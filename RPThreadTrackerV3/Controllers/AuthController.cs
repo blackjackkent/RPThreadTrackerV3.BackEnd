@@ -11,7 +11,7 @@
 	using Microsoft.Extensions.Logging;
 	using Models.RequestModels;
 
-	public class AuthController : Controller
+	public class AuthController : BaseController
 	{
 		private readonly ILogger<AuthController> _logger;
 		private readonly UserManager<IdentityUser> _userManager;
