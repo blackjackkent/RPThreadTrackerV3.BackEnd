@@ -52,7 +52,8 @@
 		    var claims = new[]
 		    {
 			    new Claim(ClaimTypes.Name, user.UserName),
-			    new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+				new Claim(ClaimTypes.NameIdentifier, user.Id),
+				new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
 			    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 			    new Claim(JwtRegisteredClaimNames.Email, user.Email),
 		    }.Union(userClaims);

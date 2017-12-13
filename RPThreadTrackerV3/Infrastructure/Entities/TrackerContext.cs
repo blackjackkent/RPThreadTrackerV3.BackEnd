@@ -1,11 +1,13 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Entities
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace RPThreadTrackerV3.Infrastructure.Entities
 {
 	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 	using Microsoft.EntityFrameworkCore;
 
-	public class BudgetContext : IdentityDbContext
+	public class TrackerContext : IdentityDbContext
 	{
-		public BudgetContext(DbContextOptions options)
+		public TrackerContext(DbContextOptions options)
 			: base(options)
 		{ }
 

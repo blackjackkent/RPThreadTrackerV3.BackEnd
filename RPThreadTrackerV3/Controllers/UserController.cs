@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3.Controllers
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+namespace RPThreadTrackerV3.Controllers
 {
 	using System;
 	using System.Threading.Tasks;
@@ -11,7 +13,7 @@
 	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.Logging;
 	using Models.ViewModels;
-	[Authorize]
+	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
 	public class UserController : BaseController
     {

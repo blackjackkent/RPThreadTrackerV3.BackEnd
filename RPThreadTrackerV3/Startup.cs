@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+namespace RPThreadTrackerV3
 {
 	using System.Net;
 	using System.Text;
@@ -27,61 +29,45 @@
 
 	public class Startup
 	{
-		private IHostingEnvironment _env;
-		private IConfigurationRoot _config { get; }
+		private IConfiguration Configuration { get; }
 
-		public Startup(IHostingEnvironment env)
+		public Startup(IConfiguration configuration)
 		{
-			var builder = new ConfigurationBuilder()
-				.SetBasePath(env.ContentRootPath)
-				.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-				.AddEnvironmentVariables();
-			_env = env;
-			_config = builder.Build();
+			Configuration = configuration;
 		}
 
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			// Add framework services.
-			services.AddSingleton(_config);
-			var connection = _config["Data:ConnectionString"];
-			services.AddDbContext<BudgetContext>(options => options.UseSqlServer(connection));
-			//services.AddScoped<IRepository<Budget>, BudgetRepository>();
+			var connection = Configuration["Data:ConnectionString"];
+			services.AddDbContext<TrackerContext>(options => options.UseSqlServer(connection));
+			services.AddIdentity<IdentityUser, IdentityRole>()
+				.AddEntityFrameworkStores<TrackerContext>();
+			services.AddAuthentication(options =>
+				{
+					options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+				})
+				.AddJwtBearer(options =>
+				{
+					options.TokenValidationParameters = new TokenValidationParameters()
+					{
+						ValidIssuer = Configuration["Tokens:Issuer"],
+						ValidAudience = Configuration["Tokens:Issuer"],
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
+					};
+				})
+				.AddCookie(options =>
+				{
+					options.SlidingExpiration = true;
+				});
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>(); 
+			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandler>();
 			services.AddCors();
 			services.AddMvc();
 			services.AddAutoMapper();
-
-			services.AddIdentity<IdentityUser, IdentityRole>(config =>
-				{
-					config.Cookies.ApplicationCookie.Events = new CookieAuthenticationEvents
-					{
-						OnRedirectToLogin = (ctx) =>
-						{
-							if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-							{
-								ctx.Response.StatusCode = 401;
-							}
-							return Task.CompletedTask;
-						},
-						OnRedirectToAccessDenied = (ctx) =>
-						{
-							if (ctx.Request.Path.StartsWithSegments("/api") && ctx.Response.StatusCode == 200)
-							{
-								ctx.Response.StatusCode = 403;
-							}
-							return Task.CompletedTask;
-						}
-					};
-				})
-				.AddDefaultTokenProviders()
-				.AddEntityFrameworkStores<BudgetContext>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,25 +76,11 @@
 			loggerFactory.AddNLog();
 
 			app.AddNLogWeb();
-			app.UseIdentity();
-			app.UseJwtBearerAuthentication(new JwtBearerOptions
-			{
-				AutomaticAuthenticate = true,
-				AutomaticChallenge = true,
-				TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidIssuer = _config["Tokens:Issuer"],
-					ValidAudience = _config["Tokens:Audience"],
-					ValidateIssuerSigningKey = true,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"])),
-					ValidateLifetime = true
-				}
-			});
+			app.UseAuthentication();
 			app.UseCors(builder =>
-				builder.WithOrigins("http://localhost:1989").AllowAnyHeader().AllowAnyMethod());
+				builder.WithOrigins("http://localhost:8080").AllowAnyHeader().AllowAnyMethod());
 			app.UseMvc();
-			LogManager.Configuration.Variables["connectionString"] = _config["Data:ConnectionString"];
-			//roleInitializer.Seed().Wait();
+			LogManager.Configuration.Variables["connectionString"] = Configuration["Data:ConnectionString"];
 		}
 	}
 }

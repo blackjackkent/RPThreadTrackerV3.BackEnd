@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Mappers
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace RPThreadTrackerV3.Infrastructure.Mappers
 {
 	using AutoMapper;
 	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

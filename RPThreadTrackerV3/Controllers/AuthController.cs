@@ -15,11 +15,11 @@
 	{
 		private readonly ILogger<AuthController> _logger;
 		private readonly UserManager<IdentityUser> _userManager;
-		private readonly IConfigurationRoot _config;
+		private readonly IConfiguration _config;
 		private readonly IAuthService _authService;
 
 		public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager, 
-		IConfigurationRoot config, IAuthService authService)
+		IConfiguration config, IAuthService authService)
 		{
 			_logger = logger;
 			_userManager = userManager;
