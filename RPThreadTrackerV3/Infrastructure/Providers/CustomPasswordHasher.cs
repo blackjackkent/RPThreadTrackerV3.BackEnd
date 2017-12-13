@@ -1,10 +1,9 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Identity
+﻿namespace RPThreadTrackerV3.Infrastructure.Providers
 {
 	using System;
 	using System.Runtime.CompilerServices;
 	using System.Security.Cryptography;
 	using Microsoft.AspNetCore.Identity;
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 	public class CustomPasswordHasher : PasswordHasher<IdentityUser>
 	{

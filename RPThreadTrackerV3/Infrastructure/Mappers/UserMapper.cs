@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace RPThreadTrackerV3.Infrastructure.Mappers
+﻿namespace RPThreadTrackerV3.Infrastructure.Mappers
 {
 	using AutoMapper;
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+	using Microsoft.AspNetCore.Identity;
 	using Models.DomainModels;
 	using Models.ViewModels;
 

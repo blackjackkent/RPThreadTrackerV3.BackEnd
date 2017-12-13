@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace RPThreadTrackerV3.Infrastructure.Entities
+﻿namespace RPThreadTrackerV3.Infrastructure.Entities
 {
+	using Microsoft.AspNetCore.Identity;
 	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 	using Microsoft.EntityFrameworkCore;
 

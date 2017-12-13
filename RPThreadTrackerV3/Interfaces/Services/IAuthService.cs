@@ -1,12 +1,10 @@
 ﻿namespace RPThreadTrackerV3.Interfaces.Services
 {
-	using System.Collections.Generic;
 	using System.IdentityModel.Tokens.Jwt;
 	using System.Security.Claims;
 	using System.Threading.Tasks;
 	using AutoMapper;
 	using Microsoft.AspNetCore.Identity;
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 	using Models.DomainModels;
 
 	public interface IAuthService

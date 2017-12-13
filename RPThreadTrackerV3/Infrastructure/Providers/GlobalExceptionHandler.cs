@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace RPThreadTrackerV3.Infrastructure.Providers
+﻿namespace RPThreadTrackerV3.Infrastructure.Providers
 {
-	using System.Net;
-	using Microsoft.AspNetCore.Diagnostics;
-	using Microsoft.AspNetCore.Hosting;
-	using Microsoft.AspNetCore.Http;
-	using Microsoft.AspNetCore.Mvc;
 	using Microsoft.AspNetCore.Mvc.Filters;
-	using Microsoft.AspNetCore.Mvc.ModelBinding;
-	using Microsoft.AspNetCore.Mvc.ViewFeatures;
 	using Microsoft.Extensions.Logging;
 
 	public class GlobalExceptionHandler : ExceptionFilterAttribute

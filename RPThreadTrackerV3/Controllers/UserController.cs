@@ -1,18 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-
-namespace RPThreadTrackerV3.Controllers
+﻿namespace RPThreadTrackerV3.Controllers
 {
 	using System;
 	using System.Threading.Tasks;
 	using AutoMapper;
 	using Interfaces.Services;
+	using Microsoft.AspNetCore.Authentication.JwtBearer;
 	using Microsoft.AspNetCore.Authorization;
 	using Microsoft.AspNetCore.Identity;
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 	using Microsoft.AspNetCore.Mvc;
-	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.Logging;
 	using Models.ViewModels;
+
 	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
 	public class UserController : BaseController
@@ -38,11 +36,11 @@ namespace RPThreadTrackerV3.Controllers
 		    {
 			    var claimsUser = User;
 			    var user = await _authService.GetCurrentUser(claimsUser, _userManager, _mapper);
-			    if (user == null)
+			    if (user != null)
 			    {
-					return NotFound(); ;
+				    return Ok(_mapper.Map<UserDto>(user));
 			    }
-			    return Ok(_mapper.Map<UserDto>(user));
+			    return NotFound();
 
 		    }
 		    catch (Exception e)

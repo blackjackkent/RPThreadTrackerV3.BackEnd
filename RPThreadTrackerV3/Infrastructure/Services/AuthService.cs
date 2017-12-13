@@ -10,7 +10,6 @@
 	using AutoMapper;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 	using Microsoft.IdentityModel.Tokens;
 	using Models.DomainModels;
 
@@ -39,11 +38,7 @@
 	    public async Task<User> GetCurrentUser(ClaimsPrincipal claimsUser, UserManager<IdentityUser> userManager, IMapper mapper)
 	    {
 			var identityUser = await userManager.GetUserAsync(claimsUser);
-		    if (identityUser == null)
-		    {
-			    return null;
-		    }
-		    return mapper.Map<User>(identityUser);
+		    return identityUser == null ? null : mapper.Map<User>(identityUser);
 	    }
 
 	    private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)

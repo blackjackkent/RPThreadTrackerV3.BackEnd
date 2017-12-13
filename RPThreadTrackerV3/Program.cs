@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-
-namespace RPThreadTrackerV3
+﻿namespace RPThreadTrackerV3
 {
+	using Microsoft.AspNetCore;
+	using Microsoft.AspNetCore.Hosting;
+	using Microsoft.Extensions.Configuration;
+
 	public class Program
 	{
 		public static void Main(string[] args)
@@ -18,8 +18,8 @@ namespace RPThreadTrackerV3
 				{
 					IHostingEnvironment env = builderContext.HostingEnvironment;
 					config.Sources.Clear();
-					config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-						.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
+					config.AddJsonFile("appsettings.json", false, true)
+						.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
 				})
 				.Build();
 	}

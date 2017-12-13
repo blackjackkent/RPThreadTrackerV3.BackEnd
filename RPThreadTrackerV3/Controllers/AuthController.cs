@@ -5,7 +5,6 @@
 	using System.Threading.Tasks;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
-	using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 	using Microsoft.AspNetCore.Mvc;
 	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.Logging;
@@ -61,26 +60,26 @@
 		[HttpPost("api/auth/register")]
 		public async Task<IActionResult> Register([FromBody] RegisterRequest model)
 		{
-			if (ModelState.IsValid)
+			if (!ModelState.IsValid)
 			{
-				var user = new IdentityUser { UserName = model.Email, Email = model.Email };
-				try
+				return BadRequest();
+			}
+			var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+			try
+			{
+				var result = await _userManager.CreateAsync(user, model.Password);
+				var roleResult = await _userManager.AddToRoleAsync(user, "User");
+				if (!result.Succeeded || !roleResult.Succeeded)
 				{
-					var result = await _userManager.CreateAsync(user, model.Password);
-					var roleResult = await _userManager.AddToRoleAsync(user, "User");
-					if (result.Succeeded && roleResult.Succeeded)
-					{
-						_logger.LogInformation(3, "User created a new account with password.");
-						return Ok();
-					}
 					return BadRequest(result);
 				}
-				catch (Exception e)
-				{
-					return BadRequest(e);
-				}
+				_logger.LogInformation(3, "User created a new account with password.");
+				return Ok();
 			}
-			return BadRequest();
+			catch (Exception e)
+			{
+				return BadRequest(e);
+			}
 		}
 	}
 }
