@@ -1,4 +1,4 @@
-﻿namespace RPThreadTracker.Infrastructure.Services
+﻿namespace RPThreadTrackerV3.TumblrClient.Infrastructure.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -10,24 +10,26 @@
 	using DontPanic.TumblrSharp;
 	using DontPanic.TumblrSharp.Client;
 	using DontPanic.TumblrSharp.OAuth;
+	using Exceptions;
+	using Interfaces;
 	using Microsoft.Extensions.Configuration;
+	using Models.DataModels;
+	using Models.ResponseModels;
 	using Polly;
 	using Polly.Fallback;
 	using Polly.Retry;
-	using Polly.Wrap;
-	using RPThreadTrackerV3.TumblrClient.Infrastructure.Interfaces;
 
 	/// <inheritdoc cref="ITumblrClient"/>
 	public class TumblrSharpClient : ITumblrClient
 	{
 		private readonly IConfiguration _config;
 		private readonly RetryPolicy _retryPolicy;
-		private FallbackPolicy<IEnumerable<IPost>> _notFoundPolicy;
+		private readonly FallbackPolicy<PostAdapter> _notFoundPolicy;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TumblrSharpClient"/> class
 		/// </summary>
-		/// <param name="configurationService">Unity-injected configuration service</param>
+		/// <param name="config">Unity-injected configuration service</param>
 		public TumblrSharpClient(IConfiguration config)
 		{
 			_config = config;
@@ -39,30 +41,43 @@
 					TimeSpan.FromSeconds(2),
 					TimeSpan.FromSeconds(4)
 				});
-			_notFoundPolicy = Policy<IEnumerable<IPost>>
+			_notFoundPolicy = Policy<PostAdapter>
 				.Handle<TumblrException>(e => e.StatusCode == HttpStatusCode.NotFound)
-				.FallbackAsync((IEnumerable<IPost>)null);
+				.FallbackAsync((PostAdapter)null);
 		}
 
 		/// <inheritdoc cref="ITumblrClient"/>
-		public async Task<IPost> GetPost(string postId, string blogShortname)
+		public async Task<PostAdapter> GetPost(string postId, string blogShortname)
 		{
-			if (string.IsNullOrWhiteSpace(postId))
+			if (string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(blogShortname))
 			{
-				return null;
+				throw new InvalidPostRequestException();
 			}
-			var posts = await RetrieveApiData(postId, blogShortname);
-			if (posts != null && posts.Any(p => p != null))
+			var post = await RetrieveApiData(postId, blogShortname);
+			if (post != null)
 			{
-				return posts.FirstOrDefault();
+				return post;
 			}
 			RefreshApiCache(postId, blogShortname);
-			var updatedPosts = await RetrieveApiData(postId, blogShortname);
-			if (updatedPosts == null)
+			var updatedPost = await RetrieveApiData(postId, blogShortname);
+			if (updatedPost == null)
 			{
-				return null;
+				throw new PostNotFoundException();
 			}
-			return updatedPosts.FirstOrDefault();
+			return updatedPost;
+		}
+
+		public ThreadDataDto ParsePost(PostAdapter post, string blogShortname, string watchedShortname)
+		{
+			var note = post.GetMostRecentRelevantNote(blogShortname, watchedShortname);
+			var dto = new ThreadDataDto
+			{
+				PostId = post.Id,
+				LastPostDate = note?.Timestamp ?? post.Timestamp,
+				LastPosterShortname = note?.BlogName ?? post.BlogName,
+				LastPostUrl = note != null ? note.BlogUrl + "post/" + note.PostId : post.Url
+			};
+			return dto;
 		}
 
 		private static void RefreshApiCache(string postId, string blogShortname)
@@ -79,33 +94,20 @@
 			}
 		}
 
-		private async Task<IEnumerable<IPost>> RetrieveApiData(string postId, string blogShortname, string tag = null, int? limit = null)
+		private async Task<PostAdapter> RetrieveApiData(string postId, string blogShortname)
 		{
 			var factory = new TumblrClientFactory();
-			var adapter = new TumblrSharpPostAdapter();
-			var token = new Token(_configurationService.TumblrOauthToken, _configurationService.TumblrOauthSecret);
-			using (var client = factory.Create<DontPanic.TumblrSharp.Client.TumblrClient>(_configurationService.TumblrConsumerKey, _configurationService.TumblrConsumerSecret, token))
+			var token = new Token(_config["oauthToken"], _config["oauthSecret"]);
+			using (var client = factory.Create<TumblrClient>(_config["consumerKey"], _config["consumerSecret"], token))
 			{
-				var parameters = new MethodParameterSet();
-				parameters.Add("notes_info", true);
-				if (postId != null)
-				{
-					parameters.Add("id", postId);
-				}
-				if (tag != null)
-				{
-					parameters.Add("tag", tag);
-				}
-				if (limit != null)
-				{
-					parameters.Add("limit", limit.GetValueOrDefault(), 0);
-				}
+				var parameters = new MethodParameterSet {{"notes_info", true}, {"id", postId}};
 				return await _notFoundPolicy.WrapAsync(_retryPolicy).ExecuteAsync(async () =>
 				{
 					var posts = await client.CallApiMethodAsync<Posts>(
 						new BlogMethod(blogShortname, "posts/text", client.OAuthToken, HttpMethod.Get, parameters),
 						CancellationToken.None);
-					return posts.Result.Select(p => adapter.GetPost(p)).ToList();
+					var result = posts.Result.Select(p => new PostAdapter(p)).ToList();
+					return result?.FirstOrDefault();
 				});
 			}
 		}

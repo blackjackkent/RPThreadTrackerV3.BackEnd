@@ -15,12 +15,12 @@
 	[Route("api/[controller]")]
 	public class UserController : BaseController
     {
-	    private readonly ILogger<AuthController> _logger;
+	    private readonly ILogger<UserController> _logger;
 	    private readonly UserManager<IdentityUser> _userManager;
 	    private readonly IMapper _mapper;
 	    private readonly IAuthService _authService;
 
-	    public UserController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager,
+	    public UserController(ILogger<UserController> logger, UserManager<IdentityUser> userManager,
 		    IMapper mapper, IAuthService authService)
 	    {
 		    _logger = logger;

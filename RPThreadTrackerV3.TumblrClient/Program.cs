@@ -26,7 +26,7 @@ namespace RPThreadTrackerV3.TumblrClient
 		            config.Sources.Clear();
 		            config.AddJsonFile("appsettings.json", false, true)
 			            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
-						.AddJsonFile($"secureAppSettings.json", true, true);
+						.AddJsonFile("secureAppSettings.json", true, true);
 	            })
 				.Build();
     }
