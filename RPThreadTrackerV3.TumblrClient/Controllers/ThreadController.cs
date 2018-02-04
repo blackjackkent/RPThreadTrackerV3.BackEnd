@@ -44,7 +44,7 @@
 		    catch (Exception e)
 		    {
 			    _logger.LogError(e, $"Unexpected error retrieving post (Post ID: {postId}, Blog Shortname {blogShortname}, Watched Shortname: {watchedShortname})");
-			    return StatusCode(500, "There was an error retrieving your post.");
+			    return StatusCode(500, $"There was an error retrieving your post.");
 		    }
 	    }
 	}
