@@ -2,9 +2,11 @@
 {
 	using System.Text;
 	using AutoMapper;
-	using Infrastructure.Entities;
+	using Infrastructure.Data;
+	using Infrastructure.Data.Entities;
 	using Infrastructure.Providers;
 	using Infrastructure.Services;
+	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;
 	using Microsoft.AspNetCore.Builder;
@@ -54,6 +56,8 @@
 					options.SlidingExpiration = true;
 				});
 			services.AddScoped<IAuthService, AuthService>();
+			services.AddScoped<IThreadService, ThreadService>();
+			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandler>();

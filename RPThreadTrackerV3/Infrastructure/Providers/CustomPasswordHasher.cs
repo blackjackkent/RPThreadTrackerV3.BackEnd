@@ -16,26 +16,26 @@
 				: base.VerifyHashedPassword(user, hashedPassword, providedPassword);
 		}
 
-		private const int Pbkdf2IterCount = 1000;
-		private const int Pbkdf2SubkeyLength = 256 / 8;
-		private const int SaltSize = 128 / 8;
+		private const int _pbkdf2IterCount = 1000;
+		private const int _pbkdf2SubkeyLength = 256 / 8;
+		private const int _saltSize = 128 / 8;
 		
 		public static bool VerifyHashedPassword(string hashedPassword, string password)
 		{
 			//Checks password using legacy hashing from System.Web.Helpers.Crypto
 			var hashedPasswordBytes = Convert.FromBase64String(hashedPassword);
-			if (hashedPasswordBytes.Length != (1 + SaltSize + Pbkdf2SubkeyLength) || hashedPasswordBytes[0] != 0x00)
+			if (hashedPasswordBytes.Length != (1 + _saltSize + _pbkdf2SubkeyLength) || hashedPasswordBytes[0] != 0x00)
 			{
 				return false;
 			}
-			var salt = new byte[SaltSize];
-			Buffer.BlockCopy(hashedPasswordBytes, 1, salt, 0, SaltSize);
-			var storedSubkey = new byte[Pbkdf2SubkeyLength];
-			Buffer.BlockCopy(hashedPasswordBytes, 1 + SaltSize, storedSubkey, 0, Pbkdf2SubkeyLength);
+			var salt = new byte[_saltSize];
+			Buffer.BlockCopy(hashedPasswordBytes, 1, salt, 0, _saltSize);
+			var storedSubkey = new byte[_pbkdf2SubkeyLength];
+			Buffer.BlockCopy(hashedPasswordBytes, 1 + _saltSize, storedSubkey, 0, _pbkdf2SubkeyLength);
 			byte[] generatedSubkey;
-			using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, Pbkdf2IterCount))
+			using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, _pbkdf2IterCount))
 			{
-				generatedSubkey = deriveBytes.GetBytes(Pbkdf2SubkeyLength);
+				generatedSubkey = deriveBytes.GetBytes(_pbkdf2SubkeyLength);
 			}
 			return ByteArraysEqual(storedSubkey, generatedSubkey);
 		}
