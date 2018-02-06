@@ -1,6 +1,7 @@
 ﻿namespace RPThreadTrackerV3.TumblrClient.Controllers
 {
 	using System;
+	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using Infrastructure.Exceptions;
 	using Infrastructure.Interfaces;
@@ -25,9 +26,9 @@
 	    {
 		    try
 		    {
-			    var post = await _client.GetPost(postId, characterUrlIdentifier);
+				var post = await _client.GetPost(postId, characterUrlIdentifier);
 			    var response = _client.ParsePost(post, characterUrlIdentifier, partnerUrlIdentifier);
-			    return Ok(response);
+				return Ok(response);
 		    }
 		    catch (InvalidPostRequestException e)
 		    {

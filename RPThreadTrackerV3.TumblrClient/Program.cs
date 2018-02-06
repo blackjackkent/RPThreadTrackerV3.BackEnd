@@ -29,6 +29,11 @@ namespace RPThreadTrackerV3.TumblrClient
 						.AddJsonFile("secureAppSettings.json", true, true)
 						.AddEnvironmentVariables();
 	            })
+	            .UseKestrel(options =>
+	            {
+		            options.Limits.MaxConcurrentConnections = 50000;
+		            options.Limits.MaxConcurrentUpgradedConnections = 50000;
+	            })
 				.Build();
     }
 }
