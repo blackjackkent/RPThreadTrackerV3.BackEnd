@@ -34,6 +34,8 @@
         {
 	        loggerFactory.AddNLog();
 	        app.AddNLogWeb();
+	        app.UseCors(builder =>
+		        builder.WithOrigins(Configuration["CorsUrl"]).AllowAnyHeader().AllowAnyMethod());
 			if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
