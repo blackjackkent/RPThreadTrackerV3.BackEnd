@@ -25,6 +25,7 @@
 		private readonly IConfiguration _config;
 		private readonly RetryPolicy _retryPolicy;
 		private readonly FallbackPolicy<PostAdapter> _notFoundPolicy;
+		private TumblrClient _client;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TumblrSharpClient"/> class
@@ -33,6 +34,9 @@
 		public TumblrSharpClient(IConfiguration config)
 		{
 			_config = config;
+			var token = new Token(_config["oauthToken"], _config["oauthSecret"]);
+			var factory = new TumblrClientFactory();
+			_client = factory.Create<TumblrClient>(_config["consumerKey"], _config["consumerSecret"], token);
 			_retryPolicy = Policy
 				.Handle<TumblrException>(e => e.StatusCode == (HttpStatusCode)429)
 				.WaitAndRetryAsync(new[]
@@ -96,20 +100,15 @@
 
 		private async Task<PostAdapter> RetrieveApiData(string postId, string characterUrlIdentifier)
 		{
-			var factory = new TumblrClientFactory();
-			var token = new Token(_config["oauthToken"], _config["oauthSecret"]);
-			using (var client = factory.Create<TumblrClient>(_config["consumerKey"], _config["consumerSecret"], token))
-			{
 				var parameters = new MethodParameterSet {{"notes_info", true}, {"id", postId}};
 				return await _notFoundPolicy.WrapAsync(_retryPolicy).ExecuteAsync(async () =>
 				{
-					var posts = await client.CallApiMethodAsync<Posts>(
-						new BlogMethod(characterUrlIdentifier, "posts/text", client.OAuthToken, HttpMethod.Get, parameters),
+					var posts = await _client.CallApiMethodAsync<Posts>(
+						new BlogMethod(characterUrlIdentifier, "posts/text", _client.OAuthToken, HttpMethod.Get, parameters),
 						CancellationToken.None);
 					var result = posts.Result.Select(p => new PostAdapter(p)).ToList();
 					return result?.FirstOrDefault();
 				});
-			}
 		}
 	}
 }
