@@ -8,6 +8,6 @@
 
 	public interface IThreadService
     {
-	    IEnumerable<Thread> GetThreads(string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
+	    IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Entities.Thread> threadRepository, IMapper mapper);
     }
 }

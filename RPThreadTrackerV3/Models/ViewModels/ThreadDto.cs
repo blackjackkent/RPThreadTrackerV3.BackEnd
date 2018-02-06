@@ -9,8 +9,9 @@
 		public CharacterDto Character { get; set; }
 		public string PostId { get; set; }
 		public string UserTitle { get; set; }
-		public string WatchedShortname { get; set; }
+		public string PartnerUrlIdentifier { get; set; }
 		public bool IsArchived { get; set; }
 		public DateTime? DateMarkedQueued { get; set; }
+		public string ThreadClientUrl { get; set; }
 	}
 }

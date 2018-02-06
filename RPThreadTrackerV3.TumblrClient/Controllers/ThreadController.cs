@@ -21,29 +21,29 @@
 	    }
 
 	    [HttpGet]
-	    public async Task<IActionResult> Get(string postId, string blogShortname, string watchedShortname = null)
+	    public async Task<IActionResult> Get(string postId, string characterUrlIdentifier, string partnerUrlIdentifier = null)
 	    {
 		    try
 		    {
-			    var post = await _client.GetPost(postId, blogShortname);
-			    var response = _client.ParsePost(post, blogShortname, watchedShortname);
+			    var post = await _client.GetPost(postId, characterUrlIdentifier);
+			    var response = _client.ParsePost(post, characterUrlIdentifier, partnerUrlIdentifier);
 			    return Ok(response);
 		    }
 		    catch (InvalidPostRequestException e)
 		    {
 			    _logger.LogInformation(
-				    $"Invalid post information request: Post ID: {postId}, Blog Shortname: {blogShortname}, Watched Shortname: {watchedShortname}");
+				    $"Invalid post information request: Post ID: {postId}, Character URL Identifier: {characterUrlIdentifier}, Partner Url Identifer: {partnerUrlIdentifier}");
 			    return BadRequest(e.Message);
 		    }
 		    catch (PostNotFoundException e)
 		    {
 			    _logger.LogInformation(
-				    $"Nonexistent post request: Post ID: {postId}, Blog Shortname: {blogShortname}, Watched Shortname: {watchedShortname}");
+				    $"Nonexistent post request: Post ID: {postId}, Character URL Identifier: {characterUrlIdentifier}, Partner Url Identifer: {partnerUrlIdentifier}");
 			    return NotFound(e.Message);
 		    }
 		    catch (Exception e)
 		    {
-			    _logger.LogError(e, $"Unexpected error retrieving post (Post ID: {postId}, Blog Shortname {blogShortname}, Watched Shortname: {watchedShortname})");
+			    _logger.LogError(e, $"Unexpected error retrieving post (Post ID: {postId}, Character URL Identifier {characterUrlIdentifier}, Partner Url Identifer: {partnerUrlIdentifier})");
 			    return StatusCode(500, $"There was an error retrieving your post.");
 		    }
 	    }

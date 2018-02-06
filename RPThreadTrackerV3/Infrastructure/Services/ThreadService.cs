@@ -9,9 +9,12 @@
 
 	public class ThreadService : IThreadService
     {
-	    public IEnumerable<Thread> GetThreads(string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    public IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
-		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId).ToList();
+		    var result = threadRepository.GetWhere(
+					t => t.Character.UserId == userId && t.IsArchived == isArchived, 
+					new List<string> { "Character" }
+				).ToList();
 		    return result.Select(mapper.Map<Thread>).ToList();
 	    }
     }

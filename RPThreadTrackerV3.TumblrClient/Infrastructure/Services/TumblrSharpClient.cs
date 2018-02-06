@@ -47,19 +47,19 @@
 		}
 
 		/// <inheritdoc cref="ITumblrClient"/>
-		public async Task<PostAdapter> GetPost(string postId, string blogShortname)
+		public async Task<PostAdapter> GetPost(string postId, string characterUrlIdentifier)
 		{
-			if (string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(blogShortname))
+			if (string.IsNullOrWhiteSpace(postId) || string.IsNullOrWhiteSpace(characterUrlIdentifier))
 			{
 				throw new InvalidPostRequestException();
 			}
-			var post = await RetrieveApiData(postId, blogShortname);
+			var post = await RetrieveApiData(postId, characterUrlIdentifier);
 			if (post != null)
 			{
 				return post;
 			}
-			RefreshApiCache(postId, blogShortname);
-			var updatedPost = await RetrieveApiData(postId, blogShortname);
+			RefreshApiCache(postId, characterUrlIdentifier);
+			var updatedPost = await RetrieveApiData(postId, characterUrlIdentifier);
 			if (updatedPost == null)
 			{
 				throw new PostNotFoundException();
@@ -67,22 +67,22 @@
 			return updatedPost;
 		}
 
-		public ThreadDataDto ParsePost(PostAdapter post, string blogShortname, string watchedShortname)
+		public ThreadDataDto ParsePost(PostAdapter post, string characterUrlIdentifier, string partnerUrlIdentifier)
 		{
-			var note = post.GetMostRecentRelevantNote(blogShortname, watchedShortname);
+			var note = post.GetMostRecentRelevantNote(characterUrlIdentifier, partnerUrlIdentifier);
 			var dto = new ThreadDataDto
 			{
 				PostId = post.Id,
 				LastPostDate = note?.Timestamp ?? post.Timestamp,
-				LastPosterShortname = note?.BlogName ?? post.BlogName,
+				LastPosterUrlIdentifier = note?.BlogName ?? post.BlogName,
 				LastPostUrl = note != null ? note.BlogUrl + "post/" + note.PostId : post.Url
 			};
 			return dto;
 		}
 
-		private static void RefreshApiCache(string postId, string blogShortname)
+		private static void RefreshApiCache(string postId, string characterUrlIdentifier)
 		{
-			var url = "http://" + blogShortname + ".tumblr.com/post/" + postId;
+			var url = "http://" + characterUrlIdentifier + ".tumblr.com/post/" + postId;
 			var webRequest = WebRequest.Create(url);
 			try
 			{
@@ -94,7 +94,7 @@
 			}
 		}
 
-		private async Task<PostAdapter> RetrieveApiData(string postId, string blogShortname)
+		private async Task<PostAdapter> RetrieveApiData(string postId, string characterUrlIdentifier)
 		{
 			var factory = new TumblrClientFactory();
 			var token = new Token(_config["oauthToken"], _config["oauthSecret"]);
@@ -104,7 +104,7 @@
 				return await _notFoundPolicy.WrapAsync(_retryPolicy).ExecuteAsync(async () =>
 				{
 					var posts = await client.CallApiMethodAsync<Posts>(
-						new BlogMethod(blogShortname, "posts/text", client.OAuthToken, HttpMethod.Get, parameters),
+						new BlogMethod(characterUrlIdentifier, "posts/text", client.OAuthToken, HttpMethod.Get, parameters),
 						CancellationToken.None);
 					var result = posts.Result.Select(p => new PostAdapter(p)).ToList();
 					return result?.FirstOrDefault();

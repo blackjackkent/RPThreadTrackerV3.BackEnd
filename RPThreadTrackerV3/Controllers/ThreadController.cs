@@ -30,11 +30,11 @@
 			_threadRepository = threadRepository;
 		}
 
-		public async Task<IActionResult> Get()
+		public IActionResult Get(bool isArchived = false)
 		{
 			try
 			{
-				var threads = _threadService.GetThreads(UserId, _threadRepository, _mapper);
+				var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper);
 				var result = threads.Select(_mapper.Map<ThreadDto>).ToList();
 				return Ok(result);
 			}
