@@ -1,5 +1,6 @@
 ﻿namespace RPThreadTrackerV3.Models.ViewModels
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Linq;
 	using Newtonsoft.Json;
@@ -14,11 +15,12 @@
 
 	    private string GetThreadStatusRequestJson(List<ThreadDto> threads)
 	    {
-		    var objects = threads.Select(t => new ThreadStatusRequestItem
+		    var objects = threads.Where(t => !string.IsNullOrEmpty(t.PostId)).Select(t => new ThreadStatusRequestItem
 		    {
 			    PostId = t.PostId, 
 				PartnerUrlIdentifer = t.PartnerUrlIdentifier, 
-				CharacterUrlIdentifier = t.Character.UrlIdentifier
+				CharacterUrlIdentifier = t.Character.UrlIdentifier,
+				DateMarkedQueued = t.DateMarkedQueued
 		    });
 		    return JsonConvert.SerializeObject(objects);
 	    }
@@ -32,5 +34,6 @@
 		public string PostId { get; set; }
 		public string CharacterUrlIdentifier { get; set; }
 		public string PartnerUrlIdentifer { get; set; }
+		public DateTime? DateMarkedQueued { get; set; }
 	}
 }
