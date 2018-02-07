@@ -36,7 +36,8 @@
 			{
 				var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper);
 				var result = threads.Select(_mapper.Map<ThreadDto>).ToList();
-				return Ok(result);
+				var response = new ThreadDtoCollection(result);
+				return Ok(response);
 			}
 			catch (Exception e)
 			{

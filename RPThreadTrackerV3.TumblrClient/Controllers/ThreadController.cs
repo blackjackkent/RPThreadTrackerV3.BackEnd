@@ -1,7 +1,6 @@
 ﻿namespace RPThreadTrackerV3.TumblrClient.Controllers
 {
 	using System;
-	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using Infrastructure.Exceptions;
 	using Infrastructure.Interfaces;
