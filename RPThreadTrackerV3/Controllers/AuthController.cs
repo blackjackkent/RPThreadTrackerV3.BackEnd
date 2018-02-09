@@ -3,6 +3,9 @@
 	using System;
 	using System.IdentityModel.Tokens.Jwt;
 	using System.Threading.Tasks;
+	using Infrastructure.Data.Entities;
+	using Infrastructure.Mappers;
+	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
 	using Microsoft.AspNetCore.Mvc;
@@ -16,14 +19,16 @@
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly IConfiguration _config;
 		private readonly IAuthService _authService;
+		private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
 
 		public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager, 
-		IConfiguration config, IAuthService authService)
+		IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository)
 		{
 			_logger = logger;
 			_userManager = userManager;
 			_config = config;
 			_authService = authService;
+			_profileSettingsRepository = profileSettingsRepository;
 		}
 
 		[HttpPost("api/auth/token")]
@@ -73,6 +78,7 @@
 				{
 					return BadRequest(result);
 				}
+				_authService.InitProfileSettings(user.Id, _profileSettingsRepository);
 				_logger.LogInformation(3, "User created a new account with password.");
 				return Ok();
 			}

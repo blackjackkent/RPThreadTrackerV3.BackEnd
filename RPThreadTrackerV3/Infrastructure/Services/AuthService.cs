@@ -8,10 +8,13 @@
 	using System.Text;
 	using System.Threading.Tasks;
 	using AutoMapper;
+	using Data.Entities;
+	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
 	using Microsoft.IdentityModel.Tokens;
 	using Models.DomainModels;
+	using Models.ViewModels;
 
 	public class AuthService : IAuthService
     {
@@ -39,6 +42,30 @@
 	    {
 			var identityUser = await userManager.GetUserAsync(claimsUser);
 		    return identityUser == null ? null : mapper.Map<User>(identityUser);
+	    }
+
+	    public ProfileSettings GetProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper)
+	    {
+		    var settingsEntity = profileSettingsRepository.GetWhere(p => p.UserId == userId);
+		    return mapper.Map<ProfileSettings>(settingsEntity);
+	    }
+
+	    public void UpdateProfileSettings(ProfileSettings settings, string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper)
+	    {
+		    var entity = mapper.Map<ProfileSettingsCollection>(settings);
+		    profileSettingsRepository.Update(settings.SettingsId.ToString(), entity);
+	    }
+
+	    public void InitProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository)
+	    {
+		    var settings = new ProfileSettingsCollection
+		    {
+			    UserId = userId,
+			    AllowMarkQueued = false,
+			    ShowDashboardThreadDistribution = true,
+			    UseInvertedTheme = false
+		    };
+		    profileSettingsRepository.Create(settings);
 	    }
 
 	    private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)
