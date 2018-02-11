@@ -4,6 +4,7 @@
 	using AutoMapper;
 	using Infrastructure.Data;
 	using Infrastructure.Data.Entities;
+	using Infrastructure.Data.Seeders;
 	using Infrastructure.Providers;
 	using Infrastructure.Services;
 	using Interfaces.Data;
@@ -38,6 +39,7 @@
 			services.AddDbContext<TrackerContext>(options => options.UseSqlServer(connection));
 			services.AddIdentity<IdentityUser, IdentityRole>()
 				.AddEntityFrameworkStores<TrackerContext>();
+			services.AddTransient<RoleInitializer>();
 			services.AddAuthentication(options =>
 				{
 					options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;

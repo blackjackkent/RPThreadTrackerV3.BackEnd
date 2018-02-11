@@ -9,6 +9,7 @@
 	using System.Threading.Tasks;
 	using AutoMapper;
 	using Data.Entities;
+	using Exceptions;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
@@ -46,7 +47,11 @@
 
 	    public ProfileSettings GetProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper)
 	    {
-		    var settingsEntity = profileSettingsRepository.GetWhere(p => p.UserId == userId);
+		    var settingsEntity = profileSettingsRepository.GetWhere(p => p.UserId == userId).FirstOrDefault();
+		    if (settingsEntity == null)
+		    {
+			    throw new ProfileSettingsNotFoundException();
+		    }
 		    return mapper.Map<ProfileSettings>(settingsEntity);
 	    }
 

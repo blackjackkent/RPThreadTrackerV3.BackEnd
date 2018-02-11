@@ -10,7 +10,9 @@
 		public ProfileSettingsMapper()
 		{
 			CreateMap<ProfileSettings, ProfileSettingsCollection>()
-				.ReverseMap();
+				.ForMember(d => d.ProfileSettingsCollectionId, o => o.MapFrom(s => s.SettingsId))
+				.ReverseMap()
+				.ForMember(d => d.SettingsId, o => o.MapFrom(s => s.ProfileSettingsCollectionId));
 			CreateMap<ProfileSettings, ProfileSettingsDto>()
 				.ReverseMap();
 		}

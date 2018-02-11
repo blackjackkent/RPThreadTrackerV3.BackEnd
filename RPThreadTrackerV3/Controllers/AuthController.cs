@@ -69,14 +69,23 @@
 			{
 				return BadRequest();
 			}
-			var user = new IdentityUser { UserName = model.Email, Email = model.Email };
+			var user = new IdentityUser
+			{
+				UserName = model.Email, 
+				Email = model.Email,
+				SecurityStamp = Guid.NewGuid().ToString()
+			};
 			try
 			{
 				var result = await _userManager.CreateAsync(user, model.Password);
-				var roleResult = await _userManager.AddToRoleAsync(user, "User");
-				if (!result.Succeeded || !roleResult.Succeeded)
+				if (!result.Succeeded)
 				{
-					return BadRequest(result);
+					return BadRequest(result.Errors);
+				}
+				var roleResult = await _userManager.AddToRoleAsync(user, "User");
+				if (!roleResult.Succeeded)
+				{
+					return BadRequest(roleResult.Errors);
 				}
 				_authService.InitProfileSettings(user.Id, _profileSettingsRepository);
 				_logger.LogInformation(3, "User created a new account with password.");
@@ -84,7 +93,8 @@
 			}
 			catch (Exception e)
 			{
-				return BadRequest(e);
+				_logger.LogError(e, $"Error registering user with username {model.Email}");
+				return StatusCode(500, "An unknown error occurred.");
 			}
 		}
 	}
