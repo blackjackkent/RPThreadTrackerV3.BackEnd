@@ -1,6 +1,7 @@
 ﻿namespace RPThreadTrackerV3.Models.ViewModels
 {
 	using System;
+	using System.Collections.Generic;
 
 	public class ThreadDto
 	{
@@ -13,5 +14,6 @@
 		public bool IsArchived { get; set; }
 		public DateTime? DateMarkedQueued { get; set; }
 		public string ThreadClientUrl { get; set; }
+		public List<string> ThreadTags { get; set; }
 	}
 }

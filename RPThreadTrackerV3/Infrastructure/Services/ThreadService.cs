@@ -13,7 +13,7 @@
 	    {
 		    var result = threadRepository.GetWhere(
 					t => t.Character.UserId == userId && t.IsArchived == isArchived, 
-					new List<string> { "Character" }
+					new List<string> { "Character", "ThreadTags" }
 				).ToList();
 		    return result.Select(mapper.Map<Thread>).ToList();
 	    }

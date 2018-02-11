@@ -15,5 +15,6 @@
 		public DbSet<Thread> Threads { get; set; }
 		public DbSet<Character> Characters { get; set; }
 		public DbSet<ProfileSettingsCollection> ProfileSettings { get; set; }
+		public DbSet<ThreadTag> ThreadTags { get; set; }
 	}
 }
