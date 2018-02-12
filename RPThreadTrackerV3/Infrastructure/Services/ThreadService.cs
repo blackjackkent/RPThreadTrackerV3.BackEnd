@@ -3,9 +3,11 @@
 	using System.Collections.Generic;
 	using System.Linq;
 	using AutoMapper;
+	using Exceptions;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Models.DomainModels;
+	using Models.ViewModels;
 
 	public class ThreadService : IThreadService
     {
@@ -16,6 +18,33 @@
 					new List<string> { "Character", "ThreadTags" }
 				).ToList();
 		    return result.Select(mapper.Map<Thread>).ToList();
+	    }
+
+	    public Thread GetThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    {
+		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId && t.ThreadId == threadId)
+			    .FirstOrDefault();
+		    if (result == null)
+		    {
+			    throw new ThreadNotFoundException();
+		    }
+		    return mapper.Map<Thread>(result);
+	    }
+
+	    public void AssertUserOwnsThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    {
+		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId && t.ThreadId == threadId)
+			    .FirstOrDefault();
+		    if (result == null)
+		    {
+			    throw new ThreadNotFoundException();
+		    }
+		}
+
+	    public void UpdateThread(Thread thread, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    {
+		    var entity = mapper.Map<Data.Entities.Thread>(thread);
+		    threadRepository.Update(thread.ThreadId.ToString(), entity);
 	    }
     }
 }

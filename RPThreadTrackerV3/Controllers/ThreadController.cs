@@ -5,6 +5,7 @@
 	using System.Threading.Tasks;
 	using AutoMapper;
 	using Infrastructure.Data.Entities;
+	using Infrastructure.Exceptions;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -30,6 +31,7 @@
 			_threadRepository = threadRepository;
 		}
 
+		[HttpGet]
 		public IActionResult Get(bool isArchived = false)
 		{
 			try
@@ -42,6 +44,28 @@
 			catch (Exception e)
 			{
 				_logger.LogError(e, e.Message);
+				return StatusCode(500, "An unknown error occurred.");
+			}
+		}
+
+		[HttpPut]
+		public IActionResult Put(ThreadDto thread)
+		{
+			try
+			{
+				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository, _mapper);
+				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
+				_threadService.UpdateThread(model, _threadRepository, _mapper);
+				return Ok();
+			}
+			catch (ThreadNotFoundException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to update thread {thread.ThreadId} illegally.");
+				return NotFound();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"Error updating thread {thread}: {e.Message}", e);
 				return StatusCode(500, "An unknown error occurred.");
 			}
 		}
