@@ -5,7 +5,7 @@
 	public class ThreadTag
     {
 		[Column("TagId")]
-		public int ThreadTagId { get; set; }
+		public string ThreadTagId { get; set; }
 		public string TagText { get; set; }
 		public int ThreadId { get; set; }
 		public Thread Thread { get; set; }

@@ -6,6 +6,7 @@
 
 	public interface IRepository<T> where T : IEntity
 	{
+		bool ExistsWhere(Expression<Func<T, bool>> filter);
 		IEnumerable<T> GetAll(List<string> navigationProperties = null);
 		IEnumerable<T> GetWhere(Expression<Func<T, bool>> filter, List<string> navigationProperties = null);
 		T Create(T entity);

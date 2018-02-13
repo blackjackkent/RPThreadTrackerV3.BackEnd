@@ -59,7 +59,9 @@
 				});
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IThreadService, ThreadService>();
-			services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+			services.AddScoped<ICharacterService, CharacterService>();
+			services.AddScoped<IRepository<Thread>, ThreadRepository>();
+			services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandler>();

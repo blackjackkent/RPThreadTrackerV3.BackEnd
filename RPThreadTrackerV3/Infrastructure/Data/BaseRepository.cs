@@ -5,13 +5,13 @@
 	using System.Linq;
 	using System.Linq.Expressions;
 	using Microsoft.EntityFrameworkCore;
-	using RPThreadTrackerV3.Interfaces.Data;
+	using Interfaces.Data;
 
-	public class Repository<T> : IRepository<T> where T : class, IEntity
+	public class BaseRepository<T> : IRepository<T> where T : class, IEntity
 	{
-		private readonly TrackerContext _context;
+		protected readonly TrackerContext _context;
 
-		public Repository(TrackerContext context)
+		public BaseRepository(TrackerContext context)
 		{
 			_context = context;
 		}
@@ -29,6 +29,12 @@
 			return rowsAffected > 0;
 		}
 
+		public bool ExistsWhere(Expression<Func<T, bool>> filter)
+		{
+			var query = _context.Set<T>().AsQueryable();
+			return query.Where(filter).Any();
+		}
+
 		public IEnumerable<T> GetAll(List<string> navigationProperties = null)
 		{
 			var query = _context.Set<T>().AsQueryable();
@@ -37,7 +43,7 @@
 				return query.ToList();
 			}
 			query = navigationProperties.Aggregate(query, (current, navigationProperty) => current.Include(navigationProperty));
-			return query.ToList();
+			return query.AsNoTracking().ToList();
 		}
 
 		public IEnumerable<T> GetWhere(Expression<Func<T, bool>> filter, List<string> navigationProperties = null)
@@ -51,7 +57,7 @@
 			return query.Where(filter).ToList();
 		}
 
-		public T Update(string id, T entity)
+		public virtual T Update(string id, T entity)
 		{
 			_context.Update(entity);
 			_context.SaveChanges();

@@ -1,19 +1,20 @@
 ﻿namespace RPThreadTrackerV3.Infrastructure.Mappers
 {
-	using System.Linq;
 	using AutoMapper;
-	using Data.Entities;
+	using Models.DomainModels;
 	using Models.ViewModels;
-	using Thread = Models.DomainModels.Thread;
 
 	public class ThreadMapper : Profile
 	{
 		public ThreadMapper()
 		{
 			CreateMap<Thread, Data.Entities.Thread>()
-				.ReverseMap()
-				.ForMember(d => d.ThreadTags, o => o.ResolveUsing(s => s.ThreadTags.Select(t => t.TagText)));
+				.ReverseMap();
 			CreateMap<Thread, ThreadDto>()
+				.ReverseMap();
+			CreateMap<ThreadTag, Data.Entities.ThreadTag>()
+				.ReverseMap();
+			CreateMap<ThreadTag, ThreadTagDto>()
 				.ReverseMap();
 		}
 	}

@@ -31,20 +31,21 @@
 		    return mapper.Map<Thread>(result);
 	    }
 
-	    public void AssertUserOwnsThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    public void AssertUserOwnsThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository)
 	    {
-		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId && t.ThreadId == threadId)
-			    .FirstOrDefault();
-		    if (result == null)
+		    var threadExistsForUser =
+			    threadRepository.ExistsWhere(t => t.Character.UserId == userId && t.ThreadId == threadId);
+		    if (!threadExistsForUser)
 		    {
 			    throw new ThreadNotFoundException();
 		    }
 		}
 
-	    public void UpdateThread(Thread thread, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    public Thread UpdateThread(Thread thread, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
-		    var entity = mapper.Map<Data.Entities.Thread>(thread);
-		    threadRepository.Update(thread.ThreadId.ToString(), entity);
+			var entity = mapper.Map<Data.Entities.Thread>(thread);
+		    var result = threadRepository.Update(thread.ThreadId.ToString(), entity);
+			return mapper.Map<Thread>(result);
 	    }
     }
 }

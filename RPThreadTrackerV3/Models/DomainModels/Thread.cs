@@ -13,6 +13,6 @@
 	    public string PartnerUrlIdentifier { get; set; }
 	    public bool IsArchived { get; set; }
 	    public DateTime? DateMarkedQueued { get; set; }
-		public List<string> ThreadTags { get; set; }
+		public List<ThreadTag> ThreadTags { get; set; }
 	}
 }

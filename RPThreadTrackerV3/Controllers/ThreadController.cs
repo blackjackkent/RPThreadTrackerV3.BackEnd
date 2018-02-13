@@ -22,17 +22,21 @@
 		private readonly IMapper _mapper;
 		private readonly IThreadService _threadService;
 		private readonly IRepository<Thread> _threadRepository;
+		private readonly ICharacterService _characterService;
+		private readonly IRepository<Character> _characterRepository;
 
-		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, IRepository<Thread> threadRepository)
+		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, IRepository<Thread> threadRepository, ICharacterService characterService, IRepository<Character> characterRepository)
 		{
 			_logger = logger;
 			_mapper = mapper;
 			_threadService = threadService;
 			_threadRepository = threadRepository;
+			_characterService = characterService;
+			_characterRepository = characterRepository;
 		}
 
 		[HttpGet]
-		public IActionResult Get(bool isArchived = false)
+		public IActionResult Get([FromQuery]bool isArchived = false)
 		{
 			try
 			{
@@ -48,20 +52,49 @@
 			}
 		}
 
-		[HttpPut]
-		public IActionResult Put(ThreadDto thread)
+		[HttpGet]
+		[Route("{threadId}")]
+		public IActionResult Get(int threadId)
 		{
 			try
 			{
-				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository, _mapper);
+				var thread = _threadService.GetThread(threadId, UserId, _threadRepository, _mapper);
+				var result = _mapper.Map<ThreadDto>(thread);
+				return Ok(result);
+			}
+			catch (ThreadNotFoundException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to fetch thread {threadId} illegally.");
+				return NotFound();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, e.Message);
+				return StatusCode(500, "An unknown error occurred.");
+			}
+		}
+
+		[HttpPut]
+		[Route("{threadId}")]
+		public IActionResult Put(int threadId, [FromBody]ThreadDto thread)
+		{
+			try
+			{
+				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository);
+				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
-				_threadService.UpdateThread(model, _threadRepository, _mapper);
-				return Ok();
+				var updatedThread = _threadService.UpdateThread(model, _threadRepository, _mapper);
+				return Ok(updatedThread);
 			}
 			catch (ThreadNotFoundException)
 			{
 				_logger.LogWarning($"User {UserId} attempted to update thread {thread.ThreadId} illegally.");
-				return NotFound();
+				return NotFound("A thread with that ID does not exist.");
+			}
+			catch (CharacterNotFoundException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to update thread {thread.ThreadId} to character {thread.CharacterId} illegally.");
+				return BadRequest("The thread could not be assigned to the given character.");
 			}
 			catch (Exception e)
 			{

@@ -14,6 +14,6 @@
 		public bool IsArchived { get; set; }
 		public DateTime? DateMarkedQueued { get; set; }
 		public string ThreadClientUrl { get; set; }
-		public List<string> ThreadTags { get; set; }
+		public List<ThreadTagDto> ThreadTags { get; set; }
 	}
 }
