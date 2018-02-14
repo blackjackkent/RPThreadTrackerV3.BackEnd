@@ -2,7 +2,6 @@
 {
 	using System;
 	using System.Linq;
-	using System.Threading.Tasks;
 	using AutoMapper;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
@@ -24,8 +23,9 @@
 		private readonly IRepository<Thread> _threadRepository;
 		private readonly ICharacterService _characterService;
 		private readonly IRepository<Character> _characterRepository;
+		private readonly IRedisClient _redisClient;
 
-		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, IRepository<Thread> threadRepository, ICharacterService characterService, IRepository<Character> characterRepository)
+		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, IRepository<Thread> threadRepository, ICharacterService characterService, IRepository<Character> characterRepository, IRedisClient redisClient)
 		{
 			_logger = logger;
 			_mapper = mapper;
@@ -33,6 +33,7 @@
 			_threadRepository = threadRepository;
 			_characterService = characterService;
 			_characterRepository = characterRepository;
+			_redisClient = redisClient;
 		}
 
 		[HttpGet]
@@ -40,7 +41,7 @@
 		{
 			try
 			{
-				var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper);
+				var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper, _redisClient);
 				var result = threads.Select(_mapper.Map<ThreadDto>).ToList();
 				var response = new ThreadDtoCollection(result);
 				return Ok(response);
@@ -83,7 +84,7 @@
 				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository);
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
-				var updatedThread = _threadService.UpdateThread(model, _threadRepository, _mapper);
+				var updatedThread = _threadService.UpdateThread(model, UserId, _threadRepository, _mapper, _redisClient);
 				return Ok(updatedThread);
 			}
 			catch (ThreadNotFoundException)

@@ -9,7 +9,6 @@
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;
 	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.AspNetCore.Identity;
 	using Microsoft.AspNetCore.Mvc;
 	using Microsoft.Extensions.Logging;
 	using Models.DomainModels;
@@ -23,14 +22,16 @@
 	    private readonly IMapper _mapper;
 	    private readonly IAuthService _authService;
 	    private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
+	    private readonly IRedisClient _redisClient;
 
 	    public ProfileSettingsController(ILogger<ProfileSettingsController> logger,
-		    IMapper mapper, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository)
+		    IMapper mapper, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository, IRedisClient redisClient)
 	    {
 		    _logger = logger;
 		    _mapper = mapper;
 		    _authService = authService;
 		    _profileSettingsRepository = profileSettingsRepository;
+		    _redisClient = redisClient;
 	    }
 
 		[HttpGet]
@@ -38,7 +39,7 @@
 	    {
 		    try
 		    {
-			    var settings = _authService.GetProfileSettings(UserId, _profileSettingsRepository, _mapper);
+			    var settings = _authService.GetProfileSettings(UserId, _profileSettingsRepository, _mapper, _redisClient);
 			    var result = _mapper.Map<ProfileSettingsDto>(settings);
 			    return Ok(result);
 		    }
@@ -60,7 +61,7 @@
 		    try
 		    {
 			    var settingsModel = _mapper.Map<ProfileSettings>(settings);
-			    _authService.UpdateProfileSettings(settingsModel, UserId, _profileSettingsRepository, _mapper);
+			    _authService.UpdateProfileSettings(settingsModel, UserId, _profileSettingsRepository, _mapper, _redisClient);
 			    return Ok();
 		    }
 		    catch (Exception e)

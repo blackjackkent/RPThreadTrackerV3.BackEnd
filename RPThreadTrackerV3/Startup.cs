@@ -65,6 +65,7 @@
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandler>();
+			services.AddSingleton<IRedisClient, RedisClient>();
 			services.AddCors();
 			services.AddMvc();
 			services.AddAutoMapper();

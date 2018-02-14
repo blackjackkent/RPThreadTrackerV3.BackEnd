@@ -9,5 +9,6 @@
 		public string UrlIdentifier { get; set; }
 		public bool IsOnHiatus { get; set; }
 		public Platform PlatformId { get; set; }
+		public string HomeUrl { get; set; }
 	}
 }
