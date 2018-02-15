@@ -18,7 +18,7 @@
 		    var objects = threads.Where(t => !string.IsNullOrEmpty(t.PostId)).Select(t => new ThreadStatusRequestItem
 		    {
 			    PostId = t.PostId, 
-				PartnerUrlIdentifer = t.PartnerUrlIdentifier, 
+				PartnerUrlIdentifier = t.PartnerUrlIdentifier, 
 				CharacterUrlIdentifier = t.Character.UrlIdentifier,
 				DateMarkedQueued = t.DateMarkedQueued
 		    });
@@ -33,7 +33,7 @@
 	{
 		public string PostId { get; set; }
 		public string CharacterUrlIdentifier { get; set; }
-		public string PartnerUrlIdentifer { get; set; }
+		public string PartnerUrlIdentifier { get; set; }
 		public DateTime? DateMarkedQueued { get; set; }
 	}
 }
