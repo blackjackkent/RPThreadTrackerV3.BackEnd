@@ -4,7 +4,6 @@
 	using System.IdentityModel.Tokens.Jwt;
 	using System.Threading.Tasks;
 	using Infrastructure.Data.Entities;
-	using Infrastructure.Mappers;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;

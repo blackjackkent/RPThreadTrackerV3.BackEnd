@@ -1,5 +1,6 @@
 ﻿namespace RPThreadTrackerV3.Infrastructure.Data.Entities
 {
+	using System;
 	using System.ComponentModel.DataAnnotations.Schema;
 	using Interfaces.Data;
     public class ProfileSettingsCollection : IEntity
@@ -10,5 +11,7 @@
 		public bool ShowDashboardThreadDistribution { get; set; }
 		public bool UseInvertedTheme { get; set; }
 		public bool AllowMarkQueued { get; set; }
-    }
+		public DateTime? LastNewsReadDate { get; set; }
+
+	}
 }

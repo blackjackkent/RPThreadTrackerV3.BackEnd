@@ -101,5 +101,27 @@
 				return StatusCode(500, "An unknown error occurred.");
 			}
 		}
+
+		[HttpDelete]
+		[Route("{threadId}")]
+		public IActionResult Delete(int threadId)
+		{
+			try
+			{
+				_threadService.AssertUserOwnsThread(threadId, UserId, _threadRepository);
+				_threadService.DeleteThread(threadId, _threadRepository);
+				return Ok();
+			}
+			catch (ThreadNotFoundException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to delete thread {threadId} illegally.");
+				return NotFound("A thread with that ID does not exist.");
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"Error deleting thread {threadId}: {e.Message}", e);
+				return StatusCode(500, "An unknown error occurred.");
+			}
+		}
 	}
 }

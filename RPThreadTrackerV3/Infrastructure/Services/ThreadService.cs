@@ -49,5 +49,15 @@
 		    var result = threadRepository.Update(thread.ThreadId.ToString(), entity);
 			return mapper.Map<Thread>(result);
 	    }
+
+	    public void DeleteThread(int threadId, IRepository<Data.Entities.Thread> threadRepository)
+	    {
+		    var entity = threadRepository.GetWhere(t => t.ThreadId == threadId).FirstOrDefault();
+		    if (entity == null)
+		    {
+			    throw new ThreadNotFoundException();
+		    }
+		    threadRepository.Delete(entity);
+	    }
     }
 }
