@@ -11,23 +11,15 @@
 
 	public class ThreadService : IThreadService
     {
-	    public IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper, IRedisClient redisClient)
+	    public IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
-		    var key = $"{CacheConstants.THREAD_KEY}{userId}";
-		    var result = redisClient.Get<List<Thread>>(key);
-		    if (result != null)
-		    {
-			    return result;
-		    }
 		    var entities = threadRepository.GetWhere(
 			    t => t.Character.UserId == userId
 			         && t.IsArchived == isArchived
 			         && !t.Character.IsOnHiatus,
 			    new List<string> { "Character", "ThreadTags" }
 		    ).ToList();
-		    result = entities.Select(mapper.Map<Thread>).ToList();
-		    redisClient.Set<List<Thread>>(key, result);
-		    return result;
+		    return entities.Select(mapper.Map<Thread>).ToList();
 	    }
 
 	    public Thread GetThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
@@ -51,12 +43,10 @@
 		    }
 		}
 
-	    public Thread UpdateThread(Thread thread, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper, IRedisClient redisClient)
+	    public Thread UpdateThread(Thread thread, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
 			var entity = mapper.Map<Data.Entities.Thread>(thread);
 		    var result = threadRepository.Update(thread.ThreadId.ToString(), entity);
-		    var key = $"{CacheConstants.THREAD_KEY}{userId}";
-			redisClient.Delete(key);
 			return mapper.Map<Thread>(result);
 	    }
     }

@@ -46,30 +46,20 @@
 		    return identityUser == null ? null : mapper.Map<User>(identityUser);
 	    }
 
-	    public ProfileSettings GetProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper, IRedisClient redisClient)
+	    public ProfileSettings GetProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper)
 	    {
-		    var key = $"{CacheConstants.PROFILE_SETTINGS_KEY}{userId}";
-		    var result = redisClient.Get<ProfileSettings>(key);
-		    if (result != null)
-		    {
-			    return result;
-		    }
 		    var settingsEntity = profileSettingsRepository.GetWhere(p => p.UserId == userId).FirstOrDefault();
 		    if (settingsEntity == null)
 		    {
 			    throw new ProfileSettingsNotFoundException();
 		    }
-		    result = mapper.Map<ProfileSettings>(settingsEntity);
-		    redisClient.Set(key, result);
-		    return result;
+		    return mapper.Map<ProfileSettings>(settingsEntity);
 	    }
 
-	    public void UpdateProfileSettings(ProfileSettings settings, string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper, IRedisClient redisClient)
+	    public void UpdateProfileSettings(ProfileSettings settings, string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper)
 	    {
 		    var entity = mapper.Map<ProfileSettingsCollection>(settings);
 		    profileSettingsRepository.Update(settings.SettingsId.ToString(), entity);
-		    var key = $"{CacheConstants.PROFILE_SETTINGS_KEY}{userId}";
-		    redisClient.Delete(key);
 		}
 
 	    public void InitProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository)

@@ -20,16 +20,14 @@
 		private readonly IMapper _mapper;
 		private readonly ICharacterService _characterService;
 		private readonly IRepository<Character> _characterRepository;
-		private readonly IRedisClient _redisClient;
 
 		public CharacterController(ILogger<CharacterController> logger, IMapper mapper, 
-		ICharacterService characterService, IRepository<Character> characterRepository, IRedisClient redisClient)
+		ICharacterService characterService, IRepository<Character> characterRepository)
 		{
 			_logger = logger;
 			_mapper = mapper;
 			_characterService = characterService;
 			_characterRepository = characterRepository;
-			_redisClient = redisClient;
 		}
 
 		[HttpGet]
@@ -37,7 +35,7 @@
 		{
 			try
 			{
-				var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, _redisClient);
+				var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper);
 				var result = characters.Select(_mapper.Map<CharacterDto>).ToList();
 				return Ok(result);
 			}

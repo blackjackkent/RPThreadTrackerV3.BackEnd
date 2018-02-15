@@ -22,16 +22,14 @@
 	    private readonly IMapper _mapper;
 	    private readonly IAuthService _authService;
 	    private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
-	    private readonly IRedisClient _redisClient;
 
 	    public ProfileSettingsController(ILogger<ProfileSettingsController> logger,
-		    IMapper mapper, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository, IRedisClient redisClient)
+		    IMapper mapper, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository)
 	    {
 		    _logger = logger;
 		    _mapper = mapper;
 		    _authService = authService;
 		    _profileSettingsRepository = profileSettingsRepository;
-		    _redisClient = redisClient;
 	    }
 
 		[HttpGet]
@@ -39,7 +37,7 @@
 	    {
 		    try
 		    {
-			    var settings = _authService.GetProfileSettings(UserId, _profileSettingsRepository, _mapper, _redisClient);
+			    var settings = _authService.GetProfileSettings(UserId, _profileSettingsRepository, _mapper);
 			    var result = _mapper.Map<ProfileSettingsDto>(settings);
 			    return Ok(result);
 		    }
@@ -61,7 +59,7 @@
 		    try
 		    {
 			    var settingsModel = _mapper.Map<ProfileSettings>(settings);
-			    _authService.UpdateProfileSettings(settingsModel, UserId, _profileSettingsRepository, _mapper, _redisClient);
+			    _authService.UpdateProfileSettings(settingsModel, UserId, _profileSettingsRepository, _mapper);
 			    return Ok();
 		    }
 		    catch (Exception e)

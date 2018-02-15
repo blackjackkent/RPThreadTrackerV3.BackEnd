@@ -10,6 +10,6 @@
 	public interface ICharacterService
     {
 	    void AssertUserOwnsCharacter(int characterId, string userId, IRepository<Entities.Character> characterRepository);
-	    IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, IRedisClient redisClient);
+	    IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper);
     }
 }
