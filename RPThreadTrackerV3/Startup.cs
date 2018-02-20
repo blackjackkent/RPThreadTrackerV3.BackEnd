@@ -15,6 +15,7 @@
 	using Microsoft.AspNetCore.Http;
 	using Microsoft.AspNetCore.Identity;
 	using Microsoft.EntityFrameworkCore;
+	using Microsoft.EntityFrameworkCore.Metadata.Internal;
 	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging;
@@ -36,7 +37,11 @@
 		public void ConfigureServices(IServiceCollection services)
 		{
 			var connection = Configuration["Data:ConnectionString"];
-			services.AddDbContext<TrackerContext>(options => options.UseSqlServer(connection));
+			services.AddDbContext<TrackerContext>(options =>
+			{
+				options.UseSqlServer(connection);
+				options.ReplaceService<IEntityMaterializerSource, CustomEntityMaterializerSource>();
+			});
 			services.AddIdentity<IdentityUser, IdentityRole>()
 				.AddEntityFrameworkStores<TrackerContext>();
 			services.AddTransient<RoleInitializer>();
