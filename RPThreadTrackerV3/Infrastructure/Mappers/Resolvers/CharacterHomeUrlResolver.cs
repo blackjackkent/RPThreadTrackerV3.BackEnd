@@ -1,9 +1,7 @@
 ﻿namespace RPThreadTrackerV3.Infrastructure.Mappers.Resolvers
 {
 	using AutoMapper;
-	using Controllers;
 	using Enums;
-	using Microsoft.AspNetCore.Mvc;
 	using Models.DomainModels;
 	using Models.ViewModels;
 
