@@ -33,7 +33,7 @@
 		    return mapper.Map<Thread>(result);
 	    }
 
-	    public void AssertUserOwnsThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository)
+	    public void AssertUserOwnsThread(int? threadId, string userId, IRepository<Data.Entities.Thread> threadRepository)
 	    {
 		    var threadExistsForUser =
 			    threadRepository.ExistsWhere(t => t.Character.UserId == userId && t.ThreadId == threadId);
@@ -58,6 +58,13 @@
 			    throw new ThreadNotFoundException();
 		    }
 		    threadRepository.Delete(entity);
+	    }
+
+	    public Thread CreateThread(Thread model, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    {
+		    var entity = mapper.Map<Data.Entities.Thread>(model);
+		    var createdEntity = threadRepository.Create(entity);
+		    return mapper.Map<Thread>(createdEntity);
 	    }
     }
 }

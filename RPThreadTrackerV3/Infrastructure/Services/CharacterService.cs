@@ -26,5 +26,29 @@
 		    var entities = characterRepository.GetWhere(c => c.UserId == userId).ToList();
 		    return entities.Select(mapper.Map<Character>).ToList();
 	    }
+
+	    public Character CreateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper)
+		{
+			var entity = mapper.Map<Entities.Character>(model);
+			var createdEntity = characterRepository.Create(entity);
+			return mapper.Map<Character>(createdEntity);
+		}
+
+	    public Character UpdateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper)
+		{
+			var entity = mapper.Map<Entities.Character>(model);
+			var result = characterRepository.Update(model.CharacterId.ToString(), entity);
+			return mapper.Map<Character>(result);
+		}
+
+	    public void DeleteCharacter(int characterId, IRepository<Entities.Character> characterRepository)
+		{
+			var entity = characterRepository.GetWhere(t => t.CharacterId == characterId).FirstOrDefault();
+			if (entity == null)
+			{
+				throw new CharacterNotFoundException();
+			}
+			characterRepository.Delete(entity);
+		}
     }
 }

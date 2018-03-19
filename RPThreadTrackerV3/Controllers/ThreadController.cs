@@ -73,17 +73,51 @@
 			}
 		}
 
+		[HttpPost]
+		public IActionResult Post([FromBody] ThreadDto thread)
+		{
+			try
+			{
+				thread.AssertIsValid();
+				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
+				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
+				var createdThread = _threadService.CreateThread(model, UserId, _threadRepository, _mapper);
+				return Ok(createdThread);
+			}
+			catch (InvalidThreadException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to add invalid thread {thread}.");
+				return BadRequest("The supplied thread is invalid.");
+			}
+			catch (CharacterNotFoundException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to add thread to character {thread.CharacterId} illegally.");
+				return BadRequest("The thread could not be assigned to the given character.");
+			}
+			catch (Exception e)
+			{
+				_logger.LogError($"Error creating thread {thread}: {e.Message}", e);
+				return StatusCode(500, "An unknown error occurred.");
+			}
+		}
+
 		[HttpPut]
 		[Route("{threadId}")]
 		public IActionResult Put(int threadId, [FromBody]ThreadDto thread)
 		{
 			try
 			{
+				thread.AssertIsValid();
 				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository);
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var updatedThread = _threadService.UpdateThread(model, UserId, _threadRepository, _mapper);
 				return Ok(updatedThread);
+			}
+			catch (InvalidThreadException)
+			{
+				_logger.LogWarning($"User {UserId} attempted to add invalid thread {thread}.");
+				return BadRequest("The supplied thread is invalid.");
 			}
 			catch (ThreadNotFoundException)
 			{

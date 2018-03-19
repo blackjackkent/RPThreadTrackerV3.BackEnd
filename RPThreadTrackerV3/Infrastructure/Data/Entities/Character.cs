@@ -9,6 +9,7 @@
 		public int CharacterId { get; set; }
 		public string UserId { get; set; }
 		public IdentityUser User { get; set; }
+		public string CharacterName { get; set; }
 		public string UrlIdentifier { get; set; }
 		public bool IsOnHiatus { get; set; }
 		public Platform PlatformId { get; set; }

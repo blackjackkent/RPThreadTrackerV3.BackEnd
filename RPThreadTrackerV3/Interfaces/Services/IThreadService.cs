@@ -10,8 +10,9 @@
     {
 	    IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Entities.Thread> threadRepository, IMapper mapper);
 	    Thread GetThread(int threadId, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
-		void AssertUserOwnsThread(int threadId, string userId, IRepository<Entities.Thread> threadRepository);
+		void AssertUserOwnsThread(int? threadId, string userId, IRepository<Entities.Thread> threadRepository);
 	    Thread UpdateThread(Thread model, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
 		void DeleteThread(int threadId, IRepository<Entities.Thread> threadRepository);
+	    Thread CreateThread(Thread model, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
     }
 }

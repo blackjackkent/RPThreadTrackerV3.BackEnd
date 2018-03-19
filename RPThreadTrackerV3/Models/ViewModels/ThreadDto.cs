@@ -2,10 +2,12 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Text.RegularExpressions;
+	using Infrastructure.Exceptions;
 
 	public class ThreadDto
 	{
-		public int ThreadId { get; set; }
+		public int? ThreadId { get; set; }
 		public int CharacterId { get; set; }
 		public CharacterDto Character { get; set; }
 		public string PostId { get; set; }
@@ -15,5 +17,18 @@
 		public DateTime? DateMarkedQueued { get; set; }
 		public string ThreadHomeUrl { get; set; }
 		public List<ThreadTagDto> ThreadTags { get; set; }
+
+		public void AssertIsValid()
+		{
+			if (string.IsNullOrEmpty(UserTitle))
+			{
+				throw new InvalidThreadException();
+			}
+			var regex = new Regex(@"^(\d)+$");
+			if (!string.IsNullOrEmpty(PostId) && !regex.IsMatch(PostId))
+			{
+				throw new InvalidThreadException();
+			}
+		}
 	}
 }
