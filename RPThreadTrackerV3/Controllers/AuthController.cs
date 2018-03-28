@@ -2,6 +2,7 @@
 {
 	using System;
 	using System.IdentityModel.Tokens.Jwt;
+	using System.Linq;
 	using System.Threading.Tasks;
 	using Infrastructure.Data.Entities;
 	using Interfaces.Data;
@@ -70,7 +71,7 @@
 			}
 			var user = new IdentityUser
 			{
-				UserName = model.Email, 
+				UserName = model.Username, 
 				Email = model.Email,
 				SecurityStamp = Guid.NewGuid().ToString()
 			};
@@ -79,7 +80,7 @@
 				var result = await _userManager.CreateAsync(user, model.Password);
 				if (!result.Succeeded)
 				{
-					return BadRequest(result.Errors);
+					return BadRequest(result.Errors.Select(e => e.Description));
 				}
 				var roleResult = await _userManager.AddToRoleAsync(user, "User");
 				if (!roleResult.Succeeded)
