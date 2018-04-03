@@ -43,7 +43,8 @@
 				options.ReplaceService<IEntityMaterializerSource, CustomEntityMaterializerSource>();
 			});
 			services.AddIdentity<IdentityUser, IdentityRole>()
-				.AddEntityFrameworkStores<TrackerContext>();
+				.AddEntityFrameworkStores<TrackerContext>()
+				.AddDefaultTokenProviders();
 			services.AddTransient<RoleInitializer>();
 			services.AddAuthentication(options =>
 				{
@@ -65,9 +66,11 @@
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IThreadService, ThreadService>();
 			services.AddScoped<ICharacterService, CharacterService>();
+			services.AddScoped<IEmailClient, SendGridEmailClient>();
 			services.AddScoped<IRepository<Thread>, ThreadRepository>();
 			services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			services.AddSingleton<IEmailBuilder, EmailBuilder>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandler>();
 			services.AddCors();

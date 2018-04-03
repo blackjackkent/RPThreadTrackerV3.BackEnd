@@ -1,10 +1,12 @@
 ﻿namespace RPThreadTrackerV3.Controllers
 {
 	using System;
+	using System.Collections.Generic;
 	using System.IdentityModel.Tokens.Jwt;
 	using System.Linq;
 	using System.Threading.Tasks;
 	using Infrastructure.Data.Entities;
+	using Infrastructure.Exceptions;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
@@ -20,15 +22,20 @@
 		private readonly IConfiguration _config;
 		private readonly IAuthService _authService;
 		private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
+		private readonly IEmailClient _emailClient;
+		private readonly IEmailBuilder _emailBuilder;
 
 		public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager, 
-		IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository)
+		IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository,
+		IEmailClient emailClient, IEmailBuilder emailBuilder)
 		{
 			_logger = logger;
 			_userManager = userManager;
 			_config = config;
 			_authService = authService;
 			_profileSettingsRepository = profileSettingsRepository;
+			_emailClient = emailClient;
+			_emailBuilder = emailBuilder;
 		}
 
 		[HttpPost("api/auth/token")]
@@ -94,6 +101,53 @@
 			catch (Exception e)
 			{
 				_logger.LogError(e, $"Error registering user with username {model.Email}");
+				return StatusCode(500, "An unknown error occurred.");
+			}
+		}
+
+		[HttpPost("api/auth/forgotpassword")]
+		public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestModel model)
+		{
+			try
+			{
+				var user = await _userManager.FindByEmailAsync(model.Email);
+				var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+				var email = _emailBuilder.BuildForgotPasswordEmail(user, _config["CorsUrl"], code);
+				await _emailClient.SendEmail(email, _config);
+				return Ok();
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Error requesting password reset for {model.Email}");
+				return StatusCode(500, "An unknown error occurred.");
+			}
+		}
+
+		[HttpPost("api/auth/resetpassword")]
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestModel model)
+		{
+			try
+			{
+				if (!model.NewPassword.Equals(model.ConfirmNewPassword))
+				{
+					throw new InvalidPasswordResetException(new List<string> {"Passwords do not match."});
+				}
+				await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, _userManager);
+				return Ok();
+			}
+			catch (InvalidPasswordResetException e)
+			{
+				_logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors}");
+				return BadRequest(e.Errors);
+			}
+			catch (UserNotFoundException e)
+			{
+				_logger.LogError(e, $"Error resetting password for {model.Email}. User does not exist.");
+				return BadRequest("This reset token is invalid. Please request a new password reset link.");
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, $"Error requesting password reset for {model.Email}");
 				return StatusCode(500, "An unknown error occurred.");
 			}
 		}

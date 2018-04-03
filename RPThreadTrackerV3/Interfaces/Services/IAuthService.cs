@@ -18,5 +18,6 @@
 	    ProfileSettings GetProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper);
 	    void UpdateProfileSettings(ProfileSettings settings, string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper);
 	    void InitProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository);
+	    Task ResetPassword(string email, string passwordResetToken, string newPassword, UserManager<IdentityUser> userManager);
     }
 }

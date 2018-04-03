@@ -315,4 +315,5 @@ OpenCover/
 ASALocalRun/
 
 # Custom files
-RPThreadTrackerV3.TumblrClient/secureAppSettings.json
+RPThreadTrackerV3/appSettings.secure.json
+

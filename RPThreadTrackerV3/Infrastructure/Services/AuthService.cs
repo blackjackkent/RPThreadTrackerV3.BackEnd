@@ -74,6 +74,20 @@
 		    profileSettingsRepository.Create(settings);
 	    }
 
+	    public async Task ResetPassword(string email, string passwordResetToken, string newPassword, UserManager<IdentityUser> userManager)
+	    {
+		    var user = await userManager.FindByEmailAsync(email);
+		    if (user == null)
+		    {
+			    throw new UserNotFoundException();
+		    }
+		    var result = await userManager.ResetPasswordAsync(user, passwordResetToken, newPassword);
+		    if (!result.Succeeded)
+		    {
+			    throw new InvalidPasswordResetException(result.Errors.Select(e => e.Description).ToList());
+		    }
+		}
+
 	    private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)
 	    {
 			var userClaims = await userManager.GetClaimsAsync(user);
