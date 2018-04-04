@@ -21,7 +21,7 @@
 		    }
 		}
 
-	    public IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper)
+	    public IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, bool includeHiatused = true)
 	    {
 		    var entities = characterRepository.GetWhere(c => c.UserId == userId).ToList();
 		    return entities.Select(mapper.Map<Character>).ToList();

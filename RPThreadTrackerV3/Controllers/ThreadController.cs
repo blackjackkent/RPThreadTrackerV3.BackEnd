@@ -169,10 +169,13 @@
 		[Route("export")]
 		public IActionResult Export([FromQuery] bool includeHiatused = false, [FromQuery] bool includeArchive = false)
 		{
-			var byteArray = _exporterService.GetByteArray();
+			var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
+			var threads = _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository,
+				_mapper);
+			var byteArray = _exporterService.GetByteArray(characters, threads);
 			var cd = new System.Net.Mime.ContentDisposition
 			{
-				FileName = "Test.xlsx",
+				FileName = "Export.xlsx",
 				Inline = false
 			};
 			Response.Headers.Add("Content-Disposition", cd.ToString());

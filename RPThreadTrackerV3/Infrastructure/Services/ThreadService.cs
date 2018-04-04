@@ -1,7 +1,9 @@
 ﻿namespace RPThreadTrackerV3.Infrastructure.Services
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Linq.Expressions;
 	using AutoMapper;
 	using Enums;
 	using Exceptions;
@@ -20,6 +22,20 @@
 			    new List<string> { "Character", "ThreadTags" }
 		    ).ToList();
 		    return entities.Select(mapper.Map<Thread>).ToList();
+	    }
+
+	    public Dictionary<int, List<Thread>> GetThreadsByCharacter(string userId, bool includeArchived, bool includeHiatused, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    {
+		    var entities = threadRepository.GetWhere(
+			    t => t.Character.UserId == userId
+			         && (includeArchived || !t.IsArchived)
+			         && (includeHiatused || !t.Character.IsOnHiatus),
+			    new List<string> {"Character"}
+		    ).ToList();
+		    var models = entities.Select(mapper.Map<Thread>).ToList();
+			var groups = models.GroupBy(x => x.CharacterId);
+			var dictionary = groups.ToDictionary(x => x.Key, x => x.ToList());
+		    return dictionary;
 	    }
 
 	    public Thread GetThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)

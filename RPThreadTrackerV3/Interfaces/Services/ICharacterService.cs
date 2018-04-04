@@ -10,7 +10,7 @@
 	public interface ICharacterService
     {
 	    void AssertUserOwnsCharacter(int characterId, string userId, IRepository<Entities.Character> characterRepository);
-	    IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper);
+	    IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, bool includeHiatused = true);
 	    Character CreateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper);
 	    Character UpdateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper);
 	    void DeleteCharacter(int characterId, IRepository<Entities.Character> characterRepository);
