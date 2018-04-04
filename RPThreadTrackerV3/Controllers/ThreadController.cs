@@ -2,6 +2,9 @@
 {
 	using System;
 	using System.Linq;
+	using System.Net;
+	using System.Net.Http;
+	using System.Net.Http.Headers;
 	using AutoMapper;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
@@ -23,8 +26,11 @@
 		private readonly IRepository<Thread> _threadRepository;
 		private readonly ICharacterService _characterService;
 		private readonly IRepository<Character> _characterRepository;
+		private readonly IExporterService _exporterService;
 
-		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, IRepository<Thread> threadRepository, ICharacterService characterService, IRepository<Character> characterRepository)
+		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, 
+			IRepository<Thread> threadRepository, ICharacterService characterService, 
+			IRepository<Character> characterRepository, IExporterService exporterService)
 		{
 			_logger = logger;
 			_mapper = mapper;
@@ -32,6 +38,7 @@
 			_threadRepository = threadRepository;
 			_characterService = characterService;
 			_characterRepository = characterRepository;
+			_exporterService = exporterService;
 		}
 
 		[HttpGet]
@@ -156,6 +163,21 @@
 				_logger.LogError($"Error deleting thread {threadId}: {e.Message}", e);
 				return StatusCode(500, "An unknown error occurred.");
 			}
+		}
+
+		[HttpGet]
+		[Route("export")]
+		public IActionResult Export([FromQuery] bool includeHiatused = false, [FromQuery] bool includeArchive = false)
+		{
+			var byteArray = _exporterService.GetByteArray();
+			var cd = new System.Net.Mime.ContentDisposition
+			{
+				FileName = "Test.xlsx",
+				Inline = false
+			};
+			Response.Headers.Add("Content-Disposition", cd.ToString());
+			Response.Headers.Add("X-Content-Type-Options", "nosniff");
+			return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		}
 	}
 }

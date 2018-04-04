@@ -66,6 +66,7 @@
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IThreadService, ThreadService>();
 			services.AddScoped<ICharacterService, CharacterService>();
+			services.AddScoped<IExporterService, ExporterService>();
 			services.AddScoped<IEmailClient, SendGridEmailClient>();
 			services.AddScoped<IRepository<Thread>, ThreadRepository>();
 			services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
