@@ -5,6 +5,7 @@
 	using System.IdentityModel.Tokens.Jwt;
 	using System.Linq;
 	using System.Threading.Tasks;
+	using AutoMapper;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
 	using Interfaces.Data;
@@ -25,9 +26,9 @@
 		private readonly IEmailClient _emailClient;
 		private readonly IEmailBuilder _emailBuilder;
 
-		public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager, 
-		IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository,
-		IEmailClient emailClient, IEmailBuilder emailBuilder)
+		public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager,
+			IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository,
+			IEmailClient emailClient, IEmailBuilder emailBuilder)
 		{
 			_logger = logger;
 			_userManager = userManager;
@@ -55,7 +56,8 @@
 					_logger.LogWarning($"Login failure for {model.Username}. Error validating password.");
 					return BadRequest("Invalid username or password.");
 				}
-				var jwt = await _authService.GenerateJwt(user, _config["Tokens:Key"], _config["Tokens:Issuer"], _config["Tokens:Audience"], _userManager);
+				var jwt = await _authService.GenerateJwt(user, _config["Tokens:Key"], _config["Tokens:Issuer"],
+					_config["Tokens:Audience"], _userManager);
 				return Ok(new
 				{
 					token = new JwtSecurityTokenHandler().WriteToken(jwt),
@@ -78,7 +80,7 @@
 			}
 			var user = new IdentityUser
 			{
-				UserName = model.Username, 
+				UserName = model.Username,
 				Email = model.Email,
 				SecurityStamp = Guid.NewGuid().ToString()
 			};
