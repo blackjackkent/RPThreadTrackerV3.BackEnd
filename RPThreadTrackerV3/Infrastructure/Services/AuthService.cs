@@ -88,6 +88,20 @@
 		    }
 		}
 
+	    public async Task ChangePassword(ClaimsPrincipal user, string currentPassword, string newPassword, string confirmNewPassword, UserManager<IdentityUser> userManager)
+	    {
+		    if (newPassword != confirmNewPassword)
+		    {
+			    throw new InvalidChangePasswordException(new List<string> { "Passwords do not match." });
+		    }
+		    var identityUser = await userManager.GetUserAsync(user);
+		    var result = await userManager.ChangePasswordAsync(identityUser, currentPassword, newPassword);
+			if (!result.Succeeded)
+			{
+				throw new InvalidChangePasswordException(result.Errors.Select(e => e.Description).ToList());
+			}
+		}
+
 	    private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)
 	    {
 			var userClaims = await userManager.GetClaimsAsync(user);
