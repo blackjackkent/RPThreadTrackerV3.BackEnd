@@ -1,4 +1,7 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Services
+﻿using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
+
+namespace RPThreadTrackerV3.Infrastructure.Services
 {
 	using System.Net;
 	using System.Text;
@@ -8,7 +11,7 @@
 
 	public class EmailBuilder : IEmailBuilder
     {
-	    public EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code)
+	    public EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfiguration config)
 	    {
 		    var resetPasswordUrl = GetResetPasswordLink(urlRoot, user.Email, code);
 		    var result = new EmailDto
@@ -16,12 +19,28 @@
 			    RecipientEmail = user.Email,
 			    Subject = "RPThreadTracker Password Reset",
 				Body = GetForgotPasswordHtmlBody(resetPasswordUrl),
-				PlainTextBody = GetForgotPasswordPlainTextBody(resetPasswordUrl)
-		    };
+				PlainTextBody = GetForgotPasswordPlainTextBody(resetPasswordUrl),
+                SenderEmail = config["ForgotPasswordEmailFromAddress"],
+                SenderName = "RPThreadTracker"
+            };
 		    return result;
 	    }
 
-	    private string GetForgotPasswordPlainTextBody(string resetPasswordUrl)
+        public EmailDto BuildContactEmail(string userEmail, string userName, string modelMessage, IConfiguration config)
+        {
+            return new EmailDto
+            {
+                RecipientEmail = config["ContactFormEmailToAddress"],
+                Body = "<p>You have received a message via RPThreadTracker's contact form:</p>" +
+                       Regex.Replace(modelMessage, @"\r\n?|\n", "<br />"),
+                PlainTextBody = "You have received a message via RPThreadTracker's contact form:\n" + modelMessage,
+                SenderName = userName,
+                SenderEmail = userEmail,
+                Subject = "RPThreadTracker Contact Form Submission"
+            };
+        }
+
+        private string GetForgotPasswordPlainTextBody(string resetPasswordUrl)
 		{
 			var bodyBuilder = new StringBuilder();
 			bodyBuilder.Append("Hello,\n\n");

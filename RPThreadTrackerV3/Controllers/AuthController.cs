@@ -112,7 +112,7 @@
 			{
 				var user = await _userManager.FindByEmailAsync(model.Email);
 				var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-				var email = _emailBuilder.BuildForgotPasswordEmail(user, _config["CorsUrl"], code);
+				var email = _emailBuilder.BuildForgotPasswordEmail(user, _config["CorsUrl"], code, _config);
 				await _emailClient.SendEmail(email, _config);
 				return Ok();
 			}
