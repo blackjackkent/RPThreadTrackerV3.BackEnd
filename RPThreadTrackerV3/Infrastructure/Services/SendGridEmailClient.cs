@@ -13,11 +13,10 @@
 		{
 			var apiKey = config["SendGridAPIKey"];
 			var client = new SendGridClient(apiKey);
-			var from = new EmailAddress(config["ForgotPasswordEmailFromAddress"], "RPThreadTracker");
-			var subject = "RPThreadTracker Password Reset";
-			var to = new EmailAddress(email.RecipientEmail);
-			var msg = MailHelper.CreateSingleEmail(from, to, subject, email.PlainTextBody, email.Body);
-			var response = await client.SendEmailAsync(msg);
+            var from = new EmailAddress(email.SenderEmail, email.SenderName);
+            var to = new EmailAddress(email.RecipientEmail);
+			var msg = MailHelper.CreateSingleEmail(from, to, email.Subject, email.PlainTextBody, email.Body);
+			await client.SendEmailAsync(msg);
 		}
 	}
 }

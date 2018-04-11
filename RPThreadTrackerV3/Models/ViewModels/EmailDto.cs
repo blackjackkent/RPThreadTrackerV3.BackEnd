@@ -6,5 +6,7 @@
 		public string Subject { get; set; }
 		public string Body { get; set; }
 	    public string PlainTextBody { get; set; }
+        public string SenderEmail { get; set; }
+        public string SenderName { get; set; }
     }
 }
