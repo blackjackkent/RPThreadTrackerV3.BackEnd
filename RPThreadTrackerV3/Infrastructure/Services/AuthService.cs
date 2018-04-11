@@ -16,6 +16,7 @@
 	using Microsoft.AspNetCore.Identity;
 	using Microsoft.IdentityModel.Tokens;
 	using Models.DomainModels;
+	using Models.RequestModels;
 	using Models.ViewModels;
 
 	public class AuthService : IAuthService
@@ -99,6 +100,37 @@
 			if (!result.Succeeded)
 			{
 				throw new InvalidChangePasswordException(result.Errors.Select(e => e.Description).ToList());
+			}
+		}
+
+	    public async Task ChangeAccountInformation(ClaimsPrincipal user, string email, string username, UserManager<IdentityUser> userManager)
+		{
+			var identityUser = await userManager.GetUserAsync(user);
+			var errors = new List<string>();
+			if (email != identityUser.Email)
+			{
+				// TODO: update user's email if it's unique
+			}
+			if (username != identityUser.UserName)
+			{
+				var existingUser = await userManager.FindByNameAsync(username);
+				if (existingUser != null)
+				{
+					errors.Add("That username is unavailable.");
+				}
+				else
+				{
+					identityUser.UserName = username;
+					var result = await userManager.UpdateAsync(identityUser);
+					if (!result.Succeeded)
+					{
+						errors.AddRange(result.Errors.Select(e => e.Description));
+					}
+				}
+			}
+			if (errors.Any())
+			{
+				throw new InvalidAccountInfoUpdateException(errors);
 			}
 		}
 

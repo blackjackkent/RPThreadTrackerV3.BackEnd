@@ -65,7 +65,7 @@
 		    }
 		    catch (InvalidChangePasswordException e)
 		    {
-			    _logger.LogError(e, $"Error resetting password for {User.Identity.Name}: {e.Errors}");
+			    _logger.LogWarning(e, $"Error resetting password for {User.Identity.Name}: {e.Errors}");
 			    return BadRequest(e.Errors);
 		    }
 		    catch (Exception e)
@@ -73,6 +73,27 @@
 			    _logger.LogError(e, $"Error requesting password reset for {User.Identity.Name}");
 			    return StatusCode(500, new List<string> {"An unknown error occurred."});
 		    }
+	    }
+
+	    [HttpPut]
+	    [Route("accountinfo")]
+	    public async Task<IActionResult> ChangeAccountInformation([FromBody] ChangeAccountInfoRequestModel request)
+	    {
+		    try
+		    {
+			    await _authService.ChangeAccountInformation(User, request.Email, request.Username, _userManager);
+			    return Ok();
+		    }
+		    catch (InvalidAccountInfoUpdateException e)
+		    {
+			    _logger.LogWarning(e, $"Error updating account info for {User.Identity.Name}: {e.Errors}");
+			    return BadRequest(e.Errors);
+		    }
+		    catch (Exception e)
+		    {
+				_logger.LogError(e, $"Error requesting account information change for {User.Identity.Name}");
+			    return StatusCode(500, new List<string> { "An unknown error occurred." });
+			}
 	    }
 	}
 }
