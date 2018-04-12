@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using RPThreadTrackerV3.Infrastructure.Exceptions;
-using RPThreadTrackerV3.Models.DomainModels.Public;
 
 namespace RPThreadTrackerV3.Models.ViewModels.Public
 {
@@ -14,6 +13,7 @@ namespace RPThreadTrackerV3.Models.ViewModels.Public
         public string UserId { get; set; }
         public List<string> Columns { get; set; }
         public string SortKey { get; set; }
+        public bool SortDescending { get; set; }
         public PublicTurnFilterDto TurnFilter { get; set; }
         public List<int> CharacterIds { get; set; }
         public List<string> Tags { get; set; }
