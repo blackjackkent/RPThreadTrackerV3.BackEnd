@@ -10,6 +10,7 @@ namespace RPThreadTrackerV3.Models.DomainModels.Public
         public string UserId { get; set; }
         public List<string> Columns { get; set; }
         public string SortKey { get; set; }
+        public bool SortDescending { get; set; }
         public PublicTurnFilter TurnFilter { get; set; }
         public List<int> CharacterIds { get; set; }
         public List<string> Tags { get; set; }
