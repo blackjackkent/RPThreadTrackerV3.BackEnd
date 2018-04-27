@@ -2,10 +2,8 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.IdentityModel.Tokens.Jwt;
 	using System.Linq;
 	using System.Threading.Tasks;
-	using AutoMapper;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
 	using Interfaces.Data;
@@ -25,10 +23,11 @@
 		private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
 		private readonly IEmailClient _emailClient;
 		private readonly IEmailBuilder _emailBuilder;
+	    private readonly IRepository<RefreshToken> _refreshTokenRepository;
 
-		public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager,
+	    public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager,
 			IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository,
-			IEmailClient emailClient, IEmailBuilder emailBuilder)
+			IEmailClient emailClient, IEmailBuilder emailBuilder, IRepository<RefreshToken> refreshTokenRepository)
 		{
 			_logger = logger;
 			_userManager = userManager;
@@ -37,6 +36,7 @@
 			_profileSettingsRepository = profileSettingsRepository;
 			_emailClient = emailClient;
 			_emailBuilder = emailBuilder;
+		    _refreshTokenRepository = refreshTokenRepository;
 		}
 
 		[HttpPost("api/auth/token")]
@@ -56,12 +56,12 @@
 					_logger.LogWarning($"Login failure for {model.Username}. Error validating password.");
 					return BadRequest("Invalid username or password.");
 				}
-				var jwt = await _authService.GenerateJwt(user, _config["Tokens:Key"], _config["Tokens:Issuer"],
-					_config["Tokens:Audience"], _userManager);
-				return Ok(new
+				var jwt = await _authService.GenerateJwt(user, _userManager, _config);
+			    var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
+			    return Ok(new
 				{
-					token = new JwtSecurityTokenHandler().WriteToken(jwt),
-					expiration = jwt.ValidTo
+					token = jwt,
+                    refresh_token = refreshToken
 				});
 			}
 			catch (Exception ex)
@@ -69,9 +69,34 @@
 				_logger.LogError(default(EventId), ex, $"Error creating JWT: {ex.Message}");
 			}
 			return BadRequest("Failed to create JWT.");
-		}
+	    }
 
-		[HttpPost("api/auth/register")]
+	    [HttpPost("api/auth/refresh")]
+	    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
+	    {
+	        try
+	        {
+	            var user = _authService.GetUserForRefreshToken(model.RefreshToken, _config, _refreshTokenRepository);
+	            var jwt = await _authService.GenerateJwt(user, _userManager, _config);
+	            var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
+	            return Ok(new
+	            {
+	                token = jwt,
+	                refresh_token = refreshToken
+	            });
+	        }
+	        catch (InvalidRefreshTokenException e)
+	        {
+	            return StatusCode(498);
+	        }
+	        catch (Exception ex)
+	        {
+	            _logger.LogError(default(EventId), ex, $"Error creating JWT: {ex.Message}");
+	        }
+	        return BadRequest("Failed to create JWT.");
+	    }
+
+        [HttpPost("api/auth/register")]
 		public async Task<IActionResult> Register([FromBody] RegisterRequest model)
 		{
 			if (!ModelState.IsValid)

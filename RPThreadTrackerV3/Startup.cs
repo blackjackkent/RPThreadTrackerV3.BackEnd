@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3
+﻿using System;
+
+namespace RPThreadTrackerV3
 {
 	using System.Text;
 	using AutoMapper;
@@ -56,8 +58,9 @@
 					{
 						ValidIssuer = Configuration["Tokens:Issuer"],
 						ValidAudience = Configuration["Tokens:Issuer"],
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"]))
-					};
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"])),
+					    ClockSkew = TimeSpan.Zero
+                    };
 				})
 				.AddCookie(options =>
 				{
