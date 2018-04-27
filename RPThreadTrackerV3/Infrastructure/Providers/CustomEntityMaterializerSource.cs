@@ -14,29 +14,46 @@ namespace RPThreadTrackerV3.Infrastructure.Providers
 	{
 	    private static readonly MethodInfo NormalizeMethod = typeof(DateTimeMapper).GetTypeInfo().GetMethod(nameof(DateTimeMapper.Normalize));
 
+	    private static readonly MethodInfo NullableNormalizeMethod =
+	        typeof(NullableDateTimeMapper).GetTypeInfo().GetMethod(nameof(NullableDateTimeMapper.Normalize));
+
 	    public override Expression CreateReadValueExpression(Expression valueBuffer, Type type, int index, IProperty property = null)
 	    {
-		    if (type == typeof(DateTime) || type == typeof(DateTime?))
+		    if (type == typeof(DateTime))
 		    {
 			    return Expression.Call(
 				    NormalizeMethod,
 				    base.CreateReadValueExpression(valueBuffer, type, index, property)
 			    );
 		    }
+	        if (type == typeof(DateTime?))
+	        {
+	            return Expression.Call(
+	                NullableNormalizeMethod,
+	                base.CreateReadValueExpression(valueBuffer, type, index, property)
+	            );
+	        }
 
-		    return base.CreateReadValueExpression(valueBuffer, type, index, property);
+            return base.CreateReadValueExpression(valueBuffer, type, index, property);
 	    }
 	}
 
 	public static class DateTimeMapper
 	{
-		public static DateTime? Normalize(DateTime? value)
+		public static DateTime Normalize(DateTime value)
 		{
-			if (value == null)
-			{
-				return null;
-			}
-			return DateTime.SpecifyKind(value.GetValueOrDefault(), DateTimeKind.Utc);
+			return DateTime.SpecifyKind(value, DateTimeKind.Utc);
 		}
 	}
+    public static class NullableDateTimeMapper
+    {
+        public static DateTime? Normalize(DateTime? value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+            return DateTime.SpecifyKind(value.GetValueOrDefault(), DateTimeKind.Utc);
+        }
+    }
 }

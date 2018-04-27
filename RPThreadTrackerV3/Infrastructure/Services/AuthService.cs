@@ -1,4 +1,7 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Services
+﻿using Microsoft.Extensions.Configuration;
+using RPThreadTrackerV3.Models.ViewModels.Auth;
+
+namespace RPThreadTrackerV3.Infrastructure.Services
 {
 	using System;
 	using System.Collections.Generic;
@@ -27,21 +30,65 @@
 		    return user;
 	    }
 
-	    public async Task<JwtSecurityToken> GenerateJwt(IdentityUser user, string key, string issuer, string audience, UserManager<IdentityUser> userManager)
+	    public async Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config)
 	    {
 		    var claims = await GetUserClaims(user, userManager);
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Tokens:Key"]));
 		    var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-		    var token = new JwtSecurityToken(
-			    issuer,
-			    audience,
+	        var expiry = DateTime.UtcNow.AddMinutes(double.Parse(config["Tokens:AccessExpireMinutes"]));
+            var token = new JwtSecurityToken(
+		        config["Tokens:Issuer"],
+		        config["Tokens:Audience"],
 			    claims,
-			    expires: DateTime.UtcNow.AddMinutes(15),
+			    expires: expiry,
 			    signingCredentials: creds);
-		    return token;
+	        var jwtString = new JwtSecurityTokenHandler().WriteToken(token);
+            return new AuthToken(jwtString, expiry);
 	    }
 
-	    public async Task<User> GetCurrentUser(ClaimsPrincipal claimsUser, UserManager<IdentityUser> userManager, IMapper mapper)
+        public AuthToken GenerateRefreshToken(IdentityUser user, IConfiguration config,
+            IRepository<RefreshToken> refreshTokenRepository)
+        {
+            var now = DateTime.UtcNow;
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Id),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Tokens:Key"]));
+            var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var expiry = now.AddMinutes(double.Parse(config["Tokens:RefreshExpireMinutes"]));
+            var jwt = new JwtSecurityToken(
+                config["Tokens:Issuer"],
+                config["Tokens:Audience"],
+                claims,
+                expires: expiry,
+                signingCredentials: signingCredentials);
+            var token = new JwtSecurityTokenHandler().WriteToken(jwt);
+            refreshTokenRepository.Create(new RefreshToken
+            {
+                Id = Guid.NewGuid().ToString(),
+                Token = token,
+                IssuedUtc = now,
+                ExpiresUtc = expiry,
+                UserId = user.Id
+            });
+            return new AuthToken(token, expiry);
+        }
+
+        public IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository)
+        {
+            var storedToken = refreshTokenRepository.GetWhere(t => t.Token == refreshToken, new List<string> { "User" }).FirstOrDefault();
+            var now = DateTime.UtcNow;
+            if (storedToken == null || now > storedToken.ExpiresUtc)
+            {
+                throw new InvalidRefreshTokenException();
+            }
+            return storedToken.User;
+        }
+
+        public async Task<User> GetCurrentUser(ClaimsPrincipal claimsUser, UserManager<IdentityUser> userManager, IMapper mapper)
 	    {
 			var identityUser = await userManager.GetUserAsync(claimsUser);
 		    return identityUser == null ? null : mapper.Map<User>(identityUser);
@@ -133,8 +180,8 @@
 				throw new InvalidAccountInfoUpdateException(errors);
 			}
 		}
-
-	    private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)
+        
+        private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)
 	    {
 			var userClaims = await userManager.GetClaimsAsync(user);
 		    var claims = new[]
