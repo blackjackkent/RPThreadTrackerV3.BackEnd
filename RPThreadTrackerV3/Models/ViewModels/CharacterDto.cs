@@ -4,8 +4,9 @@
 	using System.Text.RegularExpressions;
 	using Infrastructure.Enums;
 	using Infrastructure.Exceptions;
+	using Infrastructure.Exceptions.Characters;
 
-	public class CharacterDto
+    public class CharacterDto
 	{
 		public int CharacterId { get; set; }
 		public string UserId { get; set; }

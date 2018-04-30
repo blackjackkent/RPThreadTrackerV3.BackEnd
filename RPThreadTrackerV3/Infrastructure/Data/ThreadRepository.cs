@@ -5,8 +5,9 @@
 	using System.Linq;
 	using Entities;
 	using Exceptions;
+	using Exceptions.Thread;
 
-	public class ThreadRepository : BaseRepository<Thread>
+    public class ThreadRepository : BaseRepository<Thread>
 	{
 		public ThreadRepository(TrackerContext context) : base(context)
 		{

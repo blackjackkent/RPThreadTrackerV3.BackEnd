@@ -4,8 +4,9 @@
 	using System.Collections.Generic;
 	using System.Text.RegularExpressions;
 	using Infrastructure.Exceptions;
+	using Infrastructure.Exceptions.Thread;
 
-	public class ThreadDto
+    public class ThreadDto
 	{
 		public int? ThreadId { get; set; }
 		public int CharacterId { get; set; }

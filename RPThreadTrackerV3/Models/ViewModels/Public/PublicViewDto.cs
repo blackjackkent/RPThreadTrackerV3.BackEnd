@@ -5,6 +5,8 @@ using RPThreadTrackerV3.Infrastructure.Exceptions;
 
 namespace RPThreadTrackerV3.Models.ViewModels.Public
 {
+    using Infrastructure.Exceptions.Public;
+
     public class PublicViewDto
     {
         public string Id { get; set; }

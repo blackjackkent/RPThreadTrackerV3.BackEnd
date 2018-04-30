@@ -5,6 +5,7 @@
 	using AutoMapper;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
+	using Infrastructure.Exceptions.Account;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;

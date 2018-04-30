@@ -5,6 +5,7 @@
 	using System.Threading.Tasks;
 	using AutoMapper;
 	using Infrastructure.Exceptions;
+	using Infrastructure.Exceptions.Account;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;
 	using Microsoft.AspNetCore.Authorization;

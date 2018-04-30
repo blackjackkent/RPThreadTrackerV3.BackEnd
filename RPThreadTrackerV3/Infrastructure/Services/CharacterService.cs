@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Services
+﻿using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
+
+namespace RPThreadTrackerV3.Infrastructure.Services
 {
 	using System.Collections.Generic;
 	using System.Linq;

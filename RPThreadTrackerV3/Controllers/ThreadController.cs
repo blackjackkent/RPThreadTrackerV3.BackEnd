@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3.Controllers
+﻿using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
+
+namespace RPThreadTrackerV3.Controllers
 {
 	using System;
 	using System.Linq;
@@ -8,6 +10,7 @@
 	using AutoMapper;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
+	using Infrastructure.Exceptions.Thread;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;
