@@ -80,6 +80,7 @@ namespace RPThreadTrackerV3
 			services.AddSingleton<IEmailBuilder, EmailBuilder>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandler>();
+		    services.AddScoped<DisableDuringMaintenanceFilter>();
 			services.AddCors();
 			services.AddMvc();
 			services.AddAutoMapper();
