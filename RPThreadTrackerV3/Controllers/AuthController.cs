@@ -3,9 +3,11 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Security.Authentication;
 	using System.Threading.Tasks;
 	using Infrastructure.Data.Entities;
 	using Infrastructure.Exceptions;
+	using Infrastructure.Exceptions.Account;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
@@ -42,33 +44,33 @@
 		[HttpPost("api/auth/token")]
 		public async Task<IActionResult> CreateToken([FromBody] LoginRequest model)
 		{
-			try
-			{
-				var user = await _authService.GetUserByUsernameOrEmail(model.Username, _userManager);
-				if (user == null)
-				{
-					_logger.LogWarning($"Login failure for {model.Username}. No user exists with this username or email address.");
-					return BadRequest("Invalid username or password.");
-				}
-				var verificationResult = await _userManager.CheckPasswordAsync(user, model.Password);
-				if (!verificationResult)
-				{
-					_logger.LogWarning($"Login failure for {model.Username}. Error validating password.");
-					return BadRequest("Invalid username or password.");
-				}
-				var jwt = await _authService.GenerateJwt(user, _userManager, _config);
-			    var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
-			    return Ok(new
-				{
-					token = jwt,
-                    refresh_token = refreshToken
-				});
-			}
+		    try
+		    {
+		        var user = await _authService.GetUserByUsernameOrEmail(model.Username, _userManager);
+		        await _authService.ValidatePassword(user, model.Password, _userManager);
+		        var jwt = await _authService.GenerateJwt(user, _userManager, _config);
+		        var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
+		        return Ok(new
+		        {
+		            token = jwt,
+		            refresh_token = refreshToken
+		        });
+		    }
+		    catch (UserNotFoundException)
+		    {
+		        _logger.LogWarning($"Login failure for {model.Username}. No user exists with this username or email address.");
+		        return BadRequest("Invalid username or password.");
+		    }
+		    catch (InvalidCredentialException)
+		    {
+		        _logger.LogWarning($"Login failure for {model.Username}. Error validating password.");
+		        return BadRequest("Invalid username or password.");
+            }
 			catch (Exception ex)
 			{
 				_logger.LogError(default(EventId), ex, $"Error creating JWT: {ex.Message}");
-			}
-			return BadRequest("Failed to create JWT.");
+			    return StatusCode(500, "Failed to create JWT.");
+            }
 	    }
 
 	    [HttpPost("api/auth/refresh")]
@@ -85,49 +87,63 @@
 	                refresh_token = refreshToken
 	            });
 	        }
-	        catch (InvalidRefreshTokenException e)
+	        catch (InvalidRefreshTokenException)
 	        {
 	            return StatusCode(498);
 	        }
 	        catch (Exception ex)
 	        {
-	            _logger.LogError(default(EventId), ex, $"Error creating JWT: {ex.Message}");
+	            _logger.LogError(default(EventId), ex, $"Error refreshing JWT: {ex.Message}");
+	            return StatusCode(500, "Failed to create JWT.");
 	        }
-	        return BadRequest("Failed to create JWT.");
+	    }
+
+	    [HttpPost("api/auth/revoke")]
+	    public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenRequest model)
+	    {
+	        try
+	        {
+	            _authService.RevokeRefreshToken(model.RefreshToken, _config, _refreshTokenRepository);
+	            return Ok();
+	        }
+	        catch (Exception ex)
+	        {
+	            _logger.LogError(default(EventId), ex, $"Error revoking JWT: {ex.Message}");
+	            return StatusCode(500, "Failed to revoke JWT.");
+            }
 	    }
 
         [HttpPost("api/auth/register")]
 		public async Task<IActionResult> Register([FromBody] RegisterRequest model)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
-			var user = new IdentityUser
-			{
-				UserName = model.Username,
-				Email = model.Email,
-				SecurityStamp = Guid.NewGuid().ToString()
-			};
-			try
-			{
-				var result = await _userManager.CreateAsync(user, model.Password);
-				if (!result.Succeeded)
-				{
-					return BadRequest(result.Errors.Select(e => e.Description));
-				}
-				var roleResult = await _userManager.AddToRoleAsync(user, "User");
-				if (!roleResult.Succeeded)
-				{
-					return BadRequest(roleResult.Errors);
-				}
-				_authService.InitProfileSettings(user.Id, _profileSettingsRepository);
-				_logger.LogInformation(3, "User created a new account with password.");
-				return Ok();
-			}
+		    try
+		    {
+		        model.AssertIsValid();
+		        var user = new IdentityUser
+		        {
+		            UserName = model.Username,
+		            Email = model.Email,
+		            SecurityStamp = Guid.NewGuid().ToString()
+		        };
+		        await _authService.CreateUser(user, model.Password, _userManager);
+		        await _authService.AddUserToRole(user, "User", _userManager);
+		        _authService.InitProfileSettings(user.Id, _profileSettingsRepository);
+		        _logger.LogInformation(3, $"User {model.Username} created a new account with password.");
+		        return Ok();
+		    }
+		    catch (InvalidRegistrationException e)
+		    {
+		        _logger.LogError(e, $"Error registering user with email {model.Email} and username {model.Username}");
+		        return BadRequest(e.Errors);
+		    }
+		    catch (InvalidAccountInfoUpdateException e)
+		    {
+		        _logger.LogError(e, $"Error adding {model.Username} to user role.");
+		        return BadRequest(e.Errors);
+            }
 			catch (Exception e)
 			{
-				_logger.LogError(e, $"Error registering user with username {model.Email}");
+				_logger.LogError(e, $"Error registering user with email {model.Email} and username {model.Username}");
 				return StatusCode(500, "An unknown error occurred.");
 			}
 		}

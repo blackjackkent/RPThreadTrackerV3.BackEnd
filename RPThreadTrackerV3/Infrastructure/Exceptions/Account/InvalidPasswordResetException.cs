@@ -1,9 +1,9 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Exceptions
+﻿namespace RPThreadTrackerV3.Infrastructure.Exceptions.Account
 {
-	using System;
-	using System.Collections.Generic;
+    using System;
+    using System.Collections.Generic;
 
-	public class InvalidPasswordResetException : Exception
+    public class InvalidPasswordResetException : Exception
 	{
 		public List<string> Errors { get; }
 

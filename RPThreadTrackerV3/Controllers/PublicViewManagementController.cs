@@ -14,6 +14,8 @@ using RPThreadTrackerV3.Models.ViewModels.Public;
 
 namespace RPThreadTrackerV3.Controllers
 {
+    using Infrastructure.Exceptions.Public;
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class PublicViewManagementController : BaseController

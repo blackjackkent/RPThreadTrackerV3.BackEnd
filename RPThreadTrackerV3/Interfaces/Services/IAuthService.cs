@@ -27,5 +27,9 @@ namespace RPThreadTrackerV3.Interfaces.Services
 	    Task ResetPassword(string email, string passwordResetToken, string newPassword, UserManager<IdentityUser> userManager);
 	    Task ChangePassword(ClaimsPrincipal user, string currentPassword, string newPassword, string confirmNewPassword, UserManager<IdentityUser> userManager);
 	    Task ChangeAccountInformation(ClaimsPrincipal user, string email, string username, UserManager<IdentityUser> userManager);
+        Task ValidatePassword(IdentityUser user, string modelPassword, UserManager<IdentityUser> userManager);
+        Task CreateUser(IdentityUser user, string modelPassword, UserManager<IdentityUser> userManager);
+        Task AddUserToRole(IdentityUser user, string s, UserManager<IdentityUser> userManager);
+        void RevokeRefreshToken(string modelRefreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
     }
 }

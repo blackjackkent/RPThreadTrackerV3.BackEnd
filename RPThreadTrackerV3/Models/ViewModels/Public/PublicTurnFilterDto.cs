@@ -2,6 +2,8 @@
 
 namespace RPThreadTrackerV3.Models.ViewModels.Public
 {
+    using Infrastructure.Exceptions.Public;
+
     public class PublicTurnFilterDto
     {
         public bool IncludeMyTurn { get; set; }

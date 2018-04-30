@@ -7,6 +7,7 @@
 	using AutoMapper;
 	using Enums;
 	using Exceptions;
+	using Exceptions.Thread;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Models.DomainModels;

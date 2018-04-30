@@ -7,6 +7,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	using System.Collections.Generic;
 	using System.IdentityModel.Tokens.Jwt;
 	using System.Linq;
+	using System.Security.Authentication;
 	using System.Security.Claims;
 	using System.Text;
 	using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	using Data.Entities;
 	using Enums;
 	using Exceptions;
+	using Exceptions.Account;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Identity;
@@ -27,7 +29,11 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	    public async Task<IdentityUser> GetUserByUsernameOrEmail(string usernameOrEmail, UserManager<IdentityUser> userManager)
 	    {
 			var user = await userManager.FindByNameAsync(usernameOrEmail) ?? await userManager.FindByEmailAsync(usernameOrEmail);
-		    return user;
+	        if (user == null)
+	        {
+                throw new UserNotFoundException();
+	        }
+	        return user;
 	    }
 
 	    public async Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config)
@@ -180,7 +186,43 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 				throw new InvalidAccountInfoUpdateException(errors);
 			}
 		}
-        
+
+        public async Task CreateUser(IdentityUser user, string password, UserManager<IdentityUser> userManager)
+        {
+            var result = await userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                throw new InvalidRegistrationException(result.Errors.Select(e => e.Description).ToList());
+            }
+        }
+
+        public async Task AddUserToRole(IdentityUser user, string role, UserManager<IdentityUser> userManager)
+        {
+            var roleResult = await userManager.AddToRoleAsync(user, role);
+            if (!roleResult.Succeeded)
+            {
+                throw new InvalidAccountInfoUpdateException(roleResult.Errors.Select(e => e.Description).ToList());
+            }
+        }
+
+        public void RevokeRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository)
+        {
+            var token = refreshTokenRepository.GetWhere(t => t.Token == refreshToken).FirstOrDefault();
+            if (token != null)
+            {
+                refreshTokenRepository.Delete(token);
+            }
+        }
+
+        public async Task ValidatePassword(IdentityUser user, string password, UserManager<IdentityUser> userManager)
+        {
+            var verificationResult = await userManager.CheckPasswordAsync(user, password);
+            if (!verificationResult)
+            {
+                throw new InvalidCredentialException();
+            }
+        }
+
         private static async Task<IEnumerable<Claim>> GetUserClaims(IdentityUser user, UserManager<IdentityUser> userManager)
 	    {
 			var userClaims = await userManager.GetClaimsAsync(user);

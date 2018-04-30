@@ -1,4 +1,6 @@
-﻿namespace RPThreadTrackerV3.Controllers
+﻿using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
+
+namespace RPThreadTrackerV3.Controllers
 {
 	using System;
 	using System.Linq;

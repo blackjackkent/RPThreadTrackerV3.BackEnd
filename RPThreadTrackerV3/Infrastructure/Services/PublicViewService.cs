@@ -10,6 +10,8 @@ using Documents = RPThreadTrackerV3.Infrastructure.Data.Documents;
 
 namespace RPThreadTrackerV3.Infrastructure.Services
 {
+    using Exceptions.Public;
+
     public class PublicViewService : IPublicViewService
     {
         public async Task<IEnumerable<PublicView>> GetPublicViews(string userId,
