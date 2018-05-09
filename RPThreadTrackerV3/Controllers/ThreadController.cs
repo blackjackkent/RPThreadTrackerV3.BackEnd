@@ -184,6 +184,22 @@ namespace RPThreadTrackerV3.Controllers
 			Response.Headers.Add("Content-Disposition", cd.ToString());
 			Response.Headers.Add("X-Content-Type-Options", "nosniff");
 			return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		}
-	}
+	    }
+
+	    [HttpGet]
+	    [Route("tags")]
+	    public IActionResult Tags([FromQuery] bool includeArchive = false)
+	    {
+	        try
+	        {
+	            var tags = _threadService.GetAllTags(UserId, _threadRepository, _mapper);
+	            return Ok(tags);
+	        }
+	        catch (Exception e)
+	        {
+	            _logger.LogError(e, $"Error retrieving tags for user: {e.Message}");
+	            return StatusCode(500, "An unknown error occurred.");
+            }
+	    }
+    }
 }

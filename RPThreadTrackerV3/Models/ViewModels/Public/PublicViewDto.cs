@@ -12,6 +12,7 @@ namespace RPThreadTrackerV3.Models.ViewModels.Public
         public string Id { get; set; }
         public string Name { get; set; }
         public string Slug { get; set; }
+        public string Url { get; set; }
         public string UserId { get; set; }
         public List<string> Columns { get; set; }
         public string SortKey { get; set; }

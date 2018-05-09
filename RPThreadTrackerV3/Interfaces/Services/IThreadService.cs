@@ -15,5 +15,6 @@
 	    Thread UpdateThread(Thread model, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
 		void DeleteThread(int threadId, IRepository<Entities.Thread> threadRepository);
 	    Thread CreateThread(Thread model, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
+        IEnumerable<string> GetAllTags(string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
     }
 }

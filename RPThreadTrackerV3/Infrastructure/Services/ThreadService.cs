@@ -83,5 +83,14 @@
 		    var createdEntity = threadRepository.Create(entity);
 		    return mapper.Map<Thread>(createdEntity);
 	    }
+
+        public IEnumerable<string> GetAllTags(string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
+            var threads = threadRepository.GetWhere(t => t.Character.UserId == userId, new List<string> {"ThreadTags"})
+                .ToList();
+            var rawTags = threads.SelectMany(t => t.ThreadTags);
+            var deduplicated = rawTags.GroupBy(t => t.TagText).Select(g => g.First());
+            return deduplicated.Select(t => t.TagText);
+        }
     }
 }
