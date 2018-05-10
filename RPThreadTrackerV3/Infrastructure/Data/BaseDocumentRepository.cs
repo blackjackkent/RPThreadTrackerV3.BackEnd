@@ -94,6 +94,10 @@ namespace RPThreadTrackerV3.Infrastructure.Data
                     throw;
                 }
             }
+			catch (Exception e)
+			{
+				throw;
+			}
         }
 
         private async Task CreateCollectionIfNotExistsAsync()

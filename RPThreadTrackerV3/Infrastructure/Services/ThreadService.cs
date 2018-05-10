@@ -11,6 +11,7 @@
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Models.DomainModels;
+	using Models.DomainModels.Public;
 
 	public class ThreadService : IThreadService
     {
@@ -92,5 +93,32 @@
             var deduplicated = rawTags.GroupBy(t => t.TagText).Select(g => g.First());
             return deduplicated.Select(t => t.TagText);
         }
+
+	    public IEnumerable<Thread> GetThreadsForView(PublicView view, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+	    {
+		    var threads = threadRepository.GetWhere(t => t.Character.UserId == view.UserId,
+			    new List<string> { "Character", "ThreadTags" }).ToList();
+		    var filteredThreads = new List<Data.Entities.Thread>();
+		    if (view.TurnFilter.IncludeArchived)
+		    {
+			    var archivedThreads = threads.Where(t => t.IsArchived);
+				filteredThreads.AddRange(archivedThreads);
+		    }
+		    if (view.TurnFilter.IncludeMyTurn || view.TurnFilter.IncludeTheirTurn || view.TurnFilter.IncludeQueued)
+		    {
+			    var nonArchivedThreads = threads.Where(t => !t.IsArchived);
+				filteredThreads.AddRange(nonArchivedThreads);
+		    }
+		    if (view.CharacterIds.Any())
+		    {
+			    filteredThreads = filteredThreads.Where(t => view.CharacterIds.Contains(t.CharacterId)).ToList();
+		    }
+		    if (view.Tags.Any())
+		    {
+			    filteredThreads = filteredThreads.Where(t => t.ThreadTags.Select(tt => tt.TagText).Intersect(view.Tags).Any())
+				    .ToList();
+		    }
+		    return mapper.Map<List<Thread>>(filteredThreads);
+	    }
     }
 }

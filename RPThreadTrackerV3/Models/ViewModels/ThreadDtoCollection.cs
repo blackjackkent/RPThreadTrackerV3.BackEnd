@@ -15,7 +15,7 @@
 
 	    private string GetThreadStatusRequestJson(List<ThreadDto> threads)
 	    {
-		    var objects = threads.Where(t => !string.IsNullOrEmpty(t.PostId)).Select(t => new ThreadStatusRequestItem
+		    var objects = threads.Where(t => !string.IsNullOrEmpty(t.PostId) && !t.IsArchived).Select(t => new ThreadStatusRequestItem
 		    {
 			    PostId = t.PostId, 
 				PartnerUrlIdentifier = t.PartnerUrlIdentifier, 

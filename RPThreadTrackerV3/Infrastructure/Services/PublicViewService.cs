@@ -61,5 +61,16 @@ namespace RPThreadTrackerV3.Infrastructure.Services
         {
             await publicViewRepository.DeleteItemAsync(publicViewId);
         }
+
+	    public async Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+	    {
+		    var views = await publicViewRepository.GetItemsAsync(v => v.Slug == slug);
+		    var view = views.FirstOrDefault();
+		    if (view == null)
+		    {
+			    throw new PublicViewNotFoundException();
+		    }
+		    return mapper.Map<PublicView>(view);
+	    }
     }
 }

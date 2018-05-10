@@ -17,5 +17,6 @@ namespace RPThreadTrackerV3.Interfaces.Services
             IDocumentRepository<Documents.PublicView> publicViewRepository);
         Task<PublicView> UpdatePublicView(PublicView model, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper);
         Task DeletePublicView(string publicViewId, IDocumentRepository<Documents.PublicView> publicViewRepository);
+	    Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper);
     }
 }

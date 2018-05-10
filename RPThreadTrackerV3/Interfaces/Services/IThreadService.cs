@@ -5,6 +5,7 @@
 	using Data;
 	using Entities = Infrastructure.Data.Entities;
 	using Models.DomainModels;
+	using Models.DomainModels.Public;
 
 	public interface IThreadService
     {
@@ -16,5 +17,6 @@
 		void DeleteThread(int threadId, IRepository<Entities.Thread> threadRepository);
 	    Thread CreateThread(Thread model, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
         IEnumerable<string> GetAllTags(string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
+	    IEnumerable<Thread> GetThreadsForView(PublicView view, IRepository<Entities.Thread> threadRepository, IMapper mapper);
     }
 }
