@@ -1,0 +1,20 @@
+-
+  version: '1.0.{build}'
+  image: Visual Studio 2017
+  branches:
+    only:
+    - development
+  init:
+    - cmd: git config --global core.autocrlf true
+  before_build:
+    - cmd: dotnet --version
+    - cmd: dotnet restore RPThreadTrackerV3.sln --verbosity m
+  build_script:
+    - cmd: dotnet publish RPThreadTrackerV3.sln -c Release
+  artifacts:
+    - path: '\RPThreadTrackerV3\bin\Release\netcoreapp2.0\publish'
+      name: WebSite
+      type: WebDeployPackage
+  deploy:
+    - provider: Environment
+      name: RPThreadTrackerV3-BackEnd-Dev
