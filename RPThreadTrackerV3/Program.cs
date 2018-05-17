@@ -24,9 +24,11 @@
 				{
 					IHostingEnvironment env = builderContext.HostingEnvironment;
 					config.Sources.Clear();
-					config.AddJsonFile("appsettings.json", false, true)
+					config
+					    .AddJsonFile("appsettings.json", false, true)
 						.AddJsonFile("appsettings.secure.json", true, true)
-						.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true);
+						.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+					    .AddEnvironmentVariables();
 				})
 				.Build();
 

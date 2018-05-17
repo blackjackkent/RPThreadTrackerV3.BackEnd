@@ -38,7 +38,7 @@ namespace RPThreadTrackerV3
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			var connection = Configuration["Data:ConnectionString"];
+		    var connection = Configuration.GetConnectionString("Database");
 			services.AddDbContext<TrackerContext>(options =>
 			{
 				options.UseSqlServer(connection);
@@ -96,7 +96,7 @@ namespace RPThreadTrackerV3
 			app.UseCors(builder =>
 				builder.WithOrigins(Configuration["CorsUrl"]).AllowAnyHeader().AllowAnyMethod());
 			app.UseMvc();
-			LogManager.Configuration.Variables["connectionString"] = Configuration["Data:ConnectionString"];
+			LogManager.Configuration.Variables["connectionString"] = Configuration.GetConnectionString("Database");
 		}
 	}
 }
