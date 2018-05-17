@@ -42,7 +42,7 @@
 
 	    public Thread GetThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
-		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId && t.ThreadId == threadId)
+		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId && t.ThreadId == threadId, new List<string> { "Character", "ThreadTags"})
 			    .FirstOrDefault();
 		    if (result == null)
 		    {

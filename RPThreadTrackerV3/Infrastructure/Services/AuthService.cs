@@ -85,7 +85,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 
         public IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository)
         {
-            var storedToken = refreshTokenRepository.GetWhere(t => t.Token == refreshToken, new List<string> { "User" }).FirstOrDefault();
+            var storedToken = refreshTokenRepository.GetWhere(t => t.Token == refreshToken, new List<string> { "User" }).OrderByDescending(t => t.ExpiresUtc).FirstOrDefault();
             var now = DateTime.UtcNow;
             if (storedToken == null || now > storedToken.ExpiresUtc)
             {
