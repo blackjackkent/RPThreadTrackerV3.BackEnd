@@ -125,6 +125,7 @@
 		            Email = model.Email,
 		            SecurityStamp = Guid.NewGuid().ToString()
 		        };
+		        await _authService.AssertUserInformationDoesNotExist(model.Username, model.Email, _userManager);
 		        await _authService.CreateUser(user, model.Password, _userManager);
 		        await _authService.AddUserToRole(user, "User", _userManager);
 		        _authService.InitProfileSettings(user.Id, _profileSettingsRepository);
@@ -144,7 +145,7 @@
 			catch (Exception e)
 			{
 				_logger.LogError(e, $"Error registering user with email {model.Email} and username {model.Username}");
-				return StatusCode(500, "An unknown error occurred.");
+				return StatusCode(500, new List<string> { "Error creating account. An account with some or all of this information may already exist." });
 			}
 		}
 

@@ -36,7 +36,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	        return user;
 	    }
 
-	    public async Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config)
+        public async Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config)
 	    {
 		    var claims = await GetUserClaims(user, userManager);
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Tokens:Key"]));
@@ -212,6 +212,18 @@ namespace RPThreadTrackerV3.Infrastructure.Services
             {
                 refreshTokenRepository.Delete(token);
             }
+        }
+
+        public async Task AssertUserInformationDoesNotExist(string username, string email,
+            UserManager<IdentityUser> userManager)
+        {
+            var userByUsername = await userManager.FindByNameAsync(username);
+            var userByEmail = await userManager.FindByEmailAsync(email);
+            if (userByUsername != null || userByEmail != null)
+            {
+                throw new InvalidRegistrationException(new List<string> { "Error creating account. An account with some or all of this information may already exist."});
+            }
+
         }
 
         public async Task ValidatePassword(IdentityUser user, string password, UserManager<IdentityUser> userManager)

@@ -15,7 +15,7 @@ namespace RPThreadTrackerV3.Interfaces.Services
     public interface IAuthService
     {
 	    Task<IdentityUser> GetUserByUsernameOrEmail(string modelUsername, UserManager<IdentityUser> userManager);
-	    Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config);
+        Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config);
         AuthToken GenerateRefreshToken(IdentityUser userId, IConfiguration config,
             IRepository<RefreshToken> refreshTokenRepository);
         IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config,
@@ -31,5 +31,6 @@ namespace RPThreadTrackerV3.Interfaces.Services
         Task CreateUser(IdentityUser user, string modelPassword, UserManager<IdentityUser> userManager);
         Task AddUserToRole(IdentityUser user, string s, UserManager<IdentityUser> userManager);
         void RevokeRefreshToken(string modelRefreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
+        Task AssertUserInformationDoesNotExist(string username, string email, UserManager<IdentityUser> userManager);
     }
 }
