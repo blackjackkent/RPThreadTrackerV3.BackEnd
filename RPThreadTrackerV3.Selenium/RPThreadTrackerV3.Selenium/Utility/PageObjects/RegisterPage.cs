@@ -5,9 +5,8 @@
 	using Microsoft.Extensions.Configuration;
 	using OpenQA.Selenium;
 	using OpenQA.Selenium.Chrome;
-	using OpenQA.Selenium.Support.UI;
 
-	public class RegisterPage : BasePage
+    public class RegisterPage : BasePage
 	{
 		#region Elements
 		public IWebElement UsernameField
@@ -82,6 +81,15 @@
 			}
 		}
 
+	    public IWebElement ServerError
+	    {
+	        get
+	        {
+	            var confirmPassword = _driver.FindElementByDataSpec("register-server-error");
+	            return confirmPassword.FindElements(By.TagName("span")).FirstOrDefault();
+            }
+	    }
+
 		public IWebElement Button => _driver.FindElementsByClassName("btn-primary").FirstOrDefault(); 
 		#endregion
 
@@ -92,28 +100,28 @@
 
 		public void EnterUsername(string value)
 		{
-			UsernameField.Clear();
+			ClearField(UsernameField);
 			UsernameField.SendKeys(value);
 			WaitForElementToHaveValue(UsernameField, value);
 		}
 
 		public void EnterEmail(string value)
 		{
-			EmailField.Clear();
+			ClearField(EmailField);
 			EmailField.SendKeys(value);
 			WaitForElementToHaveValue(EmailField, value);
 		}
 		
 		public void EnterPassword(string value)
 		{
-			PasswordField.Clear();
+            ClearField(PasswordField);
 			PasswordField.SendKeys(value);
 			WaitForElementToHaveValue(PasswordField, value);
 		}
 
 		public void EnterConfirmPassword(string value)
 		{
-			ConfirmPasswordField.Clear();
+            ClearField(ConfirmPasswordField);
 			ConfirmPasswordField.SendKeys(value);
 			WaitForElementToHaveValue(ConfirmPasswordField, value);
 		}
