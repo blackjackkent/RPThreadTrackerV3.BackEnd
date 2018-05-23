@@ -1,15 +1,14 @@
-﻿using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
-
-namespace RPThreadTrackerV3.Infrastructure.Services
+﻿namespace RPThreadTrackerV3.Infrastructure.Services
 {
-	using System.Collections.Generic;
-	using System.Linq;
-	using AutoMapper;
-	using Entities = Data.Entities;
-	using Exceptions;
-	using Interfaces.Data;
-	using Interfaces.Services;
-	using Models.DomainModels;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
+    using AutoMapper;
+    using Exceptions.Characters;
+    using Interfaces.Data;
+    using Interfaces.Services;
+    using Models.DomainModels;
+    using Entities = Data.Entities;
 
 	public class CharacterService : ICharacterService
     {
@@ -39,7 +38,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	    public Character UpdateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper)
 		{
 			var entity = mapper.Map<Entities.Character>(model);
-			var result = characterRepository.Update(model.CharacterId.ToString(), entity);
+			var result = characterRepository.Update(model.CharacterId.ToString(CultureInfo.CurrentCulture), entity);
 			return mapper.Map<Character>(result);
 		}
 

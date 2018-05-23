@@ -7,15 +7,15 @@
 	using AutoMapper;
 	using Infrastructure.Data.Documents;
 	using Infrastructure.Data.Entities;
-	using Infrastructure.Exceptions.Public;
+	using Infrastructure.Exceptions.PublicViews;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Mvc;
 	using Microsoft.Extensions.Logging;
 	using Models.ViewModels;
-	using Models.ViewModels.Public;
+	using Models.ViewModels.PublicViews;
 
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	public class PublicThreadController : BaseController
     {
 	    private readonly ILogger<ThreadController> _logger;
@@ -25,7 +25,13 @@
 	    private readonly IPublicViewService _publicViewService;
 	    private readonly IDocumentRepository<PublicView> _publicViewRepository;
 
-		public PublicThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, IRepository<Thread> threadRepository, IPublicViewService publicViewService, IDocumentRepository<PublicView> publicViewRepository)
+		public PublicThreadController(
+		    ILogger<ThreadController> logger,
+		    IMapper mapper,
+		    IThreadService threadService,
+		    IRepository<Thread> threadRepository,
+		    IPublicViewService publicViewService,
+		    IDocumentRepository<PublicView> publicViewRepository)
 	    {
 		    _logger = logger;
 		    _mapper = mapper;

@@ -1,19 +1,17 @@
-﻿using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
-
-namespace RPThreadTrackerV3.Controllers
+﻿namespace RPThreadTrackerV3.Controllers
 {
-	using System;
-	using System.Linq;
-	using AutoMapper;
-	using Infrastructure.Data.Entities;
-	using Infrastructure.Exceptions;
-	using Interfaces.Data;
-	using Interfaces.Services;
-	using Microsoft.AspNetCore.Authentication.JwtBearer;
-	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.AspNetCore.Mvc;
-	using Microsoft.Extensions.Logging;
-	using Models.ViewModels;
+    using System;
+    using System.Linq;
+    using AutoMapper;
+    using Infrastructure.Data.Entities;
+    using Interfaces.Data;
+    using Interfaces.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Models.ViewModels;
+    using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
 
 	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
@@ -24,8 +22,11 @@ namespace RPThreadTrackerV3.Controllers
 		private readonly ICharacterService _characterService;
 		private readonly IRepository<Character> _characterRepository;
 
-		public CharacterController(ILogger<CharacterController> logger, IMapper mapper, 
-		ICharacterService characterService, IRepository<Character> characterRepository)
+		public CharacterController(
+		    ILogger<CharacterController> logger,
+		    IMapper mapper,
+		    ICharacterService characterService,
+		    IRepository<Character> characterRepository)
 		{
 			_logger = logger;
 			_mapper = mapper;
@@ -100,7 +101,7 @@ namespace RPThreadTrackerV3.Controllers
 				return StatusCode(500, "An unknown error occurred.");
 			}
 		}
-		
+
 		[HttpDelete]
 		[Route("{characterId}")]
 		public IActionResult Delete(int characterId)

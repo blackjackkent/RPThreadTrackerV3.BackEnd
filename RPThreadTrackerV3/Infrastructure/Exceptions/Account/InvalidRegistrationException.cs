@@ -7,8 +7,8 @@
     {
         public List<string> Errors { get; }
 
-        public InvalidRegistrationException(List<string> errors) : base(
-            "The supplied registration information is invalid.")
+        public InvalidRegistrationException(List<string> errors)
+            : base("The supplied registration information is invalid.")
         {
             Errors = errors;
         }

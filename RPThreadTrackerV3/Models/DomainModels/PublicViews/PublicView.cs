@@ -1,13 +1,10 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Data.Documents
+﻿namespace RPThreadTrackerV3.Models.DomainModels.PublicViews
 {
     using System.Collections.Generic;
-    using Newtonsoft.Json;
-    using RPThreadTrackerV3.Interfaces.Data;
 
-    public class PublicView : IDocument
+    public class PublicView
     {
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
+        public string Id { get; }
         public string Name { get; }
         public string Slug { get; }
         public string UserId { get; }

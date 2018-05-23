@@ -7,7 +7,10 @@
     {
 	    public List<string> Errors { get; }
 
-	    public InvalidAccountInfoUpdateException(List<string> errors) : base("There was an error updating the users's account information.") {
+        /// <inheritdoc />
+        public InvalidAccountInfoUpdateException(List<string> errors)
+            : base("There was an error updating the users's account information.")
+        {
 		    Errors = errors;
 	    }
 	}

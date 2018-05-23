@@ -9,7 +9,8 @@
 
     public class ThreadRepository : BaseRepository<Thread>
 	{
-		public ThreadRepository(TrackerContext context) : base(context)
+		public ThreadRepository(TrackerContext context)
+		    : base(context)
 		{
 		}
 

@@ -2,11 +2,9 @@
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
 	using System.Security.Authentication;
 	using System.Threading.Tasks;
 	using Infrastructure.Data.Entities;
-	using Infrastructure.Exceptions;
 	using Infrastructure.Exceptions.Account;
 	using Interfaces.Data;
 	using Interfaces.Services;
@@ -27,9 +25,15 @@
 		private readonly IEmailBuilder _emailBuilder;
 	    private readonly IRepository<RefreshToken> _refreshTokenRepository;
 
-	    public AuthController(ILogger<AuthController> logger, UserManager<IdentityUser> userManager,
-			IConfiguration config, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository,
-			IEmailClient emailClient, IEmailBuilder emailBuilder, IRepository<RefreshToken> refreshTokenRepository)
+	    public AuthController(
+	        ILogger<AuthController> logger,
+	        UserManager<IdentityUser> userManager,
+			IConfiguration config,
+	        IAuthService authService,
+	        IRepository<ProfileSettingsCollection> profileSettingsRepository,
+			IEmailClient emailClient,
+	        IEmailBuilder emailBuilder,
+	        IRepository<RefreshToken> refreshTokenRepository)
 		{
 			_logger = logger;
 			_userManager = userManager;
@@ -99,7 +103,7 @@
 	    }
 
 	    [HttpPost("api/auth/revoke")]
-	    public async Task<IActionResult> RevokeToken([FromBody] RefreshTokenRequest model)
+	    public IActionResult RevokeToken([FromBody] RefreshTokenRequest model)
 	    {
 	        try
 	        {
@@ -172,9 +176,9 @@
 		{
 			try
 			{
-				if (!model.NewPassword.Equals(model.ConfirmNewPassword))
+				if (!model.NewPassword.Equals(model.ConfirmNewPassword, StringComparison.CurrentCulture))
 				{
-					throw new InvalidPasswordResetException(new List<string> {"Passwords do not match."});
+					throw new InvalidPasswordResetException(new List<string> { "Passwords do not match." });
 				}
 				await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, _userManager);
 				return Ok();

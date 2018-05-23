@@ -8,16 +8,16 @@
 
     public class ThreadDto
 	{
-		public int? ThreadId { get; set; }
-		public int CharacterId { get; set; }
-		public CharacterDto Character { get; set; }
-		public string PostId { get; set; }
-		public string UserTitle { get; set; }
-		public string PartnerUrlIdentifier { get; set; }
-		public bool IsArchived { get; set; }
-		public DateTime? DateMarkedQueued { get; set; }
-		public string ThreadHomeUrl { get; set; }
-		public List<ThreadTagDto> ThreadTags { get; set; }
+		public int? ThreadId { get; }
+		public int CharacterId { get; }
+		public CharacterDto Character { get; }
+		public string PostId { get; }
+		public string UserTitle { get; }
+		public string PartnerUrlIdentifier { get; }
+		public bool IsArchived { get; }
+		public DateTime? DateMarkedQueued { get; }
+		public string ThreadHomeUrl { get; }
+		public List<ThreadTagDto> ThreadTags { get; }
 
 		public void AssertIsValid()
 		{

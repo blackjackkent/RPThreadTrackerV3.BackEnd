@@ -1,8 +1,8 @@
 ﻿namespace RPThreadTrackerV3.Infrastructure.Mappers
 {
     using AutoMapper;
-    using Models.DomainModels.Public;
-    using Models.ViewModels.Public;
+    using Models.DomainModels.PublicViews;
+    using Models.ViewModels.PublicViews;
     using Resolvers;
 
     public class PublicViewMapper : Profile

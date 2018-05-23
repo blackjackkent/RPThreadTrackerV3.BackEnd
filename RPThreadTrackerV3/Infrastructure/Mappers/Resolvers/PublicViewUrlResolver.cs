@@ -2,8 +2,8 @@
 {
     using AutoMapper;
     using Microsoft.Extensions.Configuration;
-    using Models.DomainModels.Public;
-    using Models.ViewModels.Public;
+    using Models.DomainModels.PublicViews;
+    using Models.ViewModels.PublicViews;
 
     public class PublicViewUrlResolver : IValueResolver<PublicView, PublicViewDto, string>
     {

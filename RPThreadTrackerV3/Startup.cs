@@ -1,30 +1,29 @@
-﻿using System;
-
-namespace RPThreadTrackerV3
+﻿namespace RPThreadTrackerV3
 {
-	using System.Text;
-	using AutoMapper;
-	using Infrastructure.Data;
-	using Infrastructure.Data.Entities;
-	using Infrastructure.Data.Seeders;
-	using Infrastructure.Providers;
-	using Infrastructure.Services;
-	using Interfaces.Data;
-	using Interfaces.Services;
-	using Microsoft.AspNetCore.Authentication.JwtBearer;
-	using Microsoft.AspNetCore.Builder;
-	using Microsoft.AspNetCore.Hosting;
-	using Microsoft.AspNetCore.Http;
-	using Microsoft.AspNetCore.Identity;
-	using Microsoft.EntityFrameworkCore;
-	using Microsoft.EntityFrameworkCore.Metadata.Internal;
-	using Microsoft.Extensions.Configuration;
-	using Microsoft.Extensions.DependencyInjection;
-	using Microsoft.Extensions.Logging;
-	using Microsoft.IdentityModel.Tokens;
-	using NLog;
-	using NLog.Extensions.Logging;
-	using NLog.Web;
+    using System;
+    using System.Text;
+    using AutoMapper;
+    using Infrastructure.Data;
+    using Infrastructure.Data.Entities;
+    using Infrastructure.Data.Seeders;
+    using Infrastructure.Providers;
+    using Infrastructure.Services;
+    using Interfaces.Data;
+    using Interfaces.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Internal;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
+    using NLog;
+    using NLog.Extensions.Logging;
+    using NLog.Web;
 
 	public class Startup
 	{
@@ -79,8 +78,8 @@ namespace RPThreadTrackerV3
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddSingleton<IEmailBuilder, EmailBuilder>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
-			services.AddScoped<GlobalExceptionHandler>();
-		    services.AddScoped<DisableDuringMaintenanceFilter>();
+			services.AddScoped<GlobalExceptionHandlerAttribute>();
+		    services.AddScoped<DisableDuringMaintenanceFilterAttribute>();
 			services.AddCors();
 			services.AddMvc();
 			services.AddAutoMapper();

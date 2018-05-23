@@ -1,17 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
-using Microsoft.Extensions.Configuration;
-using RPThreadTrackerV3.Interfaces.Data;
-
-namespace RPThreadTrackerV3.Infrastructure.Data
+﻿namespace RPThreadTrackerV3.Infrastructure.Data
 {
-    public class BaseDocumentRepository<T> :IDocumentRepository<T> where T : class, IDocument
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Threading.Tasks;
+    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Azure.Documents.Linq;
+    using Microsoft.Extensions.Configuration;
+    using RPThreadTrackerV3.Interfaces.Data;
+
+    public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
+        where T : class, IDocument
     {
         private readonly string _databaseId;
         private readonly string _collectionId;
@@ -77,6 +78,20 @@ namespace RPThreadTrackerV3.Infrastructure.Data
             await _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _client?.Dispose();
+            }
+        }
+
         private async Task CreateDatabaseIfNotExistsAsync()
         {
             try
@@ -94,10 +109,6 @@ namespace RPThreadTrackerV3.Infrastructure.Data
                     throw;
                 }
             }
-			catch (Exception e)
-			{
-				throw;
-			}
         }
 
         private async Task CreateCollectionIfNotExistsAsync()

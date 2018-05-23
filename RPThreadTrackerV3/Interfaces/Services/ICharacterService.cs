@@ -1,13 +1,17 @@
-﻿namespace RPThreadTrackerV3.Interfaces.Services
+﻿// <copyright file="ICharacterService.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Interfaces.Services
 {
 	using System.Collections.Generic;
 	using AutoMapper;
 	using Data;
 	using Models.DomainModels;
 	using Entities = Infrastructure.Data.Entities;
-	using Models.ViewModels;
 
-	public interface ICharacterService
+    public interface ICharacterService
     {
 	    void AssertUserOwnsCharacter(int characterId, string userId, IRepository<Entities.Character> characterRepository);
 	    IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, bool includeHiatused = true);

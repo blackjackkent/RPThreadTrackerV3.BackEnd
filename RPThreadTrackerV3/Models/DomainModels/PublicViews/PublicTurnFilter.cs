@@ -1,4 +1,4 @@
-﻿namespace RPThreadTrackerV3.Models.DomainModels.Public
+﻿namespace RPThreadTrackerV3.Models.DomainModels.PublicViews
 {
     public class PublicTurnFilter
     {

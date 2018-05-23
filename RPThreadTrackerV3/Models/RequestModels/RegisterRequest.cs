@@ -1,5 +1,6 @@
 ﻿namespace RPThreadTrackerV3.Models.RequestModels
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using Infrastructure.Exceptions.Account;
@@ -30,7 +31,7 @@
 	            errors.Add("You must provide a password.");
             }
 
-	        if (!string.Equals(Password, ConfirmPassword))
+	        if (!string.Equals(Password, ConfirmPassword, StringComparison.CurrentCulture))
 	        {
                 errors.Add("Your passwords must match.");
 	        }

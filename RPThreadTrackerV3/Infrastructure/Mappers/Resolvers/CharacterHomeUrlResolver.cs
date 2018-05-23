@@ -18,7 +18,7 @@
 			}
 		}
 
-		private string GetTumblrHomeUrl(Character source)
+		private static string GetTumblrHomeUrl(Character source)
 		{
 			return $"http://{source.UrlIdentifier}.tumblr.com";
 		}

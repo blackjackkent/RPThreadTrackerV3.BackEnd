@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace RPThreadTrackerV3.Models.ViewModels.Auth
+﻿namespace RPThreadTrackerV3.Models.ViewModels.Auth
 {
+    using System;
+
     public class AuthToken
     {
         public AuthToken(string token, DateTime expiry)

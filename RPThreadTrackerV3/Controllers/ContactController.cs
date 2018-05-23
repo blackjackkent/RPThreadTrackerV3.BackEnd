@@ -1,17 +1,17 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using RPThreadTrackerV3.Interfaces.Services;
-using RPThreadTrackerV3.Models.RequestModels;
-
-namespace RPThreadTrackerV3.Controllers
+﻿namespace RPThreadTrackerV3.Controllers
 {
+    using System;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Interfaces.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Logging;
+    using Models.RequestModels;
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class ContactController : BaseController

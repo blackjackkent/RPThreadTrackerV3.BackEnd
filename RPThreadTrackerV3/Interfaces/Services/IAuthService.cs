@@ -1,25 +1,22 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
-using RPThreadTrackerV3.Models.ViewModels.Auth;
-
-namespace RPThreadTrackerV3.Interfaces.Services
+﻿namespace RPThreadTrackerV3.Interfaces.Services
 {
+    using System;
     using System.Security.Claims;
-	using System.Threading.Tasks;
-	using AutoMapper;
-	using Data;
-	using Infrastructure.Data.Entities;
-	using Microsoft.AspNetCore.Identity;
-	using Models.DomainModels;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Data;
+    using Infrastructure.Data.Entities;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Configuration;
+    using Models.DomainModels;
+    using RPThreadTrackerV3.Models.ViewModels.Auth;
 
     public interface IAuthService
     {
 	    Task<IdentityUser> GetUserByUsernameOrEmail(string modelUsername, UserManager<IdentityUser> userManager);
         Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config);
-        AuthToken GenerateRefreshToken(IdentityUser userId, IConfiguration config,
-            IRepository<RefreshToken> refreshTokenRepository);
-        IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config,
-            IRepository<RefreshToken> refreshTokenRepository);
+        AuthToken GenerateRefreshToken(IdentityUser userId, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
+        IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
         Task<User> GetCurrentUser(ClaimsPrincipal claimsUser, UserManager<IdentityUser> userManager, IMapper mapper);
 	    ProfileSettings GetProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper);
 	    void UpdateProfileSettings(ProfileSettings settings, string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper);

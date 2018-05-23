@@ -4,7 +4,6 @@
 	using System.Threading.Tasks;
 	using AutoMapper;
 	using Infrastructure.Data.Entities;
-	using Infrastructure.Exceptions;
 	using Infrastructure.Exceptions.Account;
 	using Interfaces.Data;
 	using Interfaces.Services;
@@ -24,8 +23,7 @@
 	    private readonly IAuthService _authService;
 	    private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
 
-	    public ProfileSettingsController(ILogger<ProfileSettingsController> logger,
-		    IMapper mapper, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository)
+	    public ProfileSettingsController(ILogger<ProfileSettingsController> logger, IMapper mapper, IAuthService authService, IRepository<ProfileSettingsCollection> profileSettingsRepository)
 	    {
 		    _logger = logger;
 		    _mapper = mapper;
@@ -34,7 +32,7 @@
 	    }
 
 		[HttpGet]
-	    public async Task<IActionResult> Get()
+	    public IActionResult Get()
 	    {
 		    try
 		    {
@@ -53,9 +51,9 @@
 				return StatusCode(500, "An unknown error occurred.");
 			}
 		}
-		
+
 		[HttpPut]
-	    public async Task<IActionResult> Put([FromBody]ProfileSettingsDto settings)
+	    public IActionResult Put([FromBody]ProfileSettingsDto settings)
 	    {
 		    try
 		    {

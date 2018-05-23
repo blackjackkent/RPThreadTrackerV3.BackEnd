@@ -1,20 +1,24 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using RPThreadTrackerV3.Infrastructure.Data.Documents;
-using RPThreadTrackerV3.Infrastructure.Exceptions;
-using RPThreadTrackerV3.Interfaces.Data;
-using RPThreadTrackerV3.Interfaces.Services;
-using RPThreadTrackerV3.Models.ViewModels.Public;
+﻿// <copyright file="PublicViewManagementController.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
 
 namespace RPThreadTrackerV3.Controllers
 {
-    using Infrastructure.Exceptions.Public;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Infrastructure.Exceptions.PublicViews;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Models.ViewModels.PublicViews;
+    using RPThreadTrackerV3.Infrastructure.Data.Documents;
+    using RPThreadTrackerV3.Infrastructure.Exceptions;
+    using RPThreadTrackerV3.Interfaces.Data;
+    using RPThreadTrackerV3.Interfaces.Services;
 
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
@@ -25,8 +29,11 @@ namespace RPThreadTrackerV3.Controllers
         private readonly IPublicViewService _publicViewService;
         private readonly IDocumentRepository<PublicView> _publicViewRepository;
 
-        public PublicViewManagementController(ILogger<PublicViewManagementController> logger, IMapper mapper,
-            IPublicViewService publicViewService, IDocumentRepository<PublicView> publicViewRepository)
+        public PublicViewManagementController(
+            ILogger<PublicViewManagementController> logger,
+            IMapper mapper,
+            IPublicViewService publicViewService,
+            IDocumentRepository<PublicView> publicViewRepository)
         {
             _logger = logger;
             _mapper = mapper;
@@ -56,12 +63,12 @@ namespace RPThreadTrackerV3.Controllers
             {
                 model.AssertIsValid();
                 model.UserId = UserId;
-                var publicView = _mapper.Map<Models.DomainModels.Public.PublicView>(model);
+                var publicView = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(model);
                 var createdView =
                 await _publicViewService.CreatePublicView(publicView, UserId, _publicViewRepository, _mapper);
                 return Ok(createdView);
             }
-            catch (PublicViewSlugExistsException) 
+            catch (PublicViewSlugExistsException)
             {
                 _logger.LogWarning($"User {UserId} attempted to add public view with existing slug {model.Slug}.");
                 return BadRequest("A public view configuration already exists with this slug.");
@@ -87,7 +94,7 @@ namespace RPThreadTrackerV3.Controllers
                 viewModel.AssertIsValid();
                 viewModel.UserId = UserId;
                 await _publicViewService.AssertUserOwnsPublicView(publicViewId, UserId, _publicViewRepository);
-                var model = _mapper.Map<Models.DomainModels.Public.PublicView>(viewModel);
+                var model = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(viewModel);
                 var updatedCharacter = await _publicViewService.UpdatePublicView(model, UserId, _publicViewRepository, _mapper);
                 return Ok(updatedCharacter);
             }

@@ -1,28 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using RPThreadTrackerV3.Infrastructure.Exceptions;
-using RPThreadTrackerV3.Interfaces.Data;
-using RPThreadTrackerV3.Interfaces.Services;
-using RPThreadTrackerV3.Models.DomainModels.Public;
-using Documents = RPThreadTrackerV3.Infrastructure.Data.Documents;
-
-namespace RPThreadTrackerV3.Infrastructure.Services
+﻿namespace RPThreadTrackerV3.Infrastructure.Services
 {
-    using Exceptions.Public;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Exceptions.PublicViews;
+    using Models.DomainModels.PublicViews;
+    using RPThreadTrackerV3.Infrastructure.Exceptions;
+    using RPThreadTrackerV3.Interfaces.Data;
+    using RPThreadTrackerV3.Interfaces.Services;
+    using Documents = RPThreadTrackerV3.Infrastructure.Data.Documents;
 
     public class PublicViewService : IPublicViewService
     {
-        public async Task<IEnumerable<PublicView>> GetPublicViews(string userId,
-            IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+        public async Task<IEnumerable<PublicView>> GetPublicViews(string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var documents = await publicViewRepository.GetItemsAsync(v => v.UserId == userId);
             return documents.Select(mapper.Map<PublicView>).ToList();
         }
 
-        public async Task<PublicView> CreatePublicView(PublicView model, string userId,
-            IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+        public async Task<PublicView> CreatePublicView(PublicView model, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var document = mapper.Map<Documents.PublicView>(model);
             var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug);
@@ -34,8 +31,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
             return mapper.Map<PublicView>(createdDocument);
         }
 
-        public async Task AssertUserOwnsPublicView(string publicViewId, string userId,
-            IDocumentRepository<Documents.PublicView> publicViewRepository)
+        public async Task AssertUserOwnsPublicView(string publicViewId, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository)
         {
             var view = await publicViewRepository.GetItemAsync(publicViewId);
             if (view == null || view.UserId != userId)

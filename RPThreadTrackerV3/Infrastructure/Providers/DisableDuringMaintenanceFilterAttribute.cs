@@ -6,12 +6,13 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
 
-    public class DisableDuringMaintenanceFilter : ActionFilterAttribute
+    [AttributeUsage(AttributeTargets.All)]
+    public class DisableDuringMaintenanceFilterAttribute : ActionFilterAttribute
     {
-        private readonly ILogger<DisableDuringMaintenanceFilter> _logger;
+        private readonly ILogger<DisableDuringMaintenanceFilterAttribute> _logger;
         private readonly IConfiguration _config;
 
-        public DisableDuringMaintenanceFilter(ILogger<DisableDuringMaintenanceFilter> logger, IConfiguration config)
+        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, IConfiguration config)
         {
             _logger = logger;
             _config = config;

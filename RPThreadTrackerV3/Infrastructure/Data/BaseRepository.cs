@@ -1,13 +1,19 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Data
-{
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Linq.Expressions;
-	using Microsoft.EntityFrameworkCore;
-	using Interfaces.Data;
+﻿// <copyright file="BaseRepository.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
 
-	public class BaseRepository<T> : IRepository<T> where T : class, IEntity
+namespace RPThreadTrackerV3.Infrastructure.Data
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using Interfaces.Data;
+    using Microsoft.EntityFrameworkCore;
+
+	public class BaseRepository<T> : IRepository<T>
+	    where T : class, IEntity
 	{
 		protected readonly TrackerContext _context;
 
@@ -15,6 +21,7 @@
 		{
 			_context = context;
 		}
+
 		public T Create(T entity)
 		{
 			_context.Add(entity);
@@ -53,6 +60,7 @@
 			{
 				return query.Where(filter).ToList();
 			}
+
 			query = navigationProperties.Aggregate(query, (current, navigationProperty) => current.Include(navigationProperty));
 			return query.Where(filter).ToList();
 		}

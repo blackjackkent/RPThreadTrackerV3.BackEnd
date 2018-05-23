@@ -7,7 +7,8 @@
 	{
 		public List<string> Errors { get; }
 
-		public InvalidPasswordResetException(List<string> errors) : base("There was an error resetting the user's password.")
+		public InvalidPasswordResetException(List<string> errors)
+		    : base("There was an error resetting the user's password.")
 		{
 			Errors = errors;
 		}

@@ -1,23 +1,22 @@
-﻿using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
-
-namespace RPThreadTrackerV3.Controllers
+﻿namespace RPThreadTrackerV3.Controllers
 {
-	using System;
-	using System.Linq;
-	using System.Net;
-	using System.Net.Http;
-	using System.Net.Http.Headers;
-	using AutoMapper;
-	using Infrastructure.Data.Entities;
-	using Infrastructure.Exceptions;
-	using Infrastructure.Exceptions.Thread;
-	using Interfaces.Data;
-	using Interfaces.Services;
-	using Microsoft.AspNetCore.Authentication.JwtBearer;
-	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.AspNetCore.Mvc;
-	using Microsoft.Extensions.Logging;
-	using Models.ViewModels;
+    using System;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using AutoMapper;
+    using Infrastructure.Data.Entities;
+    using Infrastructure.Exceptions;
+    using Infrastructure.Exceptions.Thread;
+    using Interfaces.Data;
+    using Interfaces.Services;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+    using Models.ViewModels;
+    using RPThreadTrackerV3.Infrastructure.Exceptions.Characters;
 
 	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
@@ -31,9 +30,14 @@ namespace RPThreadTrackerV3.Controllers
 		private readonly IRepository<Character> _characterRepository;
 		private readonly IExporterService _exporterService;
 
-		public ThreadController(ILogger<ThreadController> logger, IMapper mapper, IThreadService threadService, 
-			IRepository<Thread> threadRepository, ICharacterService characterService, 
-			IRepository<Character> characterRepository, IExporterService exporterService)
+		public ThreadController(
+		    ILogger<ThreadController> logger,
+		    IMapper mapper,
+		    IThreadService threadService,
+			IRepository<Thread> threadRepository,
+		    ICharacterService characterService,
+			IRepository<Character> characterRepository,
+		    IExporterService exporterService)
 		{
 			_logger = logger;
 			_mapper = mapper;
@@ -173,8 +177,7 @@ namespace RPThreadTrackerV3.Controllers
 		public IActionResult Export([FromQuery] bool includeHiatused = false, [FromQuery] bool includeArchive = false)
 		{
 			var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
-			var threads = _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository,
-				_mapper);
+			var threads = _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
 			var byteArray = _exporterService.GetByteArray(characters, threads);
 			var cd = new System.Net.Mime.ContentDisposition
 			{

@@ -17,23 +17,23 @@
 	    {
 		    var objects = threads.Where(t => !string.IsNullOrEmpty(t.PostId) && !t.IsArchived).Select(t => new ThreadStatusRequestItem
 		    {
-			    PostId = t.PostId, 
-				PartnerUrlIdentifier = t.PartnerUrlIdentifier, 
+			    PostId = t.PostId,
+				PartnerUrlIdentifier = t.PartnerUrlIdentifier,
 				CharacterUrlIdentifier = t.Character.UrlIdentifier,
 				DateMarkedQueued = t.DateMarkedQueued
 		    });
 		    return JsonConvert.SerializeObject(objects);
 	    }
 
-	    public List<ThreadDto> Threads { get; set; }
+	    public List<ThreadDto> Threads { get; }
 		public string ThreadStatusRequestJson { get; set; }
-    }
 
-	public class ThreadStatusRequestItem
-	{
-		public string PostId { get; set; }
-		public string CharacterUrlIdentifier { get; set; }
-		public string PartnerUrlIdentifier { get; set; }
-		public DateTime? DateMarkedQueued { get; set; }
-	}
+        private class ThreadStatusRequestItem
+        {
+            public string PostId { get; set; }
+            public string CharacterUrlIdentifier { get; set; }
+            public string PartnerUrlIdentifier { get; set; }
+            public DateTime? DateMarkedQueued { get; set; }
+        }
+    }
 }

@@ -3,11 +3,11 @@
 	using System.Collections.Generic;
 	using AutoMapper;
 	using Data;
-	using Entities = Infrastructure.Data.Entities;
 	using Models.DomainModels;
-	using Models.DomainModels.Public;
+	using Models.DomainModels.PublicViews;
+	using Entities = Infrastructure.Data.Entities;
 
-	public interface IThreadService
+    public interface IThreadService
     {
 	    IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Entities.Thread> threadRepository, IMapper mapper);
 	    Thread GetThread(int threadId, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);

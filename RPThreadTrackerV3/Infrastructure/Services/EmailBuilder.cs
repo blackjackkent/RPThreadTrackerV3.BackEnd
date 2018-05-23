@@ -1,13 +1,12 @@
-﻿using System.Text.RegularExpressions;
-using Microsoft.Extensions.Configuration;
-
-namespace RPThreadTrackerV3.Infrastructure.Services
+﻿namespace RPThreadTrackerV3.Infrastructure.Services
 {
-	using System.Net;
-	using System.Text;
-	using Interfaces.Services;
-	using Microsoft.AspNetCore.Identity;
-	using Models.ViewModels;
+    using System.Net;
+    using System.Text;
+    using System.Text.RegularExpressions;
+    using Interfaces.Services;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Configuration;
+    using Models.ViewModels;
 
 	public class EmailBuilder : IEmailBuilder
     {
@@ -40,7 +39,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
             };
         }
 
-        private string GetForgotPasswordPlainTextBody(string resetPasswordUrl)
+        private static string GetForgotPasswordPlainTextBody(string resetPasswordUrl)
 		{
 			var bodyBuilder = new StringBuilder();
 			bodyBuilder.Append("Hello,\n\n");
@@ -52,7 +51,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 			return bodyBuilder.ToString();
 		}
 
-	    private string GetForgotPasswordHtmlBody(string resetPasswordUrl)
+	    private static string GetForgotPasswordHtmlBody(string resetPasswordUrl)
 	    {
 		    var bodyBuilder = new StringBuilder();
 		    bodyBuilder.Append("<p>Hello,</p>");
@@ -64,7 +63,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 		    return bodyBuilder.ToString();
 		}
 
-	    private string GetResetPasswordLink(string urlRoot, string userEmail, string code)
+	    private static string GetResetPasswordLink(string urlRoot, string userEmail, string code)
 	    {
 		    return $"{urlRoot}/resetpassword?email={WebUtility.UrlEncode(userEmail)}&code={WebUtility.UrlEncode(code)}";
 	    }

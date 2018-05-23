@@ -4,6 +4,9 @@
 
     public class InvalidRefreshTokenException : Exception
     {
-        public InvalidRefreshTokenException() : base("The supplied refresh token is invalid.") { }
+        public InvalidRefreshTokenException()
+            : base("The supplied refresh token is invalid.")
+        {
+        }
     }
 }

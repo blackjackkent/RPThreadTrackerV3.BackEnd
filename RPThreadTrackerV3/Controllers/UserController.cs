@@ -4,7 +4,6 @@
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 	using AutoMapper;
-	using Infrastructure.Exceptions;
 	using Infrastructure.Exceptions.Account;
 	using Interfaces.Services;
 	using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,14 +23,18 @@
 	    private readonly IMapper _mapper;
 	    private readonly IAuthService _authService;
 
-	    public UserController(ILogger<UserController> logger, UserManager<IdentityUser> userManager,
-		    IMapper mapper, IAuthService authService)
+	    public UserController(
+	        ILogger<UserController> logger,
+	        UserManager<IdentityUser> userManager,
+		    IMapper mapper,
+	        IAuthService authService)
 	    {
 		    _logger = logger;
 		    _userManager = userManager;
 		    _mapper = mapper;
 		    _authService = authService;
 	    }
+
 		// GET api/values
 		[HttpGet]
 	    public async Task<IActionResult> Get()
@@ -60,8 +63,7 @@
 	    {
 		    try
 		    {
-			    await _authService.ChangePassword(User, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword,
-				    _userManager);
+			    await _authService.ChangePassword(User, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword, _userManager);
 			    return Ok();
 		    }
 		    catch (InvalidChangePasswordException e)
@@ -72,7 +74,7 @@
 		    catch (Exception e)
 		    {
 			    _logger.LogError(e, $"Error requesting password reset for {User.Identity.Name}");
-			    return StatusCode(500, new List<string> {"An unknown error occurred."});
+			    return StatusCode(500, new List<string> { "An unknown error occurred." });
 		    }
 	    }
 

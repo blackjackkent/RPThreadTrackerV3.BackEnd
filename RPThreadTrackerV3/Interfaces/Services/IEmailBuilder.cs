@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace RPThreadTrackerV3.Interfaces.Services
+﻿namespace RPThreadTrackerV3.Interfaces.Services
 {
-	using Microsoft.AspNetCore.Identity;
-	using Models.ViewModels;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Configuration;
+    using Models.ViewModels;
 
 	public interface IEmailBuilder
 	{

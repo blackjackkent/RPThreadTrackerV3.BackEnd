@@ -1,28 +1,28 @@
-﻿using Microsoft.Extensions.Configuration;
-using RPThreadTrackerV3.Models.ViewModels.Auth;
-
-namespace RPThreadTrackerV3.Infrastructure.Services
+﻿namespace RPThreadTrackerV3.Infrastructure.Services
 {
-	using System;
-	using System.Collections.Generic;
-	using System.IdentityModel.Tokens.Jwt;
-	using System.Linq;
-	using System.Security.Authentication;
-	using System.Security.Claims;
-	using System.Text;
-	using System.Threading.Tasks;
-	using AutoMapper;
-	using Data.Entities;
-	using Enums;
-	using Exceptions;
-	using Exceptions.Account;
-	using Interfaces.Data;
-	using Interfaces.Services;
-	using Microsoft.AspNetCore.Identity;
-	using Microsoft.IdentityModel.Tokens;
-	using Models.DomainModels;
-	using Models.RequestModels;
-	using Models.ViewModels;
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Security.Authentication;
+    using System.Security.Claims;
+    using System.Text;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Data.Entities;
+    using Enums;
+    using Exceptions;
+    using Exceptions.Account;
+    using Interfaces.Data;
+    using Interfaces.Services;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.IdentityModel.Tokens;
+    using Models.DomainModels;
+    using Models.RequestModels;
+    using Models.ViewModels;
+    using RPThreadTrackerV3.Models.ViewModels.Auth;
 
 	public class AuthService : IAuthService
     {
@@ -41,7 +41,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 		    var claims = await GetUserClaims(user, userManager);
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Tokens:Key"]));
 		    var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-	        var expiry = DateTime.UtcNow.AddMinutes(double.Parse(config["Tokens:AccessExpireMinutes"]));
+	        var expiry = DateTime.UtcNow.AddMinutes(double.Parse(config["Tokens:AccessExpireMinutes"], CultureInfo.CurrentCulture));
             var token = new JwtSecurityToken(
 		        config["Tokens:Issuer"],
 		        config["Tokens:Audience"],
@@ -52,8 +52,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
             return new AuthToken(jwtString, expiry);
 	    }
 
-        public AuthToken GenerateRefreshToken(IdentityUser user, IConfiguration config,
-            IRepository<RefreshToken> refreshTokenRepository)
+        public AuthToken GenerateRefreshToken(IdentityUser user, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository)
         {
             var now = DateTime.UtcNow;
             var claims = new[]
@@ -64,7 +63,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
             };
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Tokens:Key"]));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expiry = now.AddMinutes(double.Parse(config["Tokens:RefreshExpireMinutes"]));
+            var expiry = now.AddMinutes(double.Parse(config["Tokens:RefreshExpireMinutes"], CultureInfo.CurrentCulture));
             var jwt = new JwtSecurityToken(
                 config["Tokens:Issuer"],
                 config["Tokens:Audience"],
@@ -113,7 +112,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	    public void UpdateProfileSettings(ProfileSettings settings, string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository, IMapper mapper)
 	    {
 		    var entity = mapper.Map<ProfileSettingsCollection>(settings);
-		    profileSettingsRepository.Update(settings.SettingsId.ToString(), entity);
+		    profileSettingsRepository.Update(settings.SettingsId.ToString(CultureInfo.CurrentCulture), entity);
 		}
 
 	    public void InitProfileSettings(string userId, IRepository<ProfileSettingsCollection> profileSettingsRepository)
@@ -214,14 +213,13 @@ namespace RPThreadTrackerV3.Infrastructure.Services
             }
         }
 
-        public async Task AssertUserInformationDoesNotExist(string username, string email,
-            UserManager<IdentityUser> userManager)
+        public async Task AssertUserInformationDoesNotExist(string username, string email, UserManager<IdentityUser> userManager)
         {
             var userByUsername = await userManager.FindByNameAsync(username);
             var userByEmail = await userManager.FindByEmailAsync(email);
             if (userByUsername != null || userByEmail != null)
             {
-                throw new InvalidRegistrationException(new List<string> { "Error creating account. An account with some or all of this information may already exist."});
+                throw new InvalidRegistrationException(new List<string> { "Error creating account. An account with some or all of this information may already exist." });
             }
 
         }

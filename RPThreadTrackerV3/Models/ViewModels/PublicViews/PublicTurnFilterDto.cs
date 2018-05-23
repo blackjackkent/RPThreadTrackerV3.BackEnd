@@ -1,8 +1,6 @@
-﻿using RPThreadTrackerV3.Infrastructure.Exceptions;
-
-namespace RPThreadTrackerV3.Models.ViewModels.Public
+﻿namespace RPThreadTrackerV3.Models.ViewModels.PublicViews
 {
-    using Infrastructure.Exceptions.Public;
+    using RPThreadTrackerV3.Infrastructure.Exceptions.PublicViews;
 
     public class PublicTurnFilterDto
     {
