@@ -9,17 +9,20 @@ namespace RPThreadTrackerV3.Controllers
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Infrastructure.Data.Documents;
     using Infrastructure.Exceptions.PublicViews;
+    using Interfaces.Data;
+    using Interfaces.Services;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Models.ViewModels.PublicViews;
-    using RPThreadTrackerV3.Infrastructure.Data.Documents;
-    using RPThreadTrackerV3.Infrastructure.Exceptions;
-    using RPThreadTrackerV3.Interfaces.Data;
-    using RPThreadTrackerV3.Interfaces.Services;
 
+    /// <summary>
+    /// Controller class for behavior related to a user's public views.
+    /// </summary>
+    /// <seealso cref="RPThreadTrackerV3.Controllers.BaseController" />
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class PublicViewManagementController : BaseController
@@ -29,6 +32,13 @@ namespace RPThreadTrackerV3.Controllers
         private readonly IPublicViewService _publicViewService;
         private readonly IDocumentRepository<PublicView> _publicViewRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PublicViewManagementController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="publicViewService">The public view service.</param>
+        /// <param name="publicViewRepository">The public view repository.</param>
         public PublicViewManagementController(
             ILogger<PublicViewManagementController> logger,
             IMapper mapper,
@@ -41,6 +51,17 @@ namespace RPThreadTrackerV3.Controllers
             _publicViewRepository = publicViewRepository;
         }
 
+        /// <summary>
+        /// Processes a request for all public views belonging to the logged-in user.
+        /// </summary>
+        /// <returns>
+        /// HTTP response containing the results of the request and, if successful,
+        /// a list of <see cref="PublicViewDto" /> objects in the response body.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful retrieval of public view information</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+        /// </list>
+        /// </returns>
         public async Task<IActionResult> Get()
         {
             try
@@ -56,6 +77,19 @@ namespace RPThreadTrackerV3.Controllers
             }
         }
 
+        /// <summary>
+        /// Processes a request to create a new public view for the logged-in user.
+        /// </summary>
+        /// <param name="model">Information about the public view to be created.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request and, if successful,
+        /// the created public view represented as a <see cref="PublicViewDto" /> in the
+        /// response body.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful retrieval of public view information</description></item>
+        /// <item><term>400 Bad Request</term><description>Response code for invalid public view creation request</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] PublicViewDto model)
         {
@@ -65,7 +99,7 @@ namespace RPThreadTrackerV3.Controllers
                 model.UserId = UserId;
                 var publicView = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(model);
                 var createdView =
-                await _publicViewService.CreatePublicView(publicView, UserId, _publicViewRepository, _mapper);
+                await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
                 return Ok(createdView);
             }
             catch (PublicViewSlugExistsException)
@@ -85,6 +119,19 @@ namespace RPThreadTrackerV3.Controllers
             }
         }
 
+        /// <summary>
+        /// Processes a request to update an existing public view belonging to the logged-in user.
+        /// </summary>
+        /// <param name="publicViewId">The unique ID of the public view to be updated.</param>
+        /// <param name="viewModel">Information about the public view to be updated.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request and, if successful,
+        /// the updated public view represented as a <see cref="PublicViewDto" /> in the
+        /// response body.<para />
+        /// <list type="table"><item><term>200 OK</term><description>Response code for successful update of public view data</description></item>
+        /// <item><term>400 Bad Request</term><description>Response code for invalid public view update request</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
         [HttpPut]
         [Route("{publicViewId}")]
         public async Task<IActionResult> Put(string publicViewId, [FromBody]PublicViewDto viewModel)
@@ -95,7 +142,7 @@ namespace RPThreadTrackerV3.Controllers
                 viewModel.UserId = UserId;
                 await _publicViewService.AssertUserOwnsPublicView(publicViewId, UserId, _publicViewRepository);
                 var model = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(viewModel);
-                var updatedCharacter = await _publicViewService.UpdatePublicView(model, UserId, _publicViewRepository, _mapper);
+                var updatedCharacter = await _publicViewService.UpdatePublicView(model, _publicViewRepository, _mapper);
                 return Ok(updatedCharacter);
             }
             catch (PublicViewSlugExistsException)
@@ -120,6 +167,17 @@ namespace RPThreadTrackerV3.Controllers
             }
         }
 
+        /// <summary>
+        /// Processes a request to delete an existing public view belonging to the logged-in user.
+        /// </summary>
+        /// <param name="publicViewId">The unique ID of the public view to be deleted.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful deletion of public view</description></item>
+        /// <item><term>404 Not Found</term><description>Response code if public view does not exist or does not belong to logged-in user</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
         [HttpDelete]
         [Route("{publicViewId}")]
         public async Task<IActionResult> Delete(string publicViewId)

@@ -5,10 +5,33 @@
 
 namespace RPThreadTrackerV3.Models.DomainModels
 {
-	public class User
+    /// <summary>
+    /// Domain-layer representation of a user.
+    /// </summary>
+    public class User
 	{
-		public string Id { get; set; }
-		public string UserName { get; set; }
-		public string Email { get; set; }
+        /// <summary>
+        /// Gets or sets the unique ID of the user
+        /// </summary>
+        /// <value>
+        /// The unique ID of the user.
+        /// </value>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the user.
+        /// </summary>
+        /// <value>
+        /// The name of the user.
+        /// </value>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// Gets or sets the user's email.
+        /// </summary>
+        /// <value>
+        /// The user's email.
+        /// </value>
+        public string Email { get; set; }
 	}
 }

@@ -7,9 +7,18 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Account
 {
     using System;
 
+    /// <summary>
+    /// The exception that is thrown when there was an error retrieving a user.
+    /// </summary>
+    /// <seealso cref="Exception" />
     public class UserNotFoundException : Exception
     {
-	    public UserNotFoundException()
-	        : base("The requested user does not exist.") { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserNotFoundException"/> class.
+        /// </summary>
+        public UserNotFoundException()
+            : base("The requested user does not exist.")
+        {
+        }
 	}
 }

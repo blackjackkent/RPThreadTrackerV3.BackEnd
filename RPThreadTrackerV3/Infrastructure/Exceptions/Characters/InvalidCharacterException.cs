@@ -7,9 +7,18 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Characters
 {
     using System;
 
+    /// <summary>
+    /// The exception that is thrown when there was an error validating a character object.
+    /// </summary>
+    /// <seealso cref="Exception" />
     public class InvalidCharacterException : Exception
     {
-		public InvalidCharacterException()
-		    : base("The supplied character is invalid.") { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidCharacterException"/> class.
+        /// </summary>
+        public InvalidCharacterException()
+            : base("The supplied character is invalid.")
+        {
+        }
     }
 }

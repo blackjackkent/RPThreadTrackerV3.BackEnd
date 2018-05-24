@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3
+﻿// <copyright file="Program.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3
 {
 	using System;
 	using Infrastructure.Data.Seeders;
@@ -8,21 +13,33 @@
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging;
 
-	public class Program
+    /// <summary>
+    /// Base application bootstrapping file.
+    /// </summary>
+    public class Program
 	{
-		public static void Main(string[] args)
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        /// <param name="args">The application arguments.</param>
+        public static void Main(string[] args)
 		{
 			var host = BuildWebHost(args);
 			SeedDatabase(host);
 			host.Run();
 		}
 
-		public static IWebHost BuildWebHost(string[] args) =>
+        /// <summary>
+        /// Builds the web host.
+        /// </summary>
+        /// <param name="args">The application arguments.</param>
+        /// <returns>Web host instance.</returns>
+        public static IWebHost BuildWebHost(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>()
 				.ConfigureAppConfiguration((builderContext, config) =>
 				{
-					IHostingEnvironment env = builderContext.HostingEnvironment;
+					var env = builderContext.HostingEnvironment;
 					config.Sources.Clear();
 					config
 					    .AddJsonFile("appsettings.json", false, true)

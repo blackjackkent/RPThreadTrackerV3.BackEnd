@@ -12,9 +12,11 @@ namespace RPThreadTrackerV3.Infrastructure.Services
 	using Models.DomainModels;
 	using OfficeOpenXml;
 
-	public class ExporterService : IExporterService
+    /// <inheritdoc />
+    public class ExporterService : IExporterService
     {
-	    public byte[] GetByteArray(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads)
+        /// <inheritdoc />
+        public byte[] GetExcelPackageByteArray(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads)
 	    {
 		    var package = new ExcelPackage();
 		    foreach (var character in characters)

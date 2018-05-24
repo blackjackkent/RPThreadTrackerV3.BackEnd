@@ -10,9 +10,16 @@ namespace RPThreadTrackerV3.Infrastructure.Mappers
 	using Models.DomainModels;
 	using Models.ViewModels;
 
+    /// <summary>
+    /// Mapping class for mapping between view model, domain model, and entity representations of characters.
+    /// </summary>
+    /// <seealso cref="Profile" />
 	public class UserMapper : Profile
 	{
-		public UserMapper()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserMapper"/> class.
+        /// </summary>
+        public UserMapper()
 		{
 			CreateMap<User, IdentityUser>()
 				.ReverseMap();

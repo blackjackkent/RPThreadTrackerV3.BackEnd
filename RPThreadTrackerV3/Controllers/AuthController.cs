@@ -1,10 +1,16 @@
-﻿namespace RPThreadTrackerV3.Controllers
+﻿// <copyright file="AuthController.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Controllers
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Security.Authentication;
 	using System.Threading.Tasks;
 	using Infrastructure.Data.Entities;
+	using Infrastructure.Enums;
 	using Infrastructure.Exceptions.Account;
 	using Interfaces.Data;
 	using Interfaces.Services;
@@ -14,7 +20,11 @@
 	using Microsoft.Extensions.Logging;
 	using Models.RequestModels;
 
-	public class AuthController : BaseController
+    /// <summary>
+    /// Controller class for authentication-related behavior.
+    /// </summary>
+    /// <seealso cref="BaseController" />
+    public class AuthController : BaseController
 	{
 		private readonly ILogger<AuthController> _logger;
 		private readonly UserManager<IdentityUser> _userManager;
@@ -25,7 +35,18 @@
 		private readonly IEmailBuilder _emailBuilder;
 	    private readonly IRepository<RefreshToken> _refreshTokenRepository;
 
-	    public AuthController(
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthController"/> class.
+        /// </summary>
+        /// <param name="logger">The logger.</param>
+        /// <param name="userManager">The user manager.</param>
+        /// <param name="config">The configuration.</param>
+        /// <param name="authService">The authentication service.</param>
+        /// <param name="profileSettingsRepository">The profile settings repository.</param>
+        /// <param name="emailClient">The email client.</param>
+        /// <param name="emailBuilder">The email builder.</param>
+        /// <param name="refreshTokenRepository">The refresh token repository.</param>
+        public AuthController(
 	        ILogger<AuthController> logger,
 	        UserManager<IdentityUser> userManager,
 			IConfiguration config,
@@ -45,7 +66,22 @@
 		    _refreshTokenRepository = refreshTokenRepository;
 		}
 
-		[HttpPost("api/auth/token")]
+        /// <summary>
+        /// Processes an attempt to authenticate a user's login credentials
+        /// and provide them with a JWT and refresh token.
+        /// </summary>
+        /// <param name="model">Request object containing the user's
+        /// login credentials.</param>
+        /// <returns>
+        /// HTTP response containing information about the operation success or failure and,
+        /// if successful, the JWT and refresh token in the response body.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful authentication and token generation</description></item>
+        /// <item><term>400 Bad Request</term><description>Response code for invalid username or password</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+        /// </list>
+        /// </returns>
+        [HttpPost("api/auth/token")]
 		public async Task<IActionResult> CreateToken([FromBody] LoginRequest model)
 		{
 		    try
@@ -77,7 +113,21 @@
             }
 	    }
 
-	    [HttpPost("api/auth/refresh")]
+        /// <summary>
+        /// Processes a request to refresh a user's JWT security token using a provided
+        /// refresh token.
+        /// </summary>
+        /// <param name="model">Request object containing information about the refresh request.</param>
+        /// <returns>
+        /// HTTP response containing information about the operation success or failure and,
+        /// if successful, the JWT and refresh token in the response body.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful token refresh</description></item>
+        /// <item><term>498 Invalid Token</term><description>Response code for requests that cannot be completed due to expired refresh token</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+        /// </list>
+        /// </returns>
+        [HttpPost("api/auth/refresh")]
 	    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
 	    {
 	        try
@@ -102,6 +152,17 @@
 	        }
 	    }
 
+	    /// <summary>
+	    /// Processes a request to invalidate a user's authentication refresh token.
+	    /// </summary>
+	    /// <param name="model">Request object containing the refresh token to be invalidated.</param>
+	    /// <returns>
+	    /// HTTP response containing information about the operation success or failure.<para />
+	    /// <list type="table">
+	    /// <item><term>200 OK</term><description>Response code for successful authentication token invalidation</description></item>
+	    /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+	    /// </list>
+	    /// </returns>
 	    [HttpPost("api/auth/revoke")]
 	    public IActionResult RevokeToken([FromBody] RefreshTokenRequest model)
 	    {
@@ -117,6 +178,18 @@
             }
 	    }
 
+	    /// <summary>
+	    /// Processes a user's request to register a new account.
+	    /// </summary>
+	    /// <param name="model">Request object containing the user's account information.</param>
+	    /// <returns>
+	    /// HTTP response containing information about the operation success or failure.<para />
+	    /// <list type="table">
+	    /// <item><term>200 OK</term><description>Response code for successful account creation</description></item>
+	    /// <item><term>400 Bad Request</term><description>Response code for unsuccessful account creation</description></item>
+	    /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+	    /// </list>
+	    /// </returns>
         [HttpPost("api/auth/register")]
 		public async Task<IActionResult> Register([FromBody] RegisterRequest model)
 		{
@@ -131,7 +204,7 @@
 		        };
 		        await _authService.AssertUserInformationDoesNotExist(model.Username, model.Email, _userManager);
 		        await _authService.CreateUser(user, model.Password, _userManager);
-		        await _authService.AddUserToRole(user, "User", _userManager);
+		        await _authService.AddUserToRole(user, RoleConstants.USER_ROLE, _userManager);
 		        _authService.InitProfileSettings(user.Id, _profileSettingsRepository);
 		        _logger.LogInformation(3, $"User {model.Username} created a new account with password.");
 		        return Ok();
@@ -153,6 +226,17 @@
 			}
 		}
 
+	    /// <summary>
+	    /// Processes a user's request to receive a password reset link.
+	    /// </summary>
+	    /// <param name="model">Request object containing the details of the password reset request.</param>
+	    /// <returns>
+	    /// HTTP response containing information about the operation success or failure.<para />
+	    /// <list type="table">
+	    /// <item><term>200 OK</term><description>Response code for successful processing of request</description></item>
+	    /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+	    /// </list>
+	    /// </returns>
 		[HttpPost("api/auth/forgotpassword")]
 		public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestModel model)
 		{
@@ -171,6 +255,18 @@
 			}
 		}
 
+	    /// <summary>
+	    /// Processes a user's request to reset their password using a security key.
+	    /// </summary>
+	    /// <param name="model">Request object containing information about the password reset request.</param>
+	    /// <returns>
+	    /// HTTP response containing information about the operation success or failure.<para />
+	    /// <list type="table">
+	    /// <item><term>200 OK</term><description>Response code for successful password reset</description></item>
+	    /// <item><term>400 Bad Request</term><description>Response code for unsuccessful password reset</description></item>
+	    /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
+	    /// </list>
+	    /// </returns>
 		[HttpPost("api/auth/resetpassword")]
 		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestModel model)
 		{

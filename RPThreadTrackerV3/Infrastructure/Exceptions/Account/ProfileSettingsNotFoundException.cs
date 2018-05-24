@@ -7,9 +7,18 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Account
 {
     using System;
 
+    /// <summary>
+    /// The exception that is thrown when there was an error retrieving a user's profile settings.
+    /// </summary>
+    /// <seealso cref="Exception" />
     public class ProfileSettingsNotFoundException : Exception
     {
-		public ProfileSettingsNotFoundException()
-		    : base("No profile settings exist for the current user.") { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfileSettingsNotFoundException"/> class.
+        /// </summary>
+        public ProfileSettingsNotFoundException()
+            : base("No profile settings exist for the current user.")
+        {
+        }
     }
 }

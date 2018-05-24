@@ -10,9 +10,16 @@ namespace RPThreadTrackerV3.Infrastructure.Mappers
 	using Models.DomainModels;
 	using Models.ViewModels;
 
+    /// <summary>
+    /// Mapping class for mapping between view model, domain model, and entity representations of user profile settings.
+    /// </summary>
+    /// <seealso cref="Profile" />
 	public class ProfileSettingsMapper : Profile
 	{
-		public ProfileSettingsMapper()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProfileSettingsMapper"/> class.
+        /// </summary>
+        public ProfileSettingsMapper()
 		{
 			CreateMap<ProfileSettings, ProfileSettingsCollection>()
 				.ForMember(d => d.ProfileSettingsCollectionId, o => o.MapFrom(s => s.SettingsId))

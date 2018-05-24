@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3
+﻿// <copyright file="Startup.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3
 {
     using System;
     using System.Text;
@@ -25,17 +30,27 @@
     using NLog.Extensions.Logging;
     using NLog.Web;
 
-	public class Startup
+    /// <summary>
+    /// .NET Core application startup class.
+    /// </summary>
+    public class Startup
 	{
 		private IConfiguration Configuration { get; }
 
-		public Startup(IConfiguration configuration)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration">The application configuration.</param>
+        public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
 		}
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		public void ConfigureServices(IServiceCollection services)
+        /// <summary>
+        /// Configures services and dependency injection for the application container.
+        /// </summary>
+        /// <param name="services">The application service collection.</param>
+        public void ConfigureServices(IServiceCollection services)
 		{
 		    var connection = Configuration.GetConnectionString("Database");
 			services.AddDbContext<TrackerContext>(options =>
@@ -85,8 +100,13 @@
 			services.AddAutoMapper();
 		}
 
-		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        /// <summary>
+        /// Configures the application's HTTP request pipeline.
+        /// </summary>
+        /// <param name="app">The application builder.</param>
+        /// <param name="env">The hosting environment.</param>
+        /// <param name="loggerFactory">The logger factory.</param>
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
 			loggerFactory.AddNLog();
 

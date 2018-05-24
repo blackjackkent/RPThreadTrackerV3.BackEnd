@@ -9,16 +9,29 @@ namespace RPThreadTrackerV3.Infrastructure.Data.Seeders
 	using Enums;
 	using Microsoft.AspNetCore.Identity;
 
-	public class RoleInitializer
+    /// <summary>
+    /// Seeder class used to initialize missing user roles at application start.
+    /// </summary>
+    public class RoleInitializer
 	{
 		private readonly RoleManager<IdentityRole> _roleManager;
 
-		public RoleInitializer(RoleManager<IdentityRole> roleManager)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RoleInitializer"/> class.
+        /// </summary>
+        /// <param name="roleManager">The role manager.</param>
+        public RoleInitializer(RoleManager<IdentityRole> roleManager)
 		{
 			_roleManager = roleManager;
 		}
 
-		public async Task Seed()
+        /// <summary>
+        /// Seeds the database with missing user roles.
+        /// </summary>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// </returns>
+        public async Task Seed()
 		{
 			await InitRoles();
 		}

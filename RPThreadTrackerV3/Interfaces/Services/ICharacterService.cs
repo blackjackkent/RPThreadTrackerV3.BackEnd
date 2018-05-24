@@ -11,12 +11,52 @@ namespace RPThreadTrackerV3.Interfaces.Services
 	using Models.DomainModels;
 	using Entities = Infrastructure.Data.Entities;
 
+    /// <summary>
+    /// Service for data manipulation relating to characters.
+    /// </summary>
     public interface ICharacterService
     {
-	    void AssertUserOwnsCharacter(int characterId, string userId, IRepository<Entities.Character> characterRepository);
-	    IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, bool includeHiatused = true);
-	    Character CreateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper);
-	    Character UpdateCharacter(Character model, string userId, IRepository<Entities.Character> characterRepository, IMapper mapper);
-	    void DeleteCharacter(int characterId, IRepository<Entities.Character> characterRepository);
+        /// <summary>
+        /// Throws an exception if the given user does not own the given character.
+        /// </summary>
+        /// <param name="characterId">The unique ID of the character.</param>
+        /// <param name="userId">The unique ID of the user.</param>
+        /// <param name="characterRepository">The character repository.</param>
+        void AssertUserOwnsCharacter(int characterId, string userId, IRepository<Entities.Character> characterRepository);
+
+        /// <summary>
+        /// Gets all characters associated with a given user.
+        /// </summary>
+        /// <param name="userId">The unique ID of the user.</param>
+        /// <param name="characterRepository">The character repository.</param>
+        /// <param name="mapper">The application's object mapper.</param>
+        /// <param name="includeHiatused">If set to <c>true</c>, includes characters who are marked as on hiatus.</param>
+        /// <returns>List of <see cref="Character"/> objects belonging to the given user.</returns>
+        IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, bool includeHiatused = true);
+
+        /// <summary>
+        /// Creates the passed character.
+        /// </summary>
+        /// <param name="model">The model containing character information.</param>
+        /// <param name="characterRepository">The character repository.</param>
+        /// <param name="mapper">The application's object mapper.</param>
+        /// <returns>The newly created character object.</returns>
+        Character CreateCharacter(Character model, IRepository<Entities.Character> characterRepository, IMapper mapper);
+
+        /// <summary>
+        /// Updates the passed character.
+        /// </summary>
+        /// <param name="model">The model containing character information.</param>
+        /// <param name="characterRepository">The character repository.</param>
+        /// <param name="mapper">The application's object mapper.</param>
+        /// <returns>The updated character object</returns>
+        Character UpdateCharacter(Character model, IRepository<Entities.Character> characterRepository, IMapper mapper);
+
+        /// <summary>
+        /// Deletes the character with the passed ID.
+        /// </summary>
+        /// <param name="characterId">The unique ID of the character to delete.</param>
+        /// <param name="characterRepository">The character repository.</param>
+        void DeleteCharacter(int characterId, IRepository<Entities.Character> characterRepository);
     }
 }

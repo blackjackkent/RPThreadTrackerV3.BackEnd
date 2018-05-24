@@ -7,11 +7,42 @@ namespace RPThreadTrackerV3.Infrastructure.Data.Documents
 {
     using RPThreadTrackerV3.Interfaces.Data;
 
+    /// <summary>
+    /// Data-layer representation of a public view's turn-based filter settings.
+    /// </summary>
+    /// <seealso cref="IDocument" />
     public class PublicTurnFilter : IDocument
     {
+        /// <summary>
+        /// Gets or sets a value indicating whether the public view should include threads for which it is the user's turn.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the public view should include threads for which it is the user's turn; otherwise, <c>false</c>.
+        /// </value>
         public bool IncludeMyTurn { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the public view should include threads for which it is not the user's turn.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the public view should include threads for which it is not the user's turn; otherwise, <c>false</c>.
+        /// </value>
         public bool IncludeTheirTurn { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the public view should include threads which are marked queued.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the public view should include threads which are marked queued; otherwise, <c>false</c>.
+        /// </value>
         public bool IncludeQueued { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the public view should include threads which are archived.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the public view should include threads which are archived; otherwise, <c>false</c>.
+        /// </value>
         public bool IncludeArchived { get; set; }
     }
 }

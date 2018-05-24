@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3.Controllers
+﻿// <copyright file="ContactController.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Controllers
 {
     using System;
     using System.Threading.Tasks;
@@ -12,6 +17,10 @@
     using Microsoft.Extensions.Logging;
     using Models.RequestModels;
 
+    /// <summary>
+    /// Controller class for behavior related the Contact Us form.
+    /// </summary>
+    /// <seealso cref="RPThreadTrackerV3.Controllers.BaseController" />
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class ContactController : BaseController
@@ -24,6 +33,16 @@
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IMapper _mapper;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContactController"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
+        /// <param name="logger">The logger.</param>
+        /// <param name="emailClient">The email client.</param>
+        /// <param name="emailBuilder">The email builder.</param>
+        /// <param name="authService">The authentication service.</param>
+        /// <param name="userManager">The user manager.</param>
+        /// <param name="mapper">The mapper.</param>
         public ContactController(IConfiguration config, ILogger<ContactController> logger, IEmailClient emailClient, IEmailBuilder emailBuilder, IAuthService authService, UserManager<IdentityUser> userManager, IMapper mapper)
         {
             _config = config;
@@ -35,6 +54,16 @@
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Processes a request to send a new message to the site's administrators.
+        /// </summary>
+        /// <param name="model">Information about the message to be sent.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful processing of message</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] ContactFormRequestModel model)
         {

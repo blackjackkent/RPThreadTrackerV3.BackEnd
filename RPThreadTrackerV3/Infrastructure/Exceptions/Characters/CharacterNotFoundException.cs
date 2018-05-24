@@ -7,9 +7,18 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Characters
 {
     using System;
 
+    /// <summary>
+    /// The exception that is thrown when there was an error retrieving a character.
+    /// </summary>
+    /// <seealso cref="Exception" />
     public class CharacterNotFoundException : Exception
     {
-		public CharacterNotFoundException()
-		    : base("The requested character does not exist for the current user.") { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CharacterNotFoundException"/> class.
+        /// </summary>
+        public CharacterNotFoundException()
+            : base("The requested character does not exist for the current user.")
+        {
+        }
     }
 }

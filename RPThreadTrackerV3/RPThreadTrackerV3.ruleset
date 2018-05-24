@@ -72,10 +72,12 @@
     <Rule Id="SA1027" Action="None" />
     <Rule Id="SA1309" Action="None" />
     <Rule Id="SA1101" Action="None" />
-    <Rule Id="SA1600" Action="Info" />
+    <Rule Id="SA1600" Action="Warning" />
     <Rule Id="SA1201" Action="None" />
     <Rule Id="SA1204" Action="None" />
     <Rule Id="SA1310" Action="None" />
+    <Rule Id="SA1513" Action="None" />
+    <Rule Id="SA1401" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeQuality.CSharp.Analyzers" RuleNamespace="Microsoft.CodeQuality.CSharp.Analyzers">
     <Rule Id="CA1032" Action="None" />
@@ -86,5 +88,6 @@
     <Rule Id="CA1055" Action="None" />
     <Rule Id="CA1707" Action="None" />
     <Rule Id="CA2007" Action="None" />
+    <Rule Id="CA1724" Action="None" />
   </Rules>
 </RuleSet>

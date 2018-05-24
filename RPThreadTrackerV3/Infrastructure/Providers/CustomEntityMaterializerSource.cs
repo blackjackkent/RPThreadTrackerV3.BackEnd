@@ -6,22 +6,32 @@
 namespace RPThreadTrackerV3.Infrastructure.Providers
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-    using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore.Metadata;
     using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
-	public class CustomEntityMaterializerSource : EntityMaterializerSource
+    /// <summary>
+    /// Custom Entity Framework entity materializer which enforces use of <c>DateTimeKind.UTC</c> for all DateTimes.
+    /// </summary>
+    /// <seealso cref="EntityMaterializerSource" />
+    public class CustomEntityMaterializerSource : EntityMaterializerSource
 	{
 	    private static readonly MethodInfo NormalizeMethod = typeof(DateTimeMapper).GetTypeInfo().GetMethod(nameof(DateTimeMapper.Normalize));
 
 	    private static readonly MethodInfo NullableNormalizeMethod =
 	        typeof(NullableDateTimeMapper).GetTypeInfo().GetMethod(nameof(NullableDateTimeMapper.Normalize));
 
-	    public override Expression CreateReadValueExpression(Expression valueBuffer, Type type, int index, IProperty property = null)
+        /// <summary>
+        /// Checks to see if <c>type</c> indicates <c>DateTime</c>, and if so, runs the result of the base
+        /// method through a normalizer to enforce <c>DateTimeKind.Utc</c>.
+        /// </summary>
+        /// <param name="valueBuffer">The value buffer.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="property">The property.</param>
+        /// <returns>The expression.</returns>
+        public override Expression CreateReadValueExpression(Expression valueBuffer, Type type, int index, IProperty property = null)
 	    {
 		    if (type == typeof(DateTime))
 		    {
@@ -46,6 +56,7 @@ namespace RPThreadTrackerV3.Infrastructure.Providers
 	            return DateTime.SpecifyKind(value, DateTimeKind.Utc);
 	        }
 	    }
+
 	    private static class NullableDateTimeMapper
 	    {
 	        public static DateTime? Normalize(DateTime? value)

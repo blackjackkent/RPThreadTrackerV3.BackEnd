@@ -5,7 +5,10 @@
 
 namespace RPThreadTrackerV3.Interfaces.Data
 {
-	public interface IEntity
+    /// <summary>
+    /// Categorization interface for all representations of relational entities.
+    /// </summary>
+    public interface IEntity
 	{
 	}
 }

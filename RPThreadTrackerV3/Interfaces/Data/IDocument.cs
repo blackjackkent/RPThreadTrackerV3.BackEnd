@@ -5,6 +5,9 @@
 
 namespace RPThreadTrackerV3.Interfaces.Data
 {
+    /// <summary>
+    /// Categorization interface for all representations of NoSQL documents.
+    /// </summary>
     public interface IDocument
     {
     }

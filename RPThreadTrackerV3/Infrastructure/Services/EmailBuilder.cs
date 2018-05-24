@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Services
+﻿// <copyright file="EmailBuilder.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Infrastructure.Services
 {
     using System.Net;
     using System.Text;
@@ -8,9 +13,11 @@
     using Microsoft.Extensions.Configuration;
     using Models.ViewModels;
 
-	public class EmailBuilder : IEmailBuilder
+    /// <inheritdoc />
+    public class EmailBuilder : IEmailBuilder
     {
-	    public EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfiguration config)
+        /// <inheritdoc />
+        public EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfiguration config)
 	    {
 		    var resetPasswordUrl = GetResetPasswordLink(urlRoot, user.Email, code);
 		    var result = new EmailDto
@@ -25,7 +32,8 @@
 		    return result;
 	    }
 
-        public EmailDto BuildContactEmail(string userEmail, string userName, string modelMessage, IConfiguration config)
+        /// <inheritdoc />
+        public EmailDto BuildContactEmail(string userEmail, string username, string modelMessage, IConfiguration config)
         {
             return new EmailDto
             {
@@ -33,7 +41,7 @@
                 Body = "<p>You have received a message via RPThreadTracker's contact form:</p>" +
                        Regex.Replace(modelMessage, @"\r\n?|\n", "<br />"),
                 PlainTextBody = "You have received a message via RPThreadTracker's contact form:\n" + modelMessage,
-                SenderName = userName,
+                SenderName = username,
                 SenderEmail = userEmail,
                 Subject = "RPThreadTracker Contact Form Submission"
             };
@@ -69,4 +77,3 @@
 	    }
     }
 }
-

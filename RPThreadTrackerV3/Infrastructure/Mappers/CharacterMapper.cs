@@ -1,13 +1,25 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Mappers
+﻿// <copyright file="CharacterMapper.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Infrastructure.Mappers
 {
 	using AutoMapper;
 	using Models.DomainModels;
 	using Models.ViewModels;
 	using Resolvers;
 
-	public class CharacterMapper : Profile
+    /// <summary>
+    /// Mapping class for mapping between view model, domain model, and entity representations of characters.
+    /// </summary>
+    /// <seealso cref="Profile" />
+    public class CharacterMapper : Profile
 	{
-		public CharacterMapper()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CharacterMapper"/> class.
+        /// </summary>
+        public CharacterMapper()
 		{
 			CreateMap<Character, Data.Entities.Character>()
 				.ForMember(d => d.User, o => o.Ignore())

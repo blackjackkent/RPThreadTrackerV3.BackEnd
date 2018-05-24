@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Data
+﻿// <copyright file="BaseDocumentRepository.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Infrastructure.Data
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +16,7 @@
     using Microsoft.Extensions.Configuration;
     using RPThreadTrackerV3.Interfaces.Data;
 
+    /// <inheritdoc cref="IDocumentRepository{T}" />
     public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
         where T : class, IDocument
     {
@@ -18,6 +24,10 @@
         private readonly string _collectionId;
         private readonly DocumentClient _client;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
+        /// </summary>
+        /// <param name="config">The configuration.</param>
         public BaseDocumentRepository(IConfiguration config)
         {
             var key = config["Documents:Key"];
@@ -29,6 +39,7 @@
             CreateCollectionIfNotExistsAsync().Wait();
         }
 
+        /// <inheritdoc />
         public async Task<T> GetItemAsync(string id)
         {
             try
@@ -46,15 +57,16 @@
             }
         }
 
+        /// <inheritdoc />
         public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
         {
-            IDocumentQuery<T> query = _client.CreateDocumentQuery<T>(
+            var query = _client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId),
                 new FeedOptions { MaxItemCount = -1 })
                 .Where(predicate)
                 .AsDocumentQuery();
 
-            List<T> results = new List<T>();
+            var results = new List<T>();
             while (query.HasMoreResults)
             {
                 results.AddRange(await query.ExecuteNextAsync<T>());
@@ -63,27 +75,35 @@
             return results;
         }
 
+        /// <inheritdoc />
         public async Task<Document> CreateItemAsync(T item)
         {
             return await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
         }
 
+        /// <inheritdoc />
         public async Task<Document> UpdateItemAsync(string id, T item)
         {
             return await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
         }
 
+        /// <inheritdoc />
         public async Task DeleteItemAsync(string id)
         {
             await _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

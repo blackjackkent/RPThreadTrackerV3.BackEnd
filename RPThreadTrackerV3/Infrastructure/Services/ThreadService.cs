@@ -1,22 +1,25 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Services
+﻿// <copyright file="ThreadService.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Infrastructure.Services
 {
-	using System;
-	using System.Collections.Generic;
+    using System.Collections.Generic;
 	using System.Globalization;
 	using System.Linq;
-	using System.Linq.Expressions;
-	using AutoMapper;
-	using Enums;
-	using Exceptions;
-	using Exceptions.Thread;
+    using AutoMapper;
+    using Exceptions.Thread;
 	using Interfaces.Data;
 	using Interfaces.Services;
 	using Models.DomainModels;
 	using Models.DomainModels.PublicViews;
 
+    /// <inheritdoc />
     public class ThreadService : IThreadService
     {
-	    public IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        /// <inheritdoc />
+        public IEnumerable<Thread> GetThreads(string userId, bool isArchived, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
 		    var entities = threadRepository.GetWhere(
 			    t => t.Character.UserId == userId
@@ -26,7 +29,8 @@
 		    return entities.Select(mapper.Map<Thread>).ToList();
 	    }
 
-	    public Dictionary<int, List<Thread>> GetThreadsByCharacter(string userId, bool includeArchived, bool includeHiatused, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        /// <inheritdoc />
+        public Dictionary<int, List<Thread>> GetThreadsByCharacter(string userId, bool includeArchived, bool includeHiatused, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
 		    var entities = threadRepository.GetWhere(
 			    t => t.Character.UserId == userId
@@ -39,18 +43,9 @@
 		    return dictionary;
 	    }
 
-	    public Thread GetThread(int threadId, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
-	    {
-		    var result = threadRepository.GetWhere(t => t.Character.UserId == userId && t.ThreadId == threadId, new List<string> { "Character", "ThreadTags" })
-			    .FirstOrDefault();
-		    if (result == null)
-		    {
-			    throw new ThreadNotFoundException();
-		    }
-		    return mapper.Map<Thread>(result);
-	    }
-
-	    public void AssertUserOwnsThread(int? threadId, string userId, IRepository<Data.Entities.Thread> threadRepository)
+        /// <exception cref="ThreadNotFoundException">Thrown if a thread with the given ID and user ID could not be found.</exception>
+        /// <inheritdoc />
+        public void AssertUserOwnsThread(int? threadId, string userId, IRepository<Data.Entities.Thread> threadRepository)
 	    {
 		    var threadExistsForUser =
 			    threadRepository.ExistsWhere(t => t.Character.UserId == userId && t.ThreadId == threadId);
@@ -60,14 +55,17 @@
 		    }
 		}
 
-	    public Thread UpdateThread(Thread thread, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
-	    {
+        /// <inheritdoc />
+        public Thread UpdateThread(Thread thread, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
 			var entity = mapper.Map<Data.Entities.Thread>(thread);
 		    var result = threadRepository.Update(thread.ThreadId.ToString(CultureInfo.CurrentCulture), entity);
 			return mapper.Map<Thread>(result);
 	    }
 
-	    public void DeleteThread(int threadId, IRepository<Data.Entities.Thread> threadRepository)
+        /// <exception cref="ThreadNotFoundException">Thrown when a thread for the given ID could not be found.</exception>
+        /// <inheritdoc />
+        public void DeleteThread(int threadId, IRepository<Data.Entities.Thread> threadRepository)
 	    {
 		    var entity = threadRepository.GetWhere(t => t.ThreadId == threadId).FirstOrDefault();
 		    if (entity == null)
@@ -77,13 +75,15 @@
 		    threadRepository.Delete(entity);
 	    }
 
-	    public Thread CreateThread(Thread model, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
-	    {
+        /// <inheritdoc />
+        public Thread CreateThread(Thread model, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
 		    var entity = mapper.Map<Data.Entities.Thread>(model);
 		    var createdEntity = threadRepository.Create(entity);
 		    return mapper.Map<Thread>(createdEntity);
 	    }
 
+        /// <inheritdoc />
         public IEnumerable<string> GetAllTags(string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
         {
             var threads = threadRepository.GetWhere(t => t.Character.UserId == userId, new List<string> { "ThreadTags" })
@@ -93,7 +93,8 @@
             return deduplicated.Select(t => t.TagText);
         }
 
-	    public IEnumerable<Thread> GetThreadsForView(PublicView view, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        /// <inheritdoc />
+        public IEnumerable<Thread> GetThreadsForView(PublicView view, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
 	    {
 		    var threads = threadRepository.GetWhere(
 		            t => t.Character.UserId == view.UserId,

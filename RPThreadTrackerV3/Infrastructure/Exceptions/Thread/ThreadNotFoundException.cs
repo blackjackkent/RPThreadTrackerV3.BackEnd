@@ -7,9 +7,18 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Thread
 {
     using System;
 
+    /// <summary>
+    /// The exception that is thrown when there was an error retrieving a thread.
+    /// </summary>
+    /// <seealso cref="Exception" />
     public class ThreadNotFoundException : Exception
     {
-		public ThreadNotFoundException()
-		    : base("The requested thread does not exist for the current user.") { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThreadNotFoundException"/> class.
+        /// </summary>
+        public ThreadNotFoundException()
+            : base("The requested thread does not exist for the current user.")
+        {
+        }
     }
 }

@@ -1,20 +1,31 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Data
+﻿// <copyright file="ThreadRepository.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Infrastructure.Data
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
 	using Entities;
-	using Exceptions;
 	using Exceptions.Thread;
 
+    /// <inheritdoc />
     public class ThreadRepository : BaseRepository<Thread>
 	{
-		public ThreadRepository(TrackerContext context)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThreadRepository"/> class.
+        /// </summary>
+        /// <param name="context">The database context.</param>
+        public ThreadRepository(TrackerContext context)
 		    : base(context)
 		{
 		}
 
-		public override Thread Update(string id, Thread entity)
+        /// <exception cref="ThreadNotFoundException">Thrown if a thread with the given ID could not be found.</exception>
+        /// <inheritdoc />
+        public override Thread Update(string id, Thread entity)
 		{
 			var existingThread = GetWhere(t => t.ThreadId == entity.ThreadId, new List<string> { "ThreadTags", "Character" }).FirstOrDefault();
 			if (existingThread == null)
@@ -63,9 +74,11 @@
 			}
 			_context.SaveChanges();
 			_context.Entry(existingThread).Reload();
-			if (existingThread.Character == null)
-				_context.Entry(existingThread).Reference(p => p.Character).Load();
-			return existingThread;
+		    if (existingThread.Character == null)
+		    {
+		        _context.Entry(existingThread).Reference(p => p.Character).Load();
+		    }
+		    return existingThread;
 		}
     }
 }

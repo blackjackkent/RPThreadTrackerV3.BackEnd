@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3.Infrastructure.Services
+﻿// <copyright file="PublicViewService.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.Infrastructure.Services
 {
     using System.Collections.Generic;
     using System.Linq;
@@ -6,20 +11,24 @@
     using AutoMapper;
     using Exceptions.PublicViews;
     using Models.DomainModels.PublicViews;
-    using RPThreadTrackerV3.Infrastructure.Exceptions;
     using RPThreadTrackerV3.Interfaces.Data;
     using RPThreadTrackerV3.Interfaces.Services;
-    using Documents = RPThreadTrackerV3.Infrastructure.Data.Documents;
+    using Documents = Data.Documents;
 
+    /// <inheritdoc />
     public class PublicViewService : IPublicViewService
     {
+        /// <inheritdoc />
         public async Task<IEnumerable<PublicView>> GetPublicViews(string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var documents = await publicViewRepository.GetItemsAsync(v => v.UserId == userId);
             return documents.Select(mapper.Map<PublicView>).ToList();
         }
 
-        public async Task<PublicView> CreatePublicView(PublicView model, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+        /// <inheritdoc />
+        /// <exception cref="PublicViewSlugExistsException">Thrown if the user attempts to create a view
+        /// with a slug that is already in use.</exception>
+        public async Task<PublicView> CreatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var document = mapper.Map<Documents.PublicView>(model);
             var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug);
@@ -31,6 +40,9 @@
             return mapper.Map<PublicView>(createdDocument);
         }
 
+        /// <inheritdoc />
+        /// <exception cref="PublicViewNotFoundException">Thrown if the public view does not exist or
+        /// does not belong to the given user.</exception>
         public async Task AssertUserOwnsPublicView(string publicViewId, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository)
         {
             var view = await publicViewRepository.GetItemAsync(publicViewId);
@@ -40,7 +52,10 @@
             }
         }
 
-        public async Task<PublicView> UpdatePublicView(PublicView model, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+        /// <inheritdoc />
+        /// <exception cref="PublicViewSlugExistsException">Thrown if the user is attempting to update
+        /// the public view to a slug already in use by another public view.</exception>
+        public async Task<PublicView> UpdatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var entity = mapper.Map<Documents.PublicView>(model);
             var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug);
@@ -53,12 +68,16 @@
             return mapper.Map<PublicView>(result);
         }
 
+        /// <inheritdoc />
         public async Task DeletePublicView(string publicViewId, IDocumentRepository<Documents.PublicView> publicViewRepository)
         {
             await publicViewRepository.DeleteItemAsync(publicViewId);
         }
 
-	    public async Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+        /// <inheritdoc />
+        /// <exception cref="PublicViewNotFoundException">Thrown if a public view with the given slug
+        /// does not exist.</exception>
+        public async Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
 	    {
 		    var views = await publicViewRepository.GetItemsAsync(v => v.Slug == slug);
 		    var view = views.FirstOrDefault();
