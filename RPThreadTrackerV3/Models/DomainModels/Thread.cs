@@ -14,12 +14,12 @@ namespace RPThreadTrackerV3.Models.DomainModels
     public class Thread
     {
         /// <summary>
-        /// Gets the unique ID of the thread.
+        /// Gets or sets the unique ID of the thread.
         /// </summary>
         /// <value>
         /// The unique ID of the thread.
         /// </value>
-        public int ThreadId { get; }
+        public int ThreadId { get; set; }
 
         /// <summary>
         /// Gets the unique ID of the character associated with this thread.

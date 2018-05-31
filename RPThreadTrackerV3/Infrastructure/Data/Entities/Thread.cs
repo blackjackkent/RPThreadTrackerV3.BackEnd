@@ -15,12 +15,12 @@ namespace RPThreadTrackerV3.Infrastructure.Data.Entities
     public class Thread : IEntity
     {
         /// <summary>
-        /// Gets the unique ID of the thread.
+        /// Gets or sets the unique ID of the thread.
         /// </summary>
         /// <value>
         /// The unique ID of the thread.
         /// </value>
-		public int ThreadId { get; }
+		public int ThreadId { get; set;  }
 
         /// <summary>
         /// Gets the unique ID of the character associated with this thread.
