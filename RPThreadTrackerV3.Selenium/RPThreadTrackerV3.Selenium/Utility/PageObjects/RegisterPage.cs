@@ -3,6 +3,7 @@
 	using System;
 	using System.Linq;
 	using Microsoft.Extensions.Configuration;
+	using Models;
 	using OpenQA.Selenium;
 	using OpenQA.Selenium.Chrome;
 
@@ -13,8 +14,8 @@
 		{
 			get
 			{
-				var username = _driver.FindElementByDataSpec("username-field");
-				return username.FindElements(By.TagName("input")).FirstOrDefault();
+				var username = _driver.FindElementsByDataSpec("username-field").FirstOrDefault();
+				return username?.FindElements(By.TagName("input")).FirstOrDefault();
 			}
 		}
 
@@ -22,8 +23,8 @@
 		{
 			get
 			{
-				var username = _driver.FindElementByDataSpec("username-field");
-				return username.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
+				var username = _driver.FindElementsByDataSpec("username-field").FirstOrDefault();
+				return username?.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
 			}
 		}
 
@@ -31,8 +32,8 @@
 		{
 			get
 			{
-				var email = _driver.FindElementByDataSpec("email-field");
-				return email.FindElements(By.TagName("input")).FirstOrDefault();
+				var email = _driver.FindElementsByDataSpec("email-field").FirstOrDefault();
+				return email?.FindElements(By.TagName("input")).FirstOrDefault();
 			}
 		}
 
@@ -40,8 +41,8 @@
 		{
 			get
 			{
-				var email = _driver.FindElementByDataSpec("email-field");
-				return email.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
+				var email = _driver.FindElementsByDataSpec("email-field").FirstOrDefault();
+				return email?.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
 			}
 		}
 
@@ -49,8 +50,8 @@
 		{
 			get
 			{
-				var password = _driver.FindElementByDataSpec("password-field");
-				return password.FindElements(By.TagName("input")).FirstOrDefault();
+				var password = _driver.FindElementsByDataSpec("password-field").FirstOrDefault();
+				return password?.FindElements(By.TagName("input")).FirstOrDefault();
 			}
 		}
 
@@ -58,8 +59,8 @@
 		{
 			get
 			{
-				var password = _driver.FindElementByDataSpec("password-field");
-				return password.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
+				var password = _driver.FindElementsByDataSpec("password-field").FirstOrDefault();
+				return password?.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
 			}
 		}
 
@@ -67,8 +68,8 @@
 		{
 			get
 			{
-				var confirmPassword = _driver.FindElementByDataSpec("confirm-password-field");
-				return confirmPassword.FindElements(By.TagName("input")).FirstOrDefault();
+				var confirmPassword = _driver.FindElementsByDataSpec("confirm-password-field").FirstOrDefault();
+				return confirmPassword?.FindElements(By.TagName("input")).FirstOrDefault();
 			}
 		}
 
@@ -76,8 +77,8 @@
 		{
 			get
 			{
-				var confirmPassword = _driver.FindElementByDataSpec("confirm-password-field");
-				return confirmPassword.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
+				var confirmPassword = _driver.FindElementsByDataSpec("confirm-password-field").FirstOrDefault();
+				return confirmPassword?.FindElements(By.ClassName("form-control-feedback")).FirstOrDefault();
 			}
 		}
 
@@ -85,8 +86,8 @@
 	    {
 	        get
 	        {
-	            var confirmPassword = _driver.FindElementByDataSpec("register-server-error");
-	            return confirmPassword.FindElements(By.TagName("span")).FirstOrDefault();
+	            var confirmPassword = _driver.FindElementsByDataSpec("register-server-error").FirstOrDefault();
+	            return confirmPassword?.FindElements(By.TagName("span")).FirstOrDefault();
             }
 	    }
 
@@ -126,14 +127,20 @@
 			WaitForElementToHaveValue(ConfirmPasswordField, value);
 		}
 
-		public void PopulateValidForm()
+		public RegistrationModel PopulateValidForm()
 		{
-			var username = "blackjackkent" + DateTime.UtcNow.Ticks;
-			var email = "rosalind.m.wills+" + DateTime.UtcNow.Ticks +"@gmail.com";
+		    var ticks = DateTime.UtcNow.Ticks;
+			var username = "blackjackkent" + ticks;
+			var email = "rosalind.m.wills+" + ticks +"@gmail.com";
 			EnterUsername(username);
 			EnterEmail(email);
 			EnterPassword(_config["accountPassword"]);
 			EnterConfirmPassword(_config["accountPassword"]);
+		    return new RegistrationModel
+		    {
+		        Username = username,
+		        Email = email
+		    };
 		}
 	}
 }

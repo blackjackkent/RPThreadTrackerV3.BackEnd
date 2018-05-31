@@ -17,17 +17,23 @@
 		    _config = config;
 		}
 
-	    public void WaitForElementToExist(IWebElement element)
+	    public void WaitForElementToBeVisible(IWebElement element)
 	    {
 		    var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(5000));
 		    wait.Until(WaitConditions.ElementIsVisible(element));
 		}
 
-	    public void WaitForElementToHaveValue(IWebElement element, string value)
+	    public void WaitForElementToHaveValue(IWebElement element, string value = null)
 	    {
 		    var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(5000));
 		    wait.Until(WaitConditions.ElementHasValue(element, value));
-		}
+        }
+
+        public void WaitForElementToHaveText(IWebElement element, string value = null)
+        {
+            var wait = new WebDriverWait(_driver, TimeSpan.FromMilliseconds(15000));
+            wait.Until(WaitConditions.ElementHasText(element, value));
+        }
 
         public void ClearField(IWebElement element)
         {

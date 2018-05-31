@@ -21,7 +21,8 @@
 	        if (_config["useHeadlessMode"] == "True")
 	        {
 	            chromeOptions.AddArguments("headless");
-	        }
+	            chromeOptions.AddArguments("window-size=1920x1080");
+            }
 	        _driver = new ChromeDriver(_config["chromeDriverPath"], chromeOptions);
 		    _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
 			FixDriverCommandExecutionDelay(_driver);
