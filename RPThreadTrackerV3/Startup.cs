@@ -35,7 +35,7 @@ namespace RPThreadTrackerV3
     /// </summary>
     public class Startup
 	{
-		private IConfiguration Configuration { get; }
+		private IConfiguration Configuration { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.

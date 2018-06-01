@@ -15,12 +15,12 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Account
     public class InvalidChangePasswordException : Exception
     {
         /// <summary>
-        /// Gets the errors resulting from the password update failure.
+        /// Gets or sets the errors resulting from the password update failure.
         /// </summary>
         /// <value>
         /// The errors resulting from the password update failure.
         /// </value>
-        public List<string> Errors { get; }
+        public List<string> Errors { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvalidChangePasswordException"/> class.

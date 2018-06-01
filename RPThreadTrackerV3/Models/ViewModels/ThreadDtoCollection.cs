@@ -17,12 +17,12 @@ namespace RPThreadTrackerV3.Models.ViewModels
     public class ThreadDtoCollection
     {
         /// <summary>
-        /// Gets the threads.
+        /// Gets or sets the threads.
         /// </summary>
         /// <value>
         /// The threads.
         /// </value>
-        public List<ThreadDto> Threads { get; }
+        public List<ThreadDto> Threads { get; set; }
 
         /// <summary>
         /// Gets or sets the JSON needed to request current status of the threads from the

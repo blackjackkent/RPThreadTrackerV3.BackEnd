@@ -25,75 +25,75 @@ namespace RPThreadTrackerV3.Infrastructure.Data.Documents
         public string Id { get; set; }
 
         /// <summary>
-        /// Gets the name of the public view.
+        /// Gets or sets the name of the public view.
         /// </summary>
         /// <value>
         /// The name of the public view.
         /// </value>
-        public string Name { get; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Gets the unique URL slug of the public view.
+        /// Gets or sets the unique URL slug of the public view.
         /// </summary>
         /// <value>
         /// The URL slug.
         /// </value>
-        public string Slug { get; }
+        public string Slug { get; set; }
 
         /// <summary>
-        /// Gets the unique identifier of the user who created this public view.
+        /// Gets or sets the unique identifier of the user who created this public view.
         /// </summary>
         /// <value>
         /// The unique identifier of the user who created this public view.
         /// </value>
-        public string UserId { get; }
+        public string UserId { get; set; }
 
         /// <summary>
-        /// Gets a list of strings representing which data columns should be displayed in this public view.
+        /// Gets or sets a list of strings representing which data columns should be displayed in this public view.
         /// </summary>
         /// <value>
         /// A list of strings representing which data columns should be displayed in this public view.
         /// </value>
-        public List<string> Columns { get; }
+        public List<string> Columns { get; set; }
 
         /// <summary>
-        /// Gets a string representing which data column the public view should be sorted by.
+        /// Gets or sets a string representing which data column the public view should be sorted by.
         /// </summary>
         /// <value>
         /// A string representing which data column the public view should be sorted by.
         /// </value>
-        public string SortKey { get; }
+        public string SortKey { get; set; }
 
         /// <summary>
-        /// Gets a value indicating whether this public view should sort in descending order.
+        /// Gets or sets a value indicating whether this public view should sort in descending order.
         /// </summary>
         /// <value>
         ///   <c>true</c> if this public view should sort in descending order; otherwise, <c>false</c>.
         /// </value>
-        public bool SortDescending { get; }
+        public bool SortDescending { get; set; }
 
         /// <summary>
-        /// Gets an object representing this public view's turn-based filter settings.
+        /// Gets or sets an object representing this public view's turn-based filter settings.
         /// </summary>
         /// <value>
         /// An object representing this public view's turn-based filter settings.
         /// </value>
-        public PublicTurnFilter TurnFilter { get; }
+        public PublicTurnFilter TurnFilter { get; set; }
 
         /// <summary>
-        /// Gets a list of IDs representing which characters' threads should be displayed in this public view.
+        /// Gets or sets a list of IDs representing which characters' threads should be displayed in this public view.
         /// </summary>
         /// <value>
         /// A list of IDs representing which characters' threads should be displayed in this public view.
         /// </value>
-        public List<int> CharacterIds { get; }
+        public List<int> CharacterIds { get; set; }
 
         /// <summary>
-        /// Gets a list of tag strings which should be used to filter which threads should be displayed in this public view.
+        /// Gets or sets a list of tag strings which should be used to filter which threads should be displayed in this public view.
         /// </summary>
         /// <value>
         /// A list of tag strings which should be used to filter which threads should be displayed in this public view.
         /// </value>
-        public List<string> Tags { get; }
+        public List<string> Tags { get; set; }
     }
 }

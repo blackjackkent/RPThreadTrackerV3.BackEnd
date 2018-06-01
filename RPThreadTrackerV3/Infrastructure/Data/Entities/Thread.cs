@@ -82,11 +82,11 @@ namespace RPThreadTrackerV3.Infrastructure.Data.Entities
         public DateTime? DateMarkedQueued { get; set; }
 
         /// <summary>
-        /// Gets the thread tags associated with this thread.
+        /// Gets or sets the thread tags associated with this thread.
         /// </summary>
         /// <value>
         /// The thread tags associated with this thread.
         /// </value>
-        public virtual List<ThreadTag> ThreadTags { get; }
+        public virtual List<ThreadTag> ThreadTags { get; set;  }
     }
 }

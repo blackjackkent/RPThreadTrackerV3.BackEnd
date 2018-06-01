@@ -16,12 +16,12 @@ namespace RPThreadTrackerV3.Models.ViewModels.PublicViews
     public class PublicThreadDtoCollection : ThreadDtoCollection
     {
         /// <summary>
-        /// Gets the public view.
+        /// Gets or sets the public view.
         /// </summary>
         /// <value>
         /// The public view.
         /// </value>
-        public PublicViewDto View { get; }
+        public PublicViewDto View { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PublicThreadDtoCollection"/> class.

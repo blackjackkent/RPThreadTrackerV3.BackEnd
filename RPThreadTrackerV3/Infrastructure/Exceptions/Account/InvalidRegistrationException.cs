@@ -15,12 +15,12 @@ namespace RPThreadTrackerV3.Infrastructure.Exceptions.Account
     public class InvalidRegistrationException : Exception
     {
         /// <summary>
-        /// Gets the errors resulting from the account registration failure.
+        /// Gets or sets the errors resulting from the account registration failure.
         /// </summary>
         /// <value>
         /// The errors resulting from the account registration failure.
         /// </value>
-        public List<string> Errors { get; }
+        public List<string> Errors { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InvalidRegistrationException"/> class.
