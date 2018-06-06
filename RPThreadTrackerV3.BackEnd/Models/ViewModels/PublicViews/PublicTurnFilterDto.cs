@@ -48,7 +48,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
         /// Throws an exception if the public view model is not valid.
         /// </summary>
         /// <exception cref="InvalidPublicViewException">Thrown if the public view model is not valid.</exception>
-        public void AssertIsValid()
+        public virtual void AssertIsValid()
         {
             if (!IncludeMyTurn && !IncludeTheirTurn && !IncludeQueued && !IncludeArchived)
             {
