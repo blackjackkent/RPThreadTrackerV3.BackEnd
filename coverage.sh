@@ -7,4 +7,4 @@
   -oldstyle
 rm -rf reports
 mkdir reports
-"$HOME/.nuget/packages/reportgenerator/3.1.2/tools/ReportGenerator.exe" -reports:"coverage.xml" -targetdir:"Reports"
+"$HOME/.nuget/packages/reportgenerator/3.1.2/tools/ReportGenerator.exe" -reports:"coverage.xml" -targetdir:"Reports" -verbosity:"Info"
