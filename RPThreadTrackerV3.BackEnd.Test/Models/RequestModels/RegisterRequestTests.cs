@@ -6,9 +6,9 @@
 namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
 {
     using System;
+    using BackEnd.Infrastructure.Exceptions.Account;
     using BackEnd.Models.RequestModels;
     using FluentAssertions;
-    using Infrastructure.Exceptions.Account;
     using Xunit;
 
     public class RegisterRequestTests

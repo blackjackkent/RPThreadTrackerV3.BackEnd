@@ -7,8 +7,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
 {
     using System;
     using System.Collections.Generic;
+    using BackEnd.Infrastructure.Exceptions.Thread;
     using BackEnd.Models.ViewModels;
-    using Infrastructure.Exceptions.Thread;
     using Xunit;
 
     public class ThreadDtoTests

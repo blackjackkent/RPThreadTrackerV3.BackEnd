@@ -6,8 +6,8 @@
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
 {
     using System.Collections.Generic;
+    using BackEnd.Infrastructure.Exceptions.PublicViews;
     using BackEnd.Models.ViewModels.PublicViews;
-    using Infrastructure.Exceptions.PublicViews;
     using Moq;
     using Xunit;
 

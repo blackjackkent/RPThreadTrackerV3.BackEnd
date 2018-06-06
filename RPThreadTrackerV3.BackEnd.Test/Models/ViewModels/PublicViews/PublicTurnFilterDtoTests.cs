@@ -5,8 +5,8 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
 {
+    using BackEnd.Infrastructure.Exceptions.PublicViews;
     using BackEnd.Models.ViewModels.PublicViews;
-    using Infrastructure.Exceptions.PublicViews;
     using Xunit;
 
     public class PublicTurnFilterDtoTests

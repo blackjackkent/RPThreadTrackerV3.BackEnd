@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Text;
     using AutoMapper;
     using Infrastructure.Data;
@@ -33,6 +34,7 @@ namespace RPThreadTrackerV3.BackEnd
     /// <summary>
     /// .NET Core application startup class.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class Startup
 	{
 		private IConfiguration Configuration { get; set; }

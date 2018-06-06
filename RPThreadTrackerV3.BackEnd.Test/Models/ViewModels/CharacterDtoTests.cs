@@ -5,9 +5,9 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
 {
+    using BackEnd.Infrastructure.Enums;
+    using BackEnd.Infrastructure.Exceptions.Characters;
     using BackEnd.Models.ViewModels;
-    using Infrastructure.Enums;
-    using Infrastructure.Exceptions.Characters;
     using Xunit;
 
     public class CharacterDtoTests

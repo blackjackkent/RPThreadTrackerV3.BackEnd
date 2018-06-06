@@ -4,6 +4,8 @@
   -target:"dotnet.exe" \
   -targetargs:"test RPThreadTrackerV3.BackEnd.Test/RPThreadTrackerV3.BackEnd.Test.csproj" \
   -filter:"+[RPThreadTrackerV3.BackEnd*]* -[*Test]*" \
+  -excludebyattribute:System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute \
+  -hideskipped:Attribute \
   -oldstyle
 rm -rf reports
 mkdir reports
