@@ -240,14 +240,21 @@ namespace RPThreadTrackerV3.Controllers
 		[HttpPost("api/auth/forgotpassword")]
 		public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestModel model)
 		{
-			try
-			{
-				var user = await _userManager.FindByEmailAsync(model.Email);
-				var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-				var email = _emailBuilder.BuildForgotPasswordEmail(user, _config["CorsUrl"], code, _config);
-				await _emailClient.SendEmail(email, _config);
-				return Ok();
-			}
+		    try
+		    {
+		        var user = await _authService.GetUserByUsernameOrEmail(model.Email, _userManager);
+		        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+		        var email = _emailBuilder.BuildForgotPasswordEmail(user, _config["CorsUrl"], code, _config);
+		        await _emailClient.SendEmail(email, _config);
+		        return Ok();
+		    }
+		    catch (UserNotFoundException e)
+		    {
+                _logger.LogWarning(e, $"Password reset requested for nonexistant email {model.Email}.");
+
+		        // Prevent account scraping by not informing front-end whether user exists or not.
+		        return Ok();
+		    }
 			catch (Exception e)
 			{
 				_logger.LogError(e, $"Error requesting password reset for {model.Email}");

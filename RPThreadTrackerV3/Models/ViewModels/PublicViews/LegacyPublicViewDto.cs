@@ -1,29 +1,20 @@
-﻿// <copyright file="PublicViewDto.cs" company="Rosalind Wills">
+﻿// <copyright file="LegacyPublicViewDto.cs" company="Rosalind Wills">
 // Copyright (c) Rosalind Wills. All rights reserved.
 // Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
 // </copyright>
 
 namespace RPThreadTrackerV3.Models.ViewModels.PublicViews
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
     using Infrastructure.Exceptions.PublicViews;
 
     /// <summary>
-    /// View model representation of a user's settings for a particular public thread view.
+    /// View model representation of a legacy public thread view.
     /// </summary>
-    public class PublicViewDto
+    public class LegacyPublicViewDto
     {
-        /// <summary>
-        /// Gets or sets the unique identifier of the public view.
-        /// </summary>
-        /// <value>
-        /// The unique identifier of the public view.
-        /// </value>
-        public string Id { get; set; }
-
         /// <summary>
         /// Gets or sets the name of the public view.
         /// </summary>
@@ -39,14 +30,6 @@ namespace RPThreadTrackerV3.Models.ViewModels.PublicViews
         /// The URL slug.
         /// </value>
         public string Slug { get; set; }
-
-        /// <summary>
-        /// Gets or sets the full URL at which this public view can be accessed.
-        /// </summary>
-        /// <value>
-        /// The full URL at which this public view can be accessed.
-        /// </value>
-        public string Url { get; set; }
 
         /// <summary>
         /// Gets or sets the unique identifier of the user who created this public view.
@@ -89,12 +72,12 @@ namespace RPThreadTrackerV3.Models.ViewModels.PublicViews
         public PublicTurnFilterDto TurnFilter { get; set; }
 
         /// <summary>
-        /// Gets or sets a list of IDs representing which characters' threads should be displayed in this public view.
+        /// Gets or sets a list of s representing which characters' threads should be displayed in this public view.
         /// </summary>
         /// <value>
         /// A list of IDs representing which characters' threads should be displayed in this public view.
         /// </value>
-        public List<int> CharacterIds { get; set; }
+        public string CharacterUrlIdentifier { get; set; }
 
         /// <summary>
         /// Gets or sets a list of tag strings which should be used to filter which threads should be displayed in this public view.
@@ -112,13 +95,13 @@ namespace RPThreadTrackerV3.Models.ViewModels.PublicViews
         {
             TurnFilter.AssertIsValid();
             var slugRegex = new Regex(@"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$");
-            List<string> reservedSlugs = new List<string> { "myturn", "yourturn", "theirturn", "archived", "queued", "legacy" };
+            var reservedSlugs = new List<string> { "myturn", "yourturn", "theirturn", "archived", "queued", "legacy" };
             var invalid =
                 string.IsNullOrEmpty(Name)
                 || string.IsNullOrEmpty(Slug)
                 || !slugRegex.IsMatch(Slug)
                 || !Columns.Any()
-                || !CharacterIds.Any()
+                || string.IsNullOrEmpty(CharacterUrlIdentifier)
                 || reservedSlugs.Contains(Slug);
             if (invalid)
             {

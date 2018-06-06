@@ -99,7 +99,7 @@ namespace RPThreadTrackerV3.Controllers
                 model.UserId = UserId;
                 var publicView = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(model);
                 var createdView =
-                await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
+                    await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
                 return Ok(createdView);
             }
             catch (PublicViewSlugExistsException)
