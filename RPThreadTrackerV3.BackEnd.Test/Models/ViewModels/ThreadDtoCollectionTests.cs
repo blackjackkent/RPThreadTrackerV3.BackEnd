@@ -5,7 +5,6 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using BackEnd.Models.ViewModels;

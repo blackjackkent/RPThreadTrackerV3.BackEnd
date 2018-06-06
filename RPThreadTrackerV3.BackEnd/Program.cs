@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using Infrastructure.Data.Seeders;
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
@@ -16,6 +17,7 @@ namespace RPThreadTrackerV3.BackEnd
     /// <summary>
     /// Base application bootstrapping file.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class Program
 	{
         /// <summary>
