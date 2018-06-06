@@ -23,7 +23,7 @@ namespace RPThreadTrackerV3.Infrastructure.Services
     using Microsoft.Extensions.Configuration;
     using Microsoft.IdentityModel.Tokens;
     using Models.DomainModels;
-    using RPThreadTrackerV3.Models.ViewModels.Auth;
+    using Models.ViewModels.Auth;
 
     /// <inheritdoc />
     public class AuthService : IAuthService
@@ -155,6 +155,10 @@ namespace RPThreadTrackerV3.Infrastructure.Services
         /// <exception cref="InvalidPasswordResetException">Thrown if the password reset request could not be completed.</exception>
         public async Task ResetPassword(string email, string passwordResetToken, string newPassword, UserManager<IdentityUser> userManager)
 	    {
+		    if (string.IsNullOrEmpty(email))
+		    {
+			    throw new UserNotFoundException();
+		    }
 		    var user = await userManager.FindByEmailAsync(email);
 		    if (user == null)
 		    {

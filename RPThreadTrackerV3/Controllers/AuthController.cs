@@ -289,7 +289,7 @@ namespace RPThreadTrackerV3.Controllers
 			catch (InvalidPasswordResetException e)
 			{
 				_logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors}");
-				return BadRequest(e.Errors);
+				return BadRequest("This reset token is invalid. Please request a new password reset link.");
 			}
 			catch (UserNotFoundException e)
 			{
