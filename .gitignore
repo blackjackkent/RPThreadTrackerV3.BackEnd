@@ -319,3 +319,6 @@ RPThreadTrackerV3/appSettings.secure.json
 RPThreadTrackerV3.Selenium/RPThreadTrackerV3.Selenium/appsettings.secure.json
 *.bak
 *.orig
+reports/
+coverage.xml
+codecov.sh
