@@ -11,10 +11,12 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\RPThreadTrackerV3.xml</DocumentationFile>
     <CodeAnalysisRuleSet>RPThreadTrackerV3.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Staging|AnyCPU'">
+    <DocumentationFile>bin\Staging\netcoreapp2.0\RPThreadTrackerV3.xml</DocumentationFile>
     <CodeAnalysisRuleSet>RPThreadTrackerV3.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
