@@ -26,7 +26,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
                 ConfirmPassword = "mypassword",
             };
         }
-        
+
         public class AssertIsValid : RegisterRequestTests
         {
             [Fact]

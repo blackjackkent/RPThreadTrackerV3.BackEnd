@@ -332,7 +332,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                         r.GetWhere(It.Is<Expression<Func<ProfileSettingsCollection, bool>>>(y => y.Compile()(settingsEntity)), It.IsAny<List<string>>()))
                     .Returns(new List<ProfileSettingsCollection> { settingsEntity });
 
-
                 // Act
                 _authService.InitProfileSettings("13579", _mockProfileSettingsRepository.Object);
 
@@ -369,7 +368,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public async Task ThrowsExceptionIfUserNotFound()
             {
                 // Arrange
-                _mockUserManager.Setup(m => m.FindByEmailAsync("me@me.com")).Returns(Task.FromResult((IdentityUser) null));
+                _mockUserManager.Setup(m => m.FindByEmailAsync("me@me.com")).Returns(Task.FromResult((IdentityUser)null));
 
                 // Act/Assert
                 await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", _mockUserManager.Object));
@@ -454,7 +453,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 ex.Errors.Should().Contain("Test Error 1");
                 ex.Errors.Should().Contain("Test Error 2");
             }
-
 
             [Fact]
             public async Task ThrowsNoExceptionIfChangeSuccessful()
@@ -641,8 +639,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void DoesNothingIfTokenDoesNotExist()
             {
                 // Arrange
-                _mockRefreshTokenRepository.Setup(r => 
-                        r.GetWhere(It.IsAny<Expression<Func<RefreshToken, bool>>>(), It.IsAny<List<string>>()))
+                _mockRefreshTokenRepository.Setup(r => r.GetWhere(It.IsAny<Expression<Func<RefreshToken, bool>>>(), It.IsAny<List<string>>()))
                     .Returns(new List<RefreshToken>());
 
                 // Act

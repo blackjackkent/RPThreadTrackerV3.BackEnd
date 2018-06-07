@@ -103,7 +103,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 97531,
                     IsOnHiatus = false
                 };
-                var characterList = new List<Character> {character1, character2};
+                var characterList = new List<Character> { character1, character2 };
                 _mockCharacterRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Character, bool>>>(y => y.Compile()(character1) && y.Compile()(character2)), It.IsAny<List<string>>())).Returns(characterList);
 
                 // Act

@@ -193,6 +193,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		{
 			var identityUser = await userManager.GetUserAsync(user);
 			var errors = new List<string>();
+
 			// TODO: update user's email if it's unique
 			if (username != identityUser.UserName)
 			{
