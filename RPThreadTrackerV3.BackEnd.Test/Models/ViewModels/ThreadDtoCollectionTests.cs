@@ -12,6 +12,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
     using Newtonsoft.Json;
     using Xunit;
 
+    [Trait("Class", "ThreadDtoCollection")]
     public class ThreadDtoCollectionTests
     {
         public class Constructor : ThreadDtoCollectionTests

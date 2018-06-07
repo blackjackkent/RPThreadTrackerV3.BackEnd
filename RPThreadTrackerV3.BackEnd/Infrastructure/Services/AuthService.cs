@@ -92,7 +92,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         /// <inheritdoc />
         /// <exception cref="InvalidRefreshTokenException">Thrown if the given refresh token does not
         /// exist or is expired.</exception>
-        public IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository)
+        public IdentityUser GetUserForRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository)
         {
             var storedToken = refreshTokenRepository.GetWhere(t => t.Token == refreshToken, new List<string> { "User" }).OrderByDescending(t => t.ExpiresUtc).FirstOrDefault();
             var now = DateTime.UtcNow;
@@ -193,10 +193,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		{
 			var identityUser = await userManager.GetUserAsync(user);
 			var errors = new List<string>();
-			if (email != identityUser.Email)
-			{
-				// TODO: update user's email if it's unique
-			}
+			// TODO: update user's email if it's unique
 			if (username != identityUser.UserName)
 			{
 				var existingUser = await userManager.FindByNameAsync(username);
@@ -243,7 +240,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         }
 
         /// <inheritdoc />
-        public void RevokeRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository)
+        public void RevokeRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository)
         {
             var token = refreshTokenRepository.GetWhere(t => t.Token == refreshToken).FirstOrDefault();
             if (token != null)

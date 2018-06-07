@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
     using FluentAssertions;
     using Xunit;
 
+    [Trait("Class", "PublicThreadDtoCollection")]
     public class PublicThreadDtoCollectionTests
     {
         public class Constructor : PublicThreadDtoCollectionTests

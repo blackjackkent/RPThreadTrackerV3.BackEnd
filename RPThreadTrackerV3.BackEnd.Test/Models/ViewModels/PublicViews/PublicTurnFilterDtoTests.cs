@@ -9,6 +9,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
     using BackEnd.Models.ViewModels.PublicViews;
     using Xunit;
 
+    [Trait("Class", "PublicTurnFilterDto")]
     public class PublicTurnFilterDtoTests
     {
         public class AssertIsValid : LegacyPublicViewDtoTests

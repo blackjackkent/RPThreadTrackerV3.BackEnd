@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
     using BackEnd.Models.ViewModels;
     using Xunit;
 
+    [Trait("Class", "ThreadDto")]
     public class ThreadDtoTests
     {
         private readonly ThreadDto _dto;

@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
     using FluentAssertions;
     using Xunit;
 
+    [Trait("Class", "RegisterRequest")]
     public class RegisterRequestTests
     {
         private readonly RegisterRequest _request;
@@ -25,7 +26,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
                 ConfirmPassword = "mypassword",
             };
         }
-
+        
         public class AssertIsValid : RegisterRequestTests
         {
             [Fact]

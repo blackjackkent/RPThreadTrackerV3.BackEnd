@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
     using Moq;
     using Xunit;
 
+    [Trait("Class", "PublicViewDto")]
     public class PublicViewDtoTests
     {
         private readonly PublicViewDto _dto;

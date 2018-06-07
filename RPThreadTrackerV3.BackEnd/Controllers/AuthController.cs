@@ -132,7 +132,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 	        try
 	        {
-	            var user = _authService.GetUserForRefreshToken(model.RefreshToken, _config, _refreshTokenRepository);
+	            var user = _authService.GetUserForRefreshToken(model.RefreshToken, _refreshTokenRepository);
 	            var jwt = await _authService.GenerateJwt(user, _userManager, _config);
 	            var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
 	            return Ok(new
@@ -168,7 +168,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 	        try
 	        {
-	            _authService.RevokeRefreshToken(model.RefreshToken, _config, _refreshTokenRepository);
+	            _authService.RevokeRefreshToken(model.RefreshToken, _refreshTokenRepository);
 	            return Ok();
 	        }
 	        catch (Exception ex)

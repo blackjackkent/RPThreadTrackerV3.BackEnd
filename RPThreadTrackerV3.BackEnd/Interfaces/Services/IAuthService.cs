@@ -59,10 +59,10 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// Gets the user with whom the given refresh token is associated.
         /// </summary>
         /// <param name="refreshToken">The refresh token.</param>
-        /// <param name="config">The configuration.</param>
         /// <param name="refreshTokenRepository">The refresh token repository.</param>
+        /// 
         /// <returns>The <see cref="IdentityUser"/> associated with the given refresh token.</returns>
-        IdentityUser GetUserForRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
+        IdentityUser GetUserForRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>
         /// Gets the currently logged in user based on a claims principal.
@@ -175,9 +175,9 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// Revokes the given refresh token.
         /// </summary>
         /// <param name="refreshToken">The refresh token to be revoked.</param>
-        /// <param name="config">The configuration.</param>
         /// <param name="refreshTokenRepository">The refresh token repository.</param>
-        void RevokeRefreshToken(string refreshToken, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
+        /// 
+        void RevokeRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>
         /// Throws an exception if a user already exists with the given username or email.
