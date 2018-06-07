@@ -7,6 +7,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 {
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Globalization;
     using System.Linq;
     using Interfaces.Services;
     using Models.DomainModels;
@@ -16,7 +17,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     public class ExporterService : IExporterService
     {
         /// <inheritdoc />
-        public byte[] GetExcelPackageByteArray(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads)
+        public ExcelPackage GetExcelPackage(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads)
 	    {
 		    var package = new ExcelPackage();
 		    foreach (var character in characters)
@@ -40,7 +41,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 				    worksheet.Cells["B" + i].Value = thread.PostId;
 				    worksheet.Cells["C" + i].Value = thread.UserTitle;
 				    worksheet.Cells["D" + i].Value = thread.PartnerUrlIdentifier;
-				    worksheet.Cells["E" + i].Value = thread.IsArchived;
+				    worksheet.Cells["E" + i].Value = thread.IsArchived.ToString(CultureInfo.CurrentCulture);
 				    if (thread.IsArchived)
 				    {
 						worksheet.Cells["A" + i + ":E" + i].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
@@ -55,8 +56,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 			    worksheet.Cells["A1:E" + i].AutoFitColumns();
 			    worksheet.Cells["B2:B" + i].Style.Numberformat.Format = "0";
 			}
-		    var bytes = package.GetAsByteArray();
-		    return bytes;
+	        return package;
 	    }
     }
 }

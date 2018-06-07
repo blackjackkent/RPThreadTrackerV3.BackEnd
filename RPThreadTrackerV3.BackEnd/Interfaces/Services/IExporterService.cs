@@ -7,6 +7,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 {
     using System.Collections.Generic;
     using Models.DomainModels;
+    using OfficeOpenXml;
 
     /// <summary>
     /// Service for data manipulation relating to data exports.
@@ -19,6 +20,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="characters">The characters to be included in the file.</param>
         /// <param name="threads">The threads to be included in the file.</param>
         /// <returns>Array of bytes making up an Excel package to be downloaded by the user.</returns>
-        byte[] GetExcelPackageByteArray(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads);
+        ExcelPackage GetExcelPackage(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads);
     }
 }

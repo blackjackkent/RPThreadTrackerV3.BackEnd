@@ -228,7 +228,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
 			var threads = _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
-			var byteArray = _exporterService.GetExcelPackageByteArray(characters, threads);
+			var excelPackage = _exporterService.GetExcelPackage(characters, threads);
+		    var byteArray = excelPackage.GetAsByteArray();
 			var cd = new System.Net.Mime.ContentDisposition
 			{
 				FileName = "Export.xlsx",
