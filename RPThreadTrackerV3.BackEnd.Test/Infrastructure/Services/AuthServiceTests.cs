@@ -28,10 +28,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     {
         private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
         private readonly AuthService _authService;
-        private Mock<IConfiguration> _mockConfig;
-        private Mock<IRepository<RefreshToken>> _mockRefreshTokenRepository;
-        private Mock<IMapper> _mockMapper;
-        private Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
+        private readonly Mock<IConfiguration> _mockConfig;
+        private readonly Mock<IRepository<RefreshToken>> _mockRefreshTokenRepository;
+        private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
 
         public AuthServiceTests()
         {
@@ -41,6 +41,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             _mockRefreshTokenRepository = new Mock<IRepository<RefreshToken>>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();
             _mockMapper = new Mock<IMapper>();
+            _mockMapper.Setup(m => m.Map<User>(It.IsAny<IdentityUser>()))
+                .Returns((IdentityUser entity) => new User
+                {
+                    Id = entity.Id,
+                    UserName = entity.UserName,
+                    Email = entity.Email
+                });
+            _mockMapper.Setup(m => m.Map<ProfileSettings>(It.IsAny<ProfileSettingsCollection>()))
+                .Returns((ProfileSettingsCollection entity) => new ProfileSettings
+                {
+                    UserId = entity.UserId,
+                    SettingsId = entity.ProfileSettingsCollectionId,
+                    ShowDashboardThreadDistribution = entity.ShowDashboardThreadDistribution
+                });
             _authService = new AuthService();
         }
 
@@ -225,12 +239,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     Id = "12345"
                 };
-                var userModel = new User
-                {
-                    Id = "12345"
-                };
                 _mockUserManager.Setup(m => m.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync(userEntity);
-                _mockMapper.Setup(m => m.Map<User>(userEntity)).Returns(userModel);
 
                 // Act
                 var result = await _authService.GetCurrentUser(new ClaimsPrincipal(), _mockUserManager.Object, _mockMapper.Object);
@@ -261,14 +270,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     ProfileSettingsCollectionId = 12345,
                     UserId = "13579"
                 };
-                var settingsModel = new ProfileSettings
-                {
-                    SettingsId = 12345
-                };
                 _mockProfileSettingsRepository.Setup(r =>
                         r.GetWhere(It.Is<Expression<Func<ProfileSettingsCollection, bool>>>(y => y.Compile()(settingsEntity)), It.IsAny<List<string>>()))
                     .Returns(new List<ProfileSettingsCollection> { settingsEntity });
-                _mockMapper.Setup(m => m.Map<ProfileSettings>(settingsEntity)).Returns(settingsModel);
 
                 // Act
                 var result = _authService.GetProfileSettings("13579", _mockProfileSettingsRepository.Object, _mockMapper.Object);

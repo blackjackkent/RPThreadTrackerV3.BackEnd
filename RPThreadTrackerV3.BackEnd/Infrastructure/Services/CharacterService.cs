@@ -35,6 +35,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         public IEnumerable<Character> GetCharacters(string userId, IRepository<Entities.Character> characterRepository, IMapper mapper, bool includeHiatused = true)
 	    {
 		    var entities = characterRepository.GetWhere(c => c.UserId == userId).ToList();
+	        if (!includeHiatused)
+	        {
+	            entities = entities.Where(e => !e.IsOnHiatus).ToList();
+	        }
 		    return entities.Select(mapper.Map<Character>).ToList();
 	    }
 
