@@ -169,7 +169,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     ExpiresUtc = expires
                 };
                 _mockRefreshTokenRepository.Setup(r =>
-                        r.GetWhere(It.IsAny<Expression<Func<RefreshToken, bool>>>(), It.IsAny<List<string>>()))
+                        r.GetWhere(It.Is<Expression<Func<RefreshToken, bool>>>(y => y.Compile()(storedToken)), It.IsAny<List<string>>()))
                     .Returns(new List<RefreshToken> { storedToken });
 
                 // Act
@@ -207,7 +207,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     ExpiresUtc = expires
                 };
                 _mockRefreshTokenRepository.Setup(r =>
-                        r.GetWhere(It.IsAny<Expression<Func<RefreshToken, bool>>>(), It.IsAny<List<string>>()))
+                        r.GetWhere(It.Is<Expression<Func<RefreshToken, bool>>>(y => y.Compile()(storedToken)), It.IsAny<List<string>>()))
                     .Returns(new List<RefreshToken> { storedToken });
 
                 // Act
@@ -258,14 +258,15 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var settingsEntity = new ProfileSettingsCollection
                 {
-                    ProfileSettingsCollectionId = 12345
+                    ProfileSettingsCollectionId = 12345,
+                    UserId = "13579"
                 };
                 var settingsModel = new ProfileSettings
                 {
                     SettingsId = 12345
                 };
                 _mockProfileSettingsRepository.Setup(r =>
-                        r.GetWhere(It.IsAny<Expression<Func<ProfileSettingsCollection, bool>>>(), It.IsAny<List<string>>()))
+                        r.GetWhere(It.Is<Expression<Func<ProfileSettingsCollection, bool>>>(y => y.Compile()(settingsEntity)), It.IsAny<List<string>>()))
                     .Returns(new List<ProfileSettingsCollection> { settingsEntity });
                 _mockMapper.Setup(m => m.Map<ProfileSettings>(settingsEntity)).Returns(settingsModel);
 
@@ -320,15 +321,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var settingsEntity = new ProfileSettingsCollection
                 {
-                    ProfileSettingsCollectionId = 12345
+                    ProfileSettingsCollectionId = 12345,
+                    UserId = "13579"
                 };
                 _mockProfileSettingsRepository.Setup(r =>
-                        r.GetWhere(It.IsAny<Expression<Func<ProfileSettingsCollection, bool>>>(), It.IsAny<List<string>>()))
+                        r.GetWhere(It.Is<Expression<Func<ProfileSettingsCollection, bool>>>(y => y.Compile()(settingsEntity)), It.IsAny<List<string>>()))
                     .Returns(new List<ProfileSettingsCollection> { settingsEntity });
 
 
                 // Act
-                _authService.InitProfileSettings("12345", _mockProfileSettingsRepository.Object);
+                _authService.InitProfileSettings("13579", _mockProfileSettingsRepository.Object);
 
                 // Assert
                 _mockProfileSettingsRepository.Verify(r => r.Create(It.IsAny<ProfileSettingsCollection>()), Times.Never);
@@ -657,7 +659,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     UserId = "13579"
                 };
                 _mockRefreshTokenRepository.Setup(r =>
-                        r.GetWhere(It.IsAny<Expression<Func<RefreshToken, bool>>>(), It.IsAny<List<string>>()))
+                        r.GetWhere(It.Is<Expression<Func<RefreshToken, bool>>>(y => y.Compile()(token)), It.IsAny<List<string>>()))
                     .Returns(new List<RefreshToken> { token });
 
                 // Act
