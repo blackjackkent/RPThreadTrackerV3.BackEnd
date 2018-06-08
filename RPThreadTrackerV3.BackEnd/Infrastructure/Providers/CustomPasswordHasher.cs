@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
     using System.Security.Cryptography;
     using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     /// System.Web.Helpers.Crypto hashing system.
     /// </summary>
     /// <seealso cref="PasswordHasher{IdentityUser}" />
+    [ExcludeFromCodeCoverage]
     public class CustomPasswordHasher : PasswordHasher<IdentityUser>
 	{
         /// <summary>

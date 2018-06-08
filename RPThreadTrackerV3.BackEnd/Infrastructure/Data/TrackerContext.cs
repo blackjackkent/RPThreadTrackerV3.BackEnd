@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 {
+    using System.Diagnostics.CodeAnalysis;
     using Entities;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     /// Database context for entity management.
     /// </summary>
     /// <seealso cref="IdentityDbContext" />
+    [ExcludeFromCodeCoverage]
     public class TrackerContext : IdentityDbContext
 	{
         /// <summary>

@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq.Expressions;
     using System.Reflection;
     using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,6 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     /// Custom Entity Framework entity materializer which enforces use of <c>DateTimeKind.UTC</c> for all DateTimes.
     /// </summary>
     /// <seealso cref="EntityMaterializerSource" />
+    [ExcludeFromCodeCoverage]
     public class CustomEntityMaterializerSource : EntityMaterializerSource
 	{
 	    private static readonly MethodInfo NormalizeMethod = typeof(DateTimeMapper).GetTypeInfo().GetMethod(nameof(DateTimeMapper.Normalize));

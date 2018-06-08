@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
 {
+    using System.Diagnostics.CodeAnalysis;
     using AutoMapper;
     using Models.DomainModels;
     using Models.ViewModels;
@@ -14,6 +15,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
     /// Mapping class for mapping between view model, domain model, and entity representations of threads.
     /// </summary>
     /// <seealso cref="Profile" />
+    [ExcludeFromCodeCoverage]
 	public class ThreadMapper : Profile
 	{
         /// <summary>

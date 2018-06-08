@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Seeders
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Enums;
     using Microsoft.AspNetCore.Identity;
@@ -12,6 +13,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Seeders
     /// <summary>
     /// Seeder class used to initialize missing user roles at application start.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class RoleInitializer
 	{
 		private readonly RoleManager<IdentityRole> _roleManager;

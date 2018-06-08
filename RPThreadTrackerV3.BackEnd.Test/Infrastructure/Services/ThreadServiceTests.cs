@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using System.Linq.Expressions;
     using AutoMapper;
     using BackEnd.Infrastructure.Data.Entities;
+    using BackEnd.Infrastructure.Exceptions.Thread;
     using BackEnd.Infrastructure.Services;
     using FluentAssertions;
     using Interfaces.Data;
@@ -35,7 +36,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     ThreadId = entity.ThreadId,
                     CharacterId = entity.CharacterId,
                     UserTitle = entity.UserTitle,
-                    IsArchived = entity.IsArchived
+                    IsArchived = entity.IsArchived,
+                    ThreadTags = entity.ThreadTags?.Select(t => new DomainModels.ThreadTag { TagText = t.TagText }).ToList()
                 });
             _mockMapper.Setup(m => m.Map<Thread>(It.IsAny<DomainModels.Thread>()))
                 .Returns((DomainModels.Thread model) => new Thread
@@ -43,12 +45,80 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     ThreadId = model.ThreadId,
                     CharacterId = model.CharacterId,
                     UserTitle = model.UserTitle,
-                    IsArchived = model.IsArchived
+                    IsArchived = model.IsArchived,
+                    ThreadTags = model.ThreadTags?.Select(t => new ThreadTag { TagText = t.TagText }).ToList()
                 });
 
             var threadList = BuildThreadList();
             _mockThreadRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Thread, bool>>>(y => threadList.Any(y.Compile())), It.IsAny<List<string>>())).Returns((Expression<Func<Thread, bool>> predicate, List<string> navigationProperties) => threadList.Where(predicate.Compile()));
             _threadService = new ThreadService();
+        }
+
+        private List<Thread> BuildThreadListWithTags()
+        {
+            var tag1 = new ThreadTag
+            {
+                TagText = "Tag1"
+            };
+            var tag2 = new ThreadTag
+            {
+                TagText = "Tag2",
+            };
+            var tag3 = new ThreadTag
+            {
+                TagText = "Tag3"
+            };
+            var tag4 = new ThreadTag
+            {
+                TagText = "Tag4"
+            };
+            var thread1 = new Thread
+            {
+                Character = new Character { UserId = "12345" },
+                ThreadId = 1,
+                ThreadTags = new List<ThreadTag>
+                    {
+                        tag1,
+                        tag2,
+                    }
+            };
+            var thread2 = new Thread()
+            {
+                Character = new Character { UserId = "12345" },
+                ThreadId = 2,
+                ThreadTags = new List<ThreadTag>
+                    {
+                        tag2,
+                        tag3
+                    }
+            };
+            var thread3 = new Thread()
+            {
+                Character = new Character { UserId = "12345" },
+                ThreadId = 3,
+                ThreadTags = new List<ThreadTag>
+                    {
+                        tag1,
+                        tag3
+                    }
+            };
+            var anotherUsersThread = new Thread
+            {
+                Character = new Character { UserId = "23456" },
+                ThreadId = 4,
+                ThreadTags = new List<ThreadTag>
+                    {
+                        tag2,
+                        tag4
+                    }
+            };
+            return new List<Thread>
+                {
+                    thread1,
+                    thread2,
+                    thread3,
+                    anotherUsersThread
+                };
         }
 
         private List<Thread> BuildThreadList()
@@ -250,6 +320,172 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 result[1].Should().HaveCount(3);
                 result[2].Should().HaveCount(3);
                 result[3].Should().HaveCount(3);
+            }
+        }
+
+        public class AssertUserOwnsThread : ThreadServiceTests
+        {
+            [Fact]
+            public void ThrowsExceptionIfThreadDoesNotExistForUser()
+            {
+                // Arrange
+                var character = new Character
+                {
+                    UserId = "54321",
+                    CharacterId = 13579
+                };
+                var thread = new Thread
+                {
+                    CharacterId = 13579,
+                    ThreadId = 97531,
+                    Character = character
+                };
+                _mockThreadRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => y.Compile()(thread)))).Returns(true);
+                _mockThreadRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => !y.Compile()(thread)))).Returns(false);
+
+                // Act/Assert
+                Assert.Throws<ThreadNotFoundException>(() => _threadService.AssertUserOwnsThread(97531, "12345", _mockThreadRepository.Object));
+            }
+
+            [Fact]
+            public void ThrowsNoExceptionIfThreadExistsForUser()
+            {
+                // Arrange
+                var character = new Character
+                {
+                    UserId = "12345",
+                    CharacterId = 13579
+                };
+                var thread = new Thread
+                {
+                    CharacterId = 13579,
+                    ThreadId = 97531,
+                    Character = character
+                };
+                _mockThreadRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => y.Compile()(thread)))).Returns(true);
+                _mockThreadRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => !y.Compile()(thread)))).Returns(false);
+
+                // Act
+                _threadService.AssertUserOwnsThread(97531, "12345", _mockThreadRepository.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => y.Compile()(thread))), Times.Once);
+            }
+        }
+
+        public class UpdateThread : ThreadServiceTests
+        {
+            [Fact]
+            public void UpdatesThreadInRepository()
+            {
+                // Arrange
+                var thread = new DomainModels.Thread
+                {
+                    CharacterId = 13579,
+                    ThreadId = 12345,
+                    UserTitle = "Test Thread",
+                    IsArchived = true
+                };
+                _mockThreadRepository.Setup(r => r.Update("12345", It.IsAny<Thread>())).Returns((string threadId, Thread entity) => entity);
+
+                // Act
+                var result = _threadService.UpdateThread(thread, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.Update("12345", It.Is<Thread>(t => t.CharacterId == 13579 && t.ThreadId == 12345 && t.UserTitle == "Test Thread" && t.IsArchived)), Times.Once);
+                result.ThreadId.Should().Be(12345);
+                result.UserTitle.Should().Be("Test Thread");
+                result.CharacterId.Should().Be(13579);
+                result.IsArchived.Should().Be(true);
+            }
+        }
+
+        public class DeleteThread : ThreadServiceTests
+        {
+            [Fact]
+            public void ThrowsExceptionIfThreadDoesNotExist()
+            {
+                // Arrange
+                _mockThreadRepository.Setup(r => r.GetWhere(It.IsAny<Expression<Func<Thread, bool>>>(), It.IsAny<List<string>>())).Returns(new List<Thread>());
+
+                // Act/Assert
+                Assert.Throws<ThreadNotFoundException>(() => _threadService.DeleteThread(13579, _mockThreadRepository.Object));
+            }
+
+            [Fact]
+            public void DeletesThreadIfExists()
+            {
+                // Arrange
+                var thread = new Thread
+                {
+                    ThreadId = 13579,
+                    UserTitle = "Test Thread"
+                };
+                _mockThreadRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Thread, bool>>>(y => y.Compile()(thread)), It.IsAny<List<string>>())).Returns(new List<Thread> { thread });
+
+                // Act
+                _threadService.DeleteThread(13579, _mockThreadRepository.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.Delete(thread), Times.Once);
+            }
+        }
+
+        public class CreateThread : ThreadServiceTests
+        {
+            [Fact]
+            public void InsertsNewThreadInRepository()
+            {
+                // Arrange
+                var thread = new DomainModels.Thread
+                {
+                    CharacterId = 12345,
+                    UserTitle = "Test Thread"
+                };
+                _mockThreadRepository.Setup(r => r.Create(It.IsAny<Thread>())).Returns((Thread entity) => entity);
+
+                // Act
+                var result = _threadService.CreateThread(thread, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.Create(It.Is<Thread>(t => t.UserTitle == "Test Thread" && t.CharacterId == 12345)), Times.Once);
+                result.CharacterId.Should().Be(12345);
+                result.UserTitle.Should().Be("Test Thread");
+            }
+        }
+
+        public class GetAllTags : ThreadServiceTests
+        {
+            [Fact]
+            public void GetsDeduplicatedListOfTagsBelongingToUser()
+            {
+                // Arrange
+                var threadList = BuildThreadListWithTags();
+                _mockThreadRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Thread, bool>>>(y => threadList.Any(y.Compile())), It.IsAny<List<string>>())).Returns((Expression<Func<Thread, bool>> predicate, List<string> navigationProperties) => threadList.Where(predicate.Compile()));
+
+                // Act
+                var tags = _threadService.GetAllTags("12345", _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                tags.Should().HaveCount(3);
+                tags.Should().Contain("Tag1");
+                tags.Should().Contain("Tag2");
+                tags.Should().Contain("Tag3");
+            }
+
+            [Fact]
+            public void ReturnsEmptyListWhenNoTagsFoundForUser()
+            {
+                // Arrange
+                var threadList = BuildThreadListWithTags();
+                threadList.ForEach(t => t.ThreadTags = new List<ThreadTag>());
+                _mockThreadRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Thread, bool>>>(y => threadList.Any(y.Compile())), It.IsAny<List<string>>())).Returns((Expression<Func<Thread, bool>> predicate, List<string> navigationProperties) => threadList.Where(predicate.Compile()));
+
+                // Act
+                var tags = _threadService.GetAllTags("12345", _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                tags.Should().HaveCount(0);
             }
         }
     }

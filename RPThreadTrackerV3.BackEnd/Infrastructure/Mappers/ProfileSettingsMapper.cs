@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
 {
+    using System.Diagnostics.CodeAnalysis;
     using AutoMapper;
     using Data.Entities;
     using Models.DomainModels;
@@ -14,6 +15,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
     /// Mapping class for mapping between view model, domain model, and entity representations of user profile settings.
     /// </summary>
     /// <seealso cref="Profile" />
+    [ExcludeFromCodeCoverage]
 	public class ProfileSettingsMapper : Profile
 	{
         /// <summary>

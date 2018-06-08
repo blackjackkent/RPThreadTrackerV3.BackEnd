@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
 {
+    using System.Diagnostics.CodeAnalysis;
     using AutoMapper;
     using Microsoft.AspNetCore.Identity;
     using Models.DomainModels;
@@ -14,6 +15,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
     /// Mapping class for mapping between view model, domain model, and entity representations of characters.
     /// </summary>
     /// <seealso cref="Profile" />
+    [ExcludeFromCodeCoverage]
 	public class UserMapper : Profile
 	{
         /// <summary>
