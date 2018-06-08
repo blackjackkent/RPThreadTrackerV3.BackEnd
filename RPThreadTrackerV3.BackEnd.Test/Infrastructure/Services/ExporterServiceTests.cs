@@ -59,7 +59,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Assert
                 result.Workbook.Worksheets.Should().HaveCount(0);
             }
-            
+
             [Fact]
             public void ProducesWorksheetForEachCharacterWithThreads()
             {
@@ -91,7 +91,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     { 12345, new List<Thread> { new Thread { IsArchived = false } } },
                     { 23456, new List<Thread>() },
-                    { 34567, new List<Thread> { new Thread {IsArchived = true} } }
+                    { 34567, new List<Thread> { new Thread { IsArchived = true } } }
                 };
 
                 // Act

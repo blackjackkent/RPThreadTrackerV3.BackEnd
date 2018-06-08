@@ -60,7 +60,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// </summary>
         /// <param name="refreshToken">The refresh token.</param>
         /// <param name="refreshTokenRepository">The refresh token repository.</param>
-        /// 
         /// <returns>The <see cref="IdentityUser"/> associated with the given refresh token.</returns>
         IdentityUser GetUserForRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository);
 
@@ -176,7 +175,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// </summary>
         /// <param name="refreshToken">The refresh token to be revoked.</param>
         /// <param name="refreshTokenRepository">The refresh token repository.</param>
-        /// 
         void RevokeRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>

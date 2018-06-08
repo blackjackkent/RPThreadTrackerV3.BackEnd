@@ -7,23 +7,16 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
 {
     using System.Collections.Generic;
     using Interfaces.Data;
+    using Microsoft.Azure.Documents;
     using Newtonsoft.Json;
 
     /// <summary>
     /// Data-layer representation of a user's settings for a particular public thread view.
     /// </summary>
     /// <seealso cref="IDocument" />
-    public class PublicView : IDocument
+    /// <seealso cref="Document" />
+    public class PublicView : Document, IDocument
     {
-        /// <summary>
-        /// Gets or sets the unique identifier of the public view.
-        /// </summary>
-        /// <value>
-        /// The unique identifier of the public view.
-        /// </value>
-        [JsonProperty(PropertyName = "id")]
-        public string Id { get; set; }
-
         /// <summary>
         /// Gets or sets the name of the public view.
         /// </summary>

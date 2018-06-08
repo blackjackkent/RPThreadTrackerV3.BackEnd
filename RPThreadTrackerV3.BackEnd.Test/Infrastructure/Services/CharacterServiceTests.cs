@@ -16,6 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using Interfaces.Data;
     using Moq;
     using Xunit;
+    using DomainModels = BackEnd.Models.DomainModels;
 
     [Trait("Class", "CharacterService")]
     public class CharacterServiceTests
@@ -28,16 +29,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         {
             _mockCharacterRepository = new Mock<IRepository<Character>>();
             _mockMapper = new Mock<IMapper>();
-            _mockMapper.Setup(m => m.Map<BackEnd.Models.DomainModels.Character>(It.IsAny<Character>()))
-                .Returns((Character entity) => new BackEnd.Models.DomainModels.Character
+            _mockMapper.Setup(m => m.Map<DomainModels.Character>(It.IsAny<Character>()))
+                .Returns((Character entity) => new DomainModels.Character
                 {
                     UserId = entity.UserId,
                     CharacterId = entity.CharacterId,
                     CharacterName = entity.CharacterName,
                     IsOnHiatus = entity.IsOnHiatus
                 });
-            _mockMapper.Setup(m => m.Map<Character>(It.IsAny<BackEnd.Models.DomainModels.Character>()))
-                .Returns((BackEnd.Models.DomainModels.Character model) => new Character
+            _mockMapper.Setup(m => m.Map<Character>(It.IsAny<DomainModels.Character>()))
+                .Returns((DomainModels.Character model) => new Character
                 {
                     UserId = model.UserId,
                     CharacterId = model.CharacterId,
@@ -154,7 +155,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void InsertsNewCharacterInRepository()
             {
                 // Arrange
-                var character = new BackEnd.Models.DomainModels.Character
+                var character = new DomainModels.Character
                 {
                     UserId = "12345",
                     CharacterName = "Test Character"
@@ -177,7 +178,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void UpdatesCharacterInRepository()
             {
                 // Arrange
-                var character = new BackEnd.Models.DomainModels.Character
+                var character = new DomainModels.Character
                 {
                     CharacterId = 13579,
                     UserId = "12345",

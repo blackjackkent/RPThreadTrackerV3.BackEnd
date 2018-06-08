@@ -18,7 +18,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 
     /// <inheritdoc cref="IDocumentRepository{T}" />
     public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
-        where T : class, IDocument
+        where T : Document, IDocument
     {
         private readonly string _databaseId;
         private readonly string _collectionId;
@@ -76,15 +76,17 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         }
 
         /// <inheritdoc />
-        public async Task<Document> CreateItemAsync(T item)
+        public async Task<T> CreateItemAsync(T item)
         {
-            return await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
+            var result = await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
+            return (T)result;
         }
 
         /// <inheritdoc />
-        public async Task<Document> UpdateItemAsync(string id, T item)
+        public async Task<T> UpdateItemAsync(string id, T item)
         {
-            return await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
+            var result = await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
+            return (T)result;
         }
 
         /// <inheritdoc />

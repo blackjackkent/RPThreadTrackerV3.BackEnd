@@ -26,7 +26,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         /// A task that represents the asynchronous operation.
         /// The task result contains the created document.
         /// </returns>
-        Task<Document> CreateItemAsync(T item);
+        Task<T> CreateItemAsync(T item);
 
         /// <summary>
         /// Deletes the document with the given ID from the document store.
@@ -66,6 +66,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         /// A task that represents the asynchronous operation.
         /// The task result contains the updated document.
         /// </returns>
-        Task<Document> UpdateItemAsync(string id, T item);
+        Task<T> UpdateItemAsync(string id, T item);
     }
 }

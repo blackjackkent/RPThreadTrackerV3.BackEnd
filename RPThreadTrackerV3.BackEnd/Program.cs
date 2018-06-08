@@ -25,7 +25,7 @@ namespace RPThreadTrackerV3.BackEnd
         /// </summary>
         /// <param name="args">The application arguments.</param>
         public static void Main(string[] args)
-		{
+	{
 			var host = BuildWebHost(args);
 			SeedDatabase(host);
 			host.Run();
