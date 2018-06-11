@@ -15,7 +15,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     /// </summary>
     /// <seealso cref="ExceptionFilterAttribute" />
     [AttributeUsage(AttributeTargets.All)]
-	public class GlobalExceptionHandlerAttribute : ExceptionFilterAttribute
+    [ExcludeFromCodeCoverage]
+    public class GlobalExceptionHandlerAttribute : ExceptionFilterAttribute
     {
 	    private readonly ILogger<GlobalExceptionHandlerAttribute> _logger;
 
@@ -23,7 +24,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// Initializes a new instance of the <see cref="GlobalExceptionHandlerAttribute"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        [ExcludeFromCodeCoverage]
         public GlobalExceptionHandlerAttribute(ILogger<GlobalExceptionHandlerAttribute> logger)
 	    {
 		    _logger = logger;

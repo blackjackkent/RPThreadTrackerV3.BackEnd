@@ -15,6 +15,13 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.Auth
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthToken"/> class.
         /// </summary>
+        public AuthToken()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AuthToken"/> class.
+        /// </summary>
         /// <param name="token">The security token string</param>
         /// <param name="expiry">The DateTime at which the token will expire</param>
         public AuthToken(string token, DateTime expiry)

@@ -51,7 +51,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.RequestModels
         /// Throws an exception if the registration request is not valid.
         /// </summary>
         /// <exception cref="InvalidRegistrationException">Thrown if the registration request is not valid.</exception>
-        public void AssertIsValid()
+        public virtual void AssertIsValid()
 	    {
 	        var errors = new List<string>();
 	        if (string.IsNullOrWhiteSpace(Username))

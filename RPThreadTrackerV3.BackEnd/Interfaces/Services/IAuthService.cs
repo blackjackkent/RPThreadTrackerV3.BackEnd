@@ -157,7 +157,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <returns>
         /// A task that represents the asynchronous operation.
         /// </returns>
-        Task CreateUser(IdentityUser user, string password, UserManager<IdentityUser> userManager);
+        Task<IdentityUser> CreateUser(IdentityUser user, string password, UserManager<IdentityUser> userManager);
 
         /// <summary>
         /// Adds the user to a given role.

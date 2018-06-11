@@ -61,7 +61,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
                 ((StatusCodeResult)_mockContext.Result).StatusCode.Should().Be(503);
             }
 
-
             [Fact]
             public void DoesNotTrigger503StatusCodeWhenMaintenanceModeNotEnabledInConfig()
             {

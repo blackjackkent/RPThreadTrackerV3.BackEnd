@@ -11,14 +11,6 @@ namespace RPThreadTrackerV3.BackEnd.Models.RequestModels
     public class RefreshTokenRequest
     {
         /// <summary>
-        /// Gets or sets the username.
-        /// </summary>
-        /// <value>
-        /// The username.
-        /// </value>
-        public string Username { get; set; }
-
-        /// <summary>
         /// Gets or sets the refresh token.
         /// </summary>
         /// <value>

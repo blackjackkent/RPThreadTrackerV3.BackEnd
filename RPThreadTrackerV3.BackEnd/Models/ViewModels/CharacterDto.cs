@@ -75,7 +75,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
         /// Throws an exception if the character model is not valid.
         /// </summary>
         /// <exception cref="InvalidCharacterException">Thrown if the character model is not valid.</exception>
-        public void AssertIsValid()
+        public virtual void AssertIsValid()
 		{
 			if (!Enum.IsDefined(typeof(Platform), PlatformId))
 			{

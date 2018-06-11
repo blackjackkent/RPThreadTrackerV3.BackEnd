@@ -220,13 +220,15 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 
         /// <inheritdoc />
         /// <exception cref="InvalidRegistrationException">Thrown if the registration request could not be completed.</exception>
-        public async Task CreateUser(IdentityUser user, string password, UserManager<IdentityUser> userManager)
+        public async Task<IdentityUser> CreateUser(IdentityUser user, string password, UserManager<IdentityUser> userManager)
         {
             var result = await userManager.CreateAsync(user, password);
             if (!result.Succeeded)
             {
                 throw new InvalidRegistrationException(result.Errors.Select(e => e.Description).ToList());
             }
+
+            return user;
         }
 
         /// <inheritdoc />

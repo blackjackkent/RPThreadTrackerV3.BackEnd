@@ -16,9 +16,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Models.RequestModels;
+    using Models.ViewModels.Auth;
 
     /// <summary>
     /// Controller class for authentication-related behavior.
@@ -90,10 +90,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		        await _authService.ValidatePassword(user, model.Password, _userManager);
 		        var jwt = await _authService.GenerateJwt(user, _userManager, _config);
 		        var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
-		        return Ok(new
+		        return Ok(new AuthTokenCollection
 		        {
-		            token = jwt,
-		            refresh_token = refreshToken
+		            Token = jwt,
+		            RefreshToken = refreshToken
 		        });
 		    }
 		    catch (UserNotFoundException)
@@ -135,10 +135,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	            var user = _authService.GetUserForRefreshToken(model.RefreshToken, _refreshTokenRepository);
 	            var jwt = await _authService.GenerateJwt(user, _userManager, _config);
 	            var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
-	            return Ok(new
+	            return Ok(new AuthTokenCollection
 	            {
-	                token = jwt,
-	                refresh_token = refreshToken
+	                Token = jwt,
+	                RefreshToken = refreshToken
 	            });
 	        }
 	        catch (InvalidRefreshTokenException)
@@ -203,9 +203,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		            SecurityStamp = Guid.NewGuid().ToString()
 		        };
 		        await _authService.AssertUserInformationDoesNotExist(model.Username, model.Email, _userManager);
-		        await _authService.CreateUser(user, model.Password, _userManager);
-		        await _authService.AddUserToRole(user, RoleConstants.USER_ROLE, _userManager);
-		        _authService.InitProfileSettings(user.Id, _profileSettingsRepository);
+		        var createdUser = await _authService.CreateUser(user, model.Password, _userManager);
+		        await _authService.AddUserToRole(createdUser, RoleConstants.USER_ROLE, _userManager);
+		        _authService.InitProfileSettings(createdUser.Id, _profileSettingsRepository);
 		        _logger.LogInformation(3, $"User {model.Username} created a new account with password.");
 		        return Ok();
 		    }
