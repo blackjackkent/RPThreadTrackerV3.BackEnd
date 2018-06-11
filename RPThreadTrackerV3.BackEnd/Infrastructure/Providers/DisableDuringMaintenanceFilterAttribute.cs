@@ -11,6 +11,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Models.Configuration;
+    using Services;
 
     /// <summary>
     /// Filter attribute which enforces 503 responses from all controllers when
@@ -21,14 +23,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     public class DisableDuringMaintenanceFilterAttribute : ActionFilterAttribute
     {
         private readonly ILogger<DisableDuringMaintenanceFilterAttribute> _logger;
-        private readonly IConfigurationService _config;
+        private readonly AppSettings _config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DisableDuringMaintenanceFilterAttribute"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="config">The configuration.</param>
-        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, IConfigurationService config)
+        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, AppSettings config)
         {
             _logger = logger;
             _config = config;
@@ -37,7 +39,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// <inheritdoc />
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (_config.MaintenanceMode)
+            if (_config.Maintenance.MaintenanceMode)
             {
                 _logger.LogInformation($"Returning 503 result for maintenance mode: {DateTime.UtcNow}");
                 context.Result = new StatusCodeResult(503);

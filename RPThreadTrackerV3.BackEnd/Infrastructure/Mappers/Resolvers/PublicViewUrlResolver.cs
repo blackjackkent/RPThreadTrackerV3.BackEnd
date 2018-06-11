@@ -8,6 +8,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers.Resolvers
     using AutoMapper;
     using Interfaces.Services;
     using Microsoft.Extensions.Configuration;
+    using Models.Configuration;
     using Models.DomainModels.PublicViews;
     using Models.ViewModels.PublicViews;
 
@@ -17,13 +18,13 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers.Resolvers
     /// <seealso cref="IValueResolver{TSource,TDestination,TDestMember}"/>
     public class PublicViewUrlResolver : IValueResolver<PublicView, PublicViewDto, string>
     {
-        private readonly IConfigurationService _config;
+        private readonly AppSettings _config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PublicViewUrlResolver"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public PublicViewUrlResolver(IConfigurationService config)
+        public PublicViewUrlResolver(AppSettings config)
         {
             _config = config;
         }
@@ -40,7 +41,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers.Resolvers
         /// </returns>
         public string Resolve(PublicView source, PublicViewDto destination, string destMember, ResolutionContext context)
         {
-            var baseUrl = _config.CorsUrl;
+            var baseUrl = _config.Cors.CorsUrl;
             return baseUrl + "/public/" + source.Slug;
         }
     }

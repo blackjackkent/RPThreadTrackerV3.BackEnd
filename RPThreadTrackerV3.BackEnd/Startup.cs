@@ -27,6 +27,7 @@ namespace RPThreadTrackerV3.BackEnd
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Logging;
     using Microsoft.IdentityModel.Tokens;
+    using Models.Configuration;
     using NLog;
     using NLog.Extensions.Logging;
     using NLog.Web;
@@ -82,12 +83,13 @@ namespace RPThreadTrackerV3.BackEnd
 				{
 					options.SlidingExpiration = true;
 				});
+		    services.Configure<AppSettings>(Configuration);
+
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IThreadService, ThreadService>();
 			services.AddScoped<ICharacterService, CharacterService>();
 			services.AddScoped<IExporterService, ExporterService>();
 		    services.AddScoped<IPublicViewService, PublicViewService>();
-		    services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<IEmailClient, SendGridEmailClient>();
 			services.AddScoped<IRepository<Thread>, ThreadRepository>();
 		    services.AddScoped<IRepository<Thread>, ThreadRepository>();

@@ -5,8 +5,10 @@
 
 namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 {
+    using Infrastructure.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
+    using Models.Configuration;
     using Models.ViewModels;
 
     /// <summary>
@@ -14,15 +16,15 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
     /// </summary>
     public interface IEmailBuilder
 	{
-        /// <summary>
-        /// Builds the forgot password email.
-        /// </summary>
-        /// <param name="user">The user to whom the email should be sent.</param>
-        /// <param name="urlRoot">The URL root of the front-end site.</param>
-        /// <param name="code">The password reset code.</param>
-        /// <param name="config">The app configuration.</param>
-        /// <returns><see cref="EmailDto"/> object containing information about the message to be sent.</returns>
-        EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfigurationService config);
+	    /// <summary>
+	    /// Builds the forgot password email.
+	    /// </summary>
+	    /// <param name="user">The user to whom the email should be sent.</param>
+	    /// <param name="urlRoot">The URL root of the front-end site.</param>
+	    /// <param name="code">The password reset code.</param>
+	    /// <param name="config">The app configuration.</param>
+	    /// <returns><see cref="EmailDto"/> object containing information about the message to be sent.</returns>
+	    EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, AppSettings config);
 
         /// <summary>
         /// Builds the "Contact Us" email.
@@ -32,6 +34,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="message">The message.</param>
         /// <param name="config">The configuration.</param>
         /// <returns><see cref="EmailDto"/> object containing information about the message to be sent.</returns>
-        EmailDto BuildContactEmail(string email, string username, string message, IConfigurationService config);
+        EmailDto BuildContactEmail(string email, string username, string message, AppSettings config);
 	}
 }

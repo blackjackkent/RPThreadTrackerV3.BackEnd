@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 {
     using BackEnd.Infrastructure.Services;
+    using BackEnd.Models.Configuration;
     using FluentAssertions;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
@@ -16,11 +17,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     public class EmailBuilderTests
     {
         private readonly EmailBuilder _emailBuilder;
-        private readonly Mock<IConfigurationService> _mockConfig;
+        private readonly AppSettings _mockConfig;
 
         public EmailBuilderTests()
         {
-            _mockConfig = new Mock<IConfigurationService>();
+            _mockConfig = new AppSettings();
             _emailBuilder = new EmailBuilder();
         }
 
@@ -34,9 +35,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     Email = "test@test.com"
                 };
-                _mockConfig.SetupGet(x => x.ForgotPasswordEmailFromAddress).Returns("forgotpassword@email.com");
+                _mockConfig.Secure.ForgotPasswordEmailFromAddress = "forgotpassword@email.com";
 
-                var dto = _emailBuilder.BuildForgotPasswordEmail(user, "http://www.rpthreadtracker.com", "12345", _mockConfig.Object);
+                var dto = _emailBuilder.BuildForgotPasswordEmail(user, "http://www.rpthreadtracker.com", "12345", _mockConfig);
 
                 dto.Subject.Should().Be("RPThreadTracker Password Reset");
                 dto.RecipientEmail.Should().Be("test@test.com");
@@ -53,9 +54,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void BuildsEmailWithMessage()
             {
                 // Arrange
-                _mockConfig.SetupGet(x => x.ContactFormEmailToAddress).Returns("contact@email.com");
+                _mockConfig.Secure.ContactFormEmailToAddress = "contact@email.com";
 
-                var dto = _emailBuilder.BuildContactEmail("user@email.com", "my-username", "This is my message.\r\nThis is the second line.", _mockConfig.Object);
+                var dto = _emailBuilder.BuildContactEmail("user@email.com", "my-username", "This is my message.\r\nThis is the second line.", _mockConfig);
 
                 dto.Subject.Should().Be("RPThreadTracker Contact Form Submission");
                 dto.RecipientEmail.Should().Be("contact@email.com");

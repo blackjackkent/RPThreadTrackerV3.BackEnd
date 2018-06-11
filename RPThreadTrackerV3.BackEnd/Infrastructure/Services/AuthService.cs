@@ -22,6 +22,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Microsoft.IdentityModel.Tokens;
+    using Models.Configuration;
     using Models.DomainModels;
     using Models.ViewModels.Auth;
 
@@ -42,15 +43,15 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 	    }
 
         /// <inheritdoc />
-        public async Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfigurationService config)
+        public async Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, AppSettings config)
 	    {
 		    var claims = await GetUserClaims(user, userManager);
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.JwtTokenKey));
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Tokens.Key));
 		    var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-	        var expiry = DateTime.UtcNow.AddMinutes(config.JwtAccessTokenExpirationMinutes);
+	        var expiry = DateTime.UtcNow.AddMinutes(config.Tokens.AccessExpireMinutes);
             var token = new JwtSecurityToken(
-		        config.JwtTokenIssuer,
-		        config.JwtTokenAudience,
+		        config.Tokens.Issuer,
+		        config.Tokens.Audience,
 			    claims,
 			    expires: expiry,
 			    signingCredentials: creds);
@@ -59,7 +60,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 	    }
 
         /// <inheritdoc />
-        public AuthToken GenerateRefreshToken(IdentityUser user, IConfigurationService config, IRepository<RefreshToken> refreshTokenRepository)
+        public AuthToken GenerateRefreshToken(IdentityUser user, AppSettings config, IRepository<RefreshToken> refreshTokenRepository)
         {
             var now = DateTime.UtcNow;
             var claims = new[]
@@ -68,12 +69,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.JwtTokenKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.Tokens.Key));
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var expiry = now.AddMinutes(config.JwtRefreshTokenExpirationMinutes);
+            var expiry = now.AddMinutes(config.Tokens.RefreshExpireMinutes);
             var jwt = new JwtSecurityToken(
-                config.JwtTokenIssuer,
-                config.JwtTokenAudience,
+                config.Tokens.Issuer,
+                config.Tokens.Audience,
                 claims,
                 expires: expiry,
                 signingCredentials: signingCredentials);

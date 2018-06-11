@@ -7,6 +7,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
 {
     using System.Collections.Generic;
     using BackEnd.Infrastructure.Providers;
+    using BackEnd.Infrastructure.Services;
+    using BackEnd.Models.Configuration;
     using FluentAssertions;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Http;
@@ -22,14 +24,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
     public class DisableDuringMaintenanceFilterAttributeTests
     {
         private readonly Mock<ILogger<DisableDuringMaintenanceFilterAttribute>> _mockLogger;
-        private readonly Mock<IConfigurationService> _mockConfig;
+        private readonly AppSettings _mockConfig;
         private readonly DisableDuringMaintenanceFilterAttribute _filter;
         private readonly ActionExecutingContext _mockContext;
 
         public DisableDuringMaintenanceFilterAttributeTests()
         {
             _mockLogger = new Mock<ILogger<DisableDuringMaintenanceFilterAttribute>>();
-            _mockConfig = new Mock<IConfigurationService>();
+            _mockConfig = new AppSettings();
             _mockContext = new ActionExecutingContext(
                 new ActionContext
                 {
@@ -43,7 +45,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
             {
                 Result = new OkResult()
             };
-            _filter = new DisableDuringMaintenanceFilterAttribute(_mockLogger.Object, _mockConfig.Object);
+            _filter = new DisableDuringMaintenanceFilterAttribute(_mockLogger.Object, _mockConfig);
         }
 
         public class OnActionExecuting : DisableDuringMaintenanceFilterAttributeTests
@@ -52,7 +54,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
             public void Triggers503StatusCodeWhenMaintenanceModeEnabledInConfig()
             {
                 // Arrange
-                _mockConfig.SetupGet(x => x.MaintenanceMode).Returns(true);
+                _mockConfig.Maintenance.MaintenanceMode = true;
 
                 // Act
                 _filter.OnActionExecuting(_mockContext);
@@ -65,7 +67,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
             public void DoesNotTrigger503StatusCodeWhenMaintenanceModeNotEnabledInConfig()
             {
                 // Arrange
-                _mockConfig.SetupGet(x => x.MaintenanceMode).Returns(false);
+                _mockConfig.Maintenance.MaintenanceMode = false;
 
                 // Act
                 _filter.OnActionExecuting(_mockContext);

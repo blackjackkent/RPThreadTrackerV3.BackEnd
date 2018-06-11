@@ -13,6 +13,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using BackEnd.Infrastructure.Data.Entities;
     using BackEnd.Infrastructure.Enums;
     using BackEnd.Infrastructure.Exceptions.Account;
+    using BackEnd.Infrastructure.Services;
+    using BackEnd.Models.Configuration;
     using BackEnd.Models.RequestModels;
     using BackEnd.Models.ViewModels.Auth;
     using FluentAssertions;
@@ -30,7 +32,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     {
         private readonly Mock<ILogger<AuthController>> _mockLogger;
         private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
-        private readonly Mock<IConfigurationService> _mockConfig;
+        private readonly AppSettings _mockConfig;
         private readonly Mock<IAuthService> _mockAuthService;
         private readonly Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
         private readonly Mock<IEmailClient> _mockEmailClient;
@@ -42,13 +44,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockLogger = new Mock<ILogger<AuthController>>();
             var userStoreMock = new Mock<IUserStore<IdentityUser>>();
             _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
-            _mockConfig = new Mock<IConfigurationService>();
+            _mockConfig = new AppSettings();
             _mockAuthService = new Mock<IAuthService>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();
             _mockEmailClient = new Mock<IEmailClient>();
             _mockEmailBuilder = new Mock<IEmailBuilder>();
             _mockRefreshTokenRepository = new Mock<IRepository<Entities.RefreshToken>>();
-            Controller = new AuthController(_mockLogger.Object, _mockUserManager.Object, _mockConfig.Object, _mockAuthService.Object, _mockProfileSettingsRepository.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockRefreshTokenRepository.Object);
+            Controller = new AuthController(_mockLogger.Object, _mockUserManager.Object, _mockConfig, _mockAuthService.Object, _mockProfileSettingsRepository.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockRefreshTokenRepository.Object);
         }
 
         public class CreateToken : AuthControllerTests
@@ -101,7 +103,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     Password = "my-password"
                 };
                 _mockAuthService
-                    .Setup(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig.Object))
+                    .Setup(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig))
                     .Throws<NullReferenceException>();
 
                 // Act
@@ -132,10 +134,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     Expiry = 54321
                 };
                 _mockAuthService
-                    .Setup(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig.Object))
+                    .Setup(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig))
                     .ReturnsAsync(token);
                 _mockAuthService
-                    .Setup(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig.Object, _mockRefreshTokenRepository.Object))
+                    .Setup(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig, _mockRefreshTokenRepository.Object))
                     .Returns(refreshToken);
 
                 // Act
@@ -210,10 +212,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     Expiry = 54321
                 };
                 _mockAuthService
-                    .Setup(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig.Object))
+                    .Setup(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig))
                     .ReturnsAsync(token);
                 _mockAuthService
-                    .Setup(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig.Object, _mockRefreshTokenRepository.Object))
+                    .Setup(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig, _mockRefreshTokenRepository.Object))
                     .Returns(refreshToken);
 
                 // Act

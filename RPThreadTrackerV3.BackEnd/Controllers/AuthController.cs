@@ -12,11 +12,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Infrastructure.Data.Entities;
     using Infrastructure.Enums;
     using Infrastructure.Exceptions.Account;
+    using Infrastructure.Services;
     using Interfaces.Data;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Models.Configuration;
     using Models.RequestModels;
     using Models.ViewModels.Auth;
 
@@ -28,7 +30,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	{
 		private readonly ILogger<AuthController> _logger;
 		private readonly UserManager<IdentityUser> _userManager;
-		private readonly IConfigurationService _config;
+		private readonly AppSettings _config;
 		private readonly IAuthService _authService;
 		private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
 		private readonly IEmailClient _emailClient;
@@ -49,7 +51,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         public AuthController(
 	        ILogger<AuthController> logger,
 	        UserManager<IdentityUser> userManager,
-			IConfigurationService config,
+			AppSettings config,
 	        IAuthService authService,
 	        IRepository<ProfileSettingsCollection> profileSettingsRepository,
 			IEmailClient emailClient,
@@ -244,7 +246,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    {
 		        var user = await _authService.GetUserByUsernameOrEmail(model.Email, _userManager);
 		        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-		        var email = _emailBuilder.BuildForgotPasswordEmail(user, _config.CorsUrl, code, _config);
+		        var email = _emailBuilder.BuildForgotPasswordEmail(user, _config.Cors.CorsUrl, code, _config);
 		        await _emailClient.SendEmail(email, _config);
 		        return Ok();
 		    }

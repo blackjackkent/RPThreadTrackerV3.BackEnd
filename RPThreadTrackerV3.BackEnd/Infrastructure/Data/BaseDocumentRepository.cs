@@ -16,6 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
     using Microsoft.Extensions.Configuration;
+    using Models.Configuration;
 
     /// <inheritdoc cref="IDocumentRepository{T}" />
     public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
@@ -29,12 +30,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public BaseDocumentRepository(IConfigurationService config)
+        public BaseDocumentRepository(AppSettings config)
         {
-            var key = config.DocumentsKey;
-            var endpoint = config.DocumentsEndpoint;
-            _databaseId = config.DocumentsDatabaseId;
-            _collectionId = config.DocumentsCollectionId;
+            var key = config.Secure.Documents.Key;
+            var endpoint = config.Secure.Documents.Endpoint;
+            _databaseId = config.Secure.Documents.DatabaseId;
+            _collectionId = config.Secure.Documents.CollectionId;
             _client = new DocumentClient(new Uri(endpoint), key);
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();

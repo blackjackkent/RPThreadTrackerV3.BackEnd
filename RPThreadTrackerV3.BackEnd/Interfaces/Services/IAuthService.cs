@@ -10,8 +10,10 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
     using AutoMapper;
     using Data;
     using Infrastructure.Data.Entities;
+    using Infrastructure.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
+    using Models.Configuration;
     using Models.DomainModels;
     using Models.ViewModels.Auth;
 
@@ -41,7 +43,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// A task that represents the asynchronous operation.
         /// The task result contains an <see cref="AuthToken"/> containing the JWT information.
         /// </returns>
-        Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfigurationService config);
+        Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, AppSettings config);
 
         /// <summary>
         /// Generates a refresh token for the given user.
@@ -53,7 +55,8 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// A task that represents the asynchronous operation.
         /// The task result contains an <see cref="AuthToken" /> containing the refresh token information information.
         /// </returns>
-        AuthToken GenerateRefreshToken(IdentityUser userId, IConfigurationService config, IRepository<RefreshToken> refreshTokenRepository);
+        AuthToken GenerateRefreshToken(IdentityUser userId, AppSettings config,
+            IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>
         /// Gets the user with whom the given refresh token is associated.

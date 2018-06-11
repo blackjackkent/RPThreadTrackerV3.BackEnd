@@ -6,7 +6,9 @@
 namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 {
     using System.Threading.Tasks;
+    using Infrastructure.Services;
     using Microsoft.Extensions.Configuration;
+    using Models.Configuration;
     using Models.ViewModels;
 
     /// <summary>
@@ -14,14 +16,14 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
     /// </summary>
     public interface IEmailClient
 	{
-        /// <summary>
-        /// Sends the email.
-        /// </summary>
-        /// <param name="email">The email.</param>
-        /// <param name="config">The app configuration.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation.
-        /// </returns>
-        Task SendEmail(EmailDto email, IConfigurationService config);
+	    /// <summary>
+	    /// Sends the email.
+	    /// </summary>
+	    /// <param name="email">The email.</param>
+	    /// <param name="config">The app configuration.</param>
+	    /// <returns>
+	    /// A task that represents the asynchronous operation.
+	    /// </returns>
+	    Task SendEmail(EmailDto email, AppSettings config);
 	}
 }
