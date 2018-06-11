@@ -25,7 +25,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     [Route("api/[controller]")]
     public class ContactController : BaseController
     {
-        private readonly IConfiguration _config;
+        private readonly IConfigurationService _config;
         private readonly ILogger<ContactController> _logger;
         private readonly IEmailClient _emailClient;
         private readonly IEmailBuilder _emailBuilder;
@@ -43,7 +43,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <param name="authService">The authentication service.</param>
         /// <param name="userManager">The user manager.</param>
         /// <param name="mapper">The mapper.</param>
-        public ContactController(IConfiguration config, ILogger<ContactController> logger, IEmailClient emailClient, IEmailBuilder emailBuilder, IAuthService authService, UserManager<IdentityUser> userManager, IMapper mapper)
+        public ContactController(IConfigurationService config, ILogger<ContactController> logger, IEmailClient emailClient, IEmailBuilder emailBuilder, IAuthService authService, UserManager<IdentityUser> userManager, IMapper mapper)
         {
             _config = config;
             _logger = logger;

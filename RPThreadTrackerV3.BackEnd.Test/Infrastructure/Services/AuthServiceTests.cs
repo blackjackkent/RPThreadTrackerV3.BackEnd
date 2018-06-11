@@ -18,6 +18,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using BackEnd.Models.DomainModels;
     using FluentAssertions;
     using Interfaces.Data;
+    using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.Extensions.Configuration;
     using Moq;
@@ -28,7 +29,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     {
         private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
         private readonly AuthService _authService;
-        private readonly Mock<IConfiguration> _mockConfig;
+        private readonly Mock<IConfigurationService> _mockConfig;
         private readonly Mock<IRepository<RefreshToken>> _mockRefreshTokenRepository;
         private readonly Mock<IMapper> _mockMapper;
         private readonly Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
@@ -36,7 +37,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public AuthServiceTests()
         {
             var userStoreMock = new Mock<IUserStore<IdentityUser>>();
-            _mockConfig = new Mock<IConfiguration>();
+            _mockConfig = new Mock<IConfigurationService>();
             _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
             _mockRefreshTokenRepository = new Mock<IRepository<RefreshToken>>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();
@@ -117,10 +118,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             {
                 // Arrange
                 _mockUserManager.Setup(u => u.GetClaimsAsync(It.IsAny<IdentityUser>())).ReturnsAsync(new List<Claim>());
-                _mockConfig.SetupGet(x => x["Tokens:Key"]).Returns("oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN");
-                _mockConfig.SetupGet(x => x["Tokens:AccessExpireMinutes"]).Returns("12345");
-                _mockConfig.SetupGet(x => x["Tokens:Audience"]).Returns("tokenaudience");
-                _mockConfig.SetupGet(x => x["Tokens:Issuer"]).Returns("tokenissuer");
+                _mockConfig.SetupGet(x => x.JwtTokenKey).Returns("oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN");
+                _mockConfig.SetupGet(x => x.JwtAccessTokenExpirationMinutes).Returns(12345);
+                _mockConfig.SetupGet(x => x.JwtTokenAudience).Returns("tokenaudience");
+                _mockConfig.SetupGet(x => x.JwtTokenIssuer).Returns("tokenissuer");
                 var user = new IdentityUser
                 {
                     Id = "12345",
@@ -144,10 +145,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             {
                 // Arrange
                 _mockUserManager.Setup(u => u.GetClaimsAsync(It.IsAny<IdentityUser>())).ReturnsAsync(new List<Claim>());
-                _mockConfig.SetupGet(x => x["Tokens:Key"]).Returns("oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN");
-                _mockConfig.SetupGet(x => x["Tokens:RefreshExpireMinutes"]).Returns("12345");
-                _mockConfig.SetupGet(x => x["Tokens:Audience"]).Returns("tokenaudience");
-                _mockConfig.SetupGet(x => x["Tokens:Issuer"]).Returns("tokenissuer");
+                _mockConfig.SetupGet(x => x.JwtTokenKey).Returns("oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN");
+                _mockConfig.SetupGet(x => x.JwtRefreshTokenExpirationMinutes).Returns(12345);
+                _mockConfig.SetupGet(x => x.JwtTokenAudience).Returns("tokenaudience");
+                _mockConfig.SetupGet(x => x.JwtTokenIssuer).Returns("tokenissuer");
                 var user = new IdentityUser
                 {
                     Id = "12345",

@@ -17,7 +17,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     public class EmailBuilder : IEmailBuilder
     {
         /// <inheritdoc />
-        public EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfiguration config)
+        public EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfigurationService config)
 	    {
 		    var resetPasswordUrl = GetResetPasswordLink(urlRoot, user.Email, code);
 		    var result = new EmailDto
@@ -26,18 +26,18 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 			    Subject = "RPThreadTracker Password Reset",
 				Body = GetForgotPasswordHtmlBody(resetPasswordUrl),
 				PlainTextBody = GetForgotPasswordPlainTextBody(resetPasswordUrl),
-                SenderEmail = config["ForgotPasswordEmailFromAddress"],
+                SenderEmail = config.ForgotPasswordEmailFromAddress,
                 SenderName = "RPThreadTracker"
             };
 		    return result;
 	    }
 
         /// <inheritdoc />
-        public EmailDto BuildContactEmail(string userEmail, string username, string modelMessage, IConfiguration config)
+        public EmailDto BuildContactEmail(string userEmail, string username, string modelMessage, IConfigurationService config)
         {
             return new EmailDto
             {
-                RecipientEmail = config["ContactFormEmailToAddress"],
+                RecipientEmail = config.ContactFormEmailToAddress,
                 Body = "<p>You have received a message via RPThreadTracker's contact form:</p>" +
                        Regex.Replace(modelMessage, @"\r\n?|\n", "<br />"),
                 PlainTextBody = "You have received a message via RPThreadTracker's contact form:\n" + modelMessage,

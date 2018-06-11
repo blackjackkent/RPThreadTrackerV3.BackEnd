@@ -78,6 +78,7 @@
     <Rule Id="SA1310" Action="None" />
     <Rule Id="SA1513" Action="None" />
     <Rule Id="SA1401" Action="None" />
+    <Rule Id="SA1124" Action="None" />
   </Rules>
   <Rules AnalyzerId="Microsoft.CodeQuality.CSharp.Analyzers" RuleNamespace="Microsoft.CodeQuality.CSharp.Analyzers">
     <Rule Id="CA1032" Action="None" />

@@ -87,6 +87,7 @@ namespace RPThreadTrackerV3.BackEnd
 			services.AddScoped<ICharacterService, CharacterService>();
 			services.AddScoped<IExporterService, ExporterService>();
 		    services.AddScoped<IPublicViewService, PublicViewService>();
+		    services.AddScoped<IConfigurationService, ConfigurationService>();
             services.AddScoped<IEmailClient, SendGridEmailClient>();
 			services.AddScoped<IRepository<Thread>, ThreadRepository>();
 		    services.AddScoped<IRepository<Thread>, ThreadRepository>();

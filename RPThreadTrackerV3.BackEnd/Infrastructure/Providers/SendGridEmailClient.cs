@@ -26,14 +26,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// Initializes a new instance of the <see cref="SendGridEmailClient"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public SendGridEmailClient(IConfiguration config)
-	    {
-	        var apiKey = config["SendGridAPIKey"];
+        public SendGridEmailClient(IConfigurationService config)
+        {
+            var apiKey = config.SendGridApiKey;
             _client = new SendGridClient(apiKey);
 	    }
 
 	    /// <inheritdoc />
-	    public async Task SendEmail(EmailDto email, IConfiguration config)
+	    public async Task SendEmail(EmailDto email, IConfigurationService config)
 		{
             var from = new EmailAddress(email.SenderEmail, email.SenderName);
             var to = new EmailAddress(email.RecipientEmail);

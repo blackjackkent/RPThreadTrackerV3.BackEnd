@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 {
     using System;
+    using Interfaces.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Configuration;
@@ -20,14 +21,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     public class DisableDuringMaintenanceFilterAttribute : ActionFilterAttribute
     {
         private readonly ILogger<DisableDuringMaintenanceFilterAttribute> _logger;
-        private readonly IConfiguration _config;
+        private readonly IConfigurationService _config;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DisableDuringMaintenanceFilterAttribute"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="config">The configuration.</param>
-        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, IConfiguration config)
+        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, IConfigurationService config)
         {
             _logger = logger;
             _config = config;
@@ -36,7 +37,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// <inheritdoc />
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (_config.GetValue<bool>("MaintenanceMode"))
+            if (_config.MaintenanceMode)
             {
                 _logger.LogInformation($"Returning 503 result for maintenance mode: {DateTime.UtcNow}");
                 context.Result = new StatusCodeResult(503);

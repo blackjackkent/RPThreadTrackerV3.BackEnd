@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Interfaces.Data;
+    using Interfaces.Services;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
@@ -28,12 +29,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public BaseDocumentRepository(IConfiguration config)
+        public BaseDocumentRepository(IConfigurationService config)
         {
-            var key = config["Documents:Key"];
-            var endpoint = config["Documents:Endpoint"];
-            _databaseId = config["Documents:DatabaseId"];
-            _collectionId = config["Documents:CollectionId"];
+            var key = config.DocumentsKey;
+            var endpoint = config.DocumentsEndpoint;
+            _databaseId = config.DocumentsDatabaseId;
+            _collectionId = config.DocumentsCollectionId;
             _client = new DocumentClient(new Uri(endpoint), key);
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();

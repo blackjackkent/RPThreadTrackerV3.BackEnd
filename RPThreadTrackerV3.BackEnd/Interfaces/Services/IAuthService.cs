@@ -41,7 +41,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// A task that represents the asynchronous operation.
         /// The task result contains an <see cref="AuthToken"/> containing the JWT information.
         /// </returns>
-        Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfiguration config);
+        Task<AuthToken> GenerateJwt(IdentityUser user, UserManager<IdentityUser> userManager, IConfigurationService config);
 
         /// <summary>
         /// Generates a refresh token for the given user.
@@ -53,7 +53,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// A task that represents the asynchronous operation.
         /// The task result contains an <see cref="AuthToken" /> containing the refresh token information information.
         /// </returns>
-        AuthToken GenerateRefreshToken(IdentityUser userId, IConfiguration config, IRepository<RefreshToken> refreshTokenRepository);
+        AuthToken GenerateRefreshToken(IdentityUser userId, IConfigurationService config, IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>
         /// Gets the user with whom the given refresh token is associated.

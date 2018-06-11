@@ -22,7 +22,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="code">The password reset code.</param>
         /// <param name="config">The app configuration.</param>
         /// <returns><see cref="EmailDto"/> object containing information about the message to be sent.</returns>
-        EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfiguration config);
+        EmailDto BuildForgotPasswordEmail(IdentityUser user, string urlRoot, string code, IConfigurationService config);
 
         /// <summary>
         /// Builds the "Contact Us" email.
@@ -32,6 +32,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="message">The message.</param>
         /// <param name="config">The configuration.</param>
         /// <returns><see cref="EmailDto"/> object containing information about the message to be sent.</returns>
-        EmailDto BuildContactEmail(string email, string username, string message, IConfiguration config);
+        EmailDto BuildContactEmail(string email, string username, string message, IConfigurationService config);
 	}
 }

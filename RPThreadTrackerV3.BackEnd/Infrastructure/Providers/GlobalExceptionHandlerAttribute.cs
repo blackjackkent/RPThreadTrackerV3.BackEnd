@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Logging;
 
@@ -22,6 +23,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// Initializes a new instance of the <see cref="GlobalExceptionHandlerAttribute"/> class.
         /// </summary>
         /// <param name="logger">The logger.</param>
+        [ExcludeFromCodeCoverage]
         public GlobalExceptionHandlerAttribute(ILogger<GlobalExceptionHandlerAttribute> logger)
 	    {
 		    _logger = logger;
@@ -30,7 +32,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// <inheritdoc />
         public override void OnException(ExceptionContext context)
 		{
-			_logger.LogError(default(EventId), context.Exception, $"Unhandled Exception: {context.Exception.Message}");
+			_logger.LogError(context.Exception, $"Unhandled Exception: {context.Exception.Message}");
 		}
 	}
 }

@@ -22,6 +22,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <returns>
         /// A task that represents the asynchronous operation.
         /// </returns>
-        Task SendEmail(EmailDto email, IConfiguration config);
+        Task SendEmail(EmailDto email, IConfigurationService config);
 	}
 }

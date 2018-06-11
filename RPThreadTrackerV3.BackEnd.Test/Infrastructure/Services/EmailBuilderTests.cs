@@ -7,20 +7,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 {
     using BackEnd.Infrastructure.Services;
     using FluentAssertions;
+    using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Moq;
     using Xunit;
 
     [Trait("Class", "EmailBuilder")]
     public class EmailBuilderTests
     {
-        private EmailBuilder _emailBuilder;
-        private Mock<IConfiguration> _mockConfig;
+        private readonly EmailBuilder _emailBuilder;
+        private readonly Mock<IConfigurationService> _mockConfig;
 
         public EmailBuilderTests()
         {
-            _mockConfig = new Mock<IConfiguration>();
+            _mockConfig = new Mock<IConfigurationService>();
             _emailBuilder = new EmailBuilder();
         }
 
@@ -34,7 +34,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     Email = "test@test.com"
                 };
-                _mockConfig.SetupGet(x => x["ForgotPasswordEmailFromAddress"]).Returns("forgotpassword@email.com");
+                _mockConfig.SetupGet(x => x.ForgotPasswordEmailFromAddress).Returns("forgotpassword@email.com");
 
                 var dto = _emailBuilder.BuildForgotPasswordEmail(user, "http://www.rpthreadtracker.com", "12345", _mockConfig.Object);
 
@@ -53,7 +53,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void BuildsEmailWithMessage()
             {
                 // Arrange
-                _mockConfig.SetupGet(x => x["ContactFormEmailToAddress"]).Returns("contact@email.com");
+                _mockConfig.SetupGet(x => x.ContactFormEmailToAddress).Returns("contact@email.com");
 
                 var dto = _emailBuilder.BuildContactEmail("user@email.com", "my-username", "This is my message.\r\nThis is the second line.", _mockConfig.Object);
 

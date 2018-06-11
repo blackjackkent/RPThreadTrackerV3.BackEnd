@@ -28,7 +28,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	{
 		private readonly ILogger<AuthController> _logger;
 		private readonly UserManager<IdentityUser> _userManager;
-		private readonly IConfiguration _config;
+		private readonly IConfigurationService _config;
 		private readonly IAuthService _authService;
 		private readonly IRepository<ProfileSettingsCollection> _profileSettingsRepository;
 		private readonly IEmailClient _emailClient;
@@ -49,7 +49,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         public AuthController(
 	        ILogger<AuthController> logger,
 	        UserManager<IdentityUser> userManager,
-			IConfiguration config,
+			IConfigurationService config,
 	        IAuthService authService,
 	        IRepository<ProfileSettingsCollection> profileSettingsRepository,
 			IEmailClient emailClient,
@@ -244,7 +244,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    {
 		        var user = await _authService.GetUserByUsernameOrEmail(model.Email, _userManager);
 		        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-		        var email = _emailBuilder.BuildForgotPasswordEmail(user, _config["CorsUrl"], code, _config);
+		        var email = _emailBuilder.BuildForgotPasswordEmail(user, _config.CorsUrl, code, _config);
 		        await _emailClient.SendEmail(email, _config);
 		        return Ok();
 		    }
