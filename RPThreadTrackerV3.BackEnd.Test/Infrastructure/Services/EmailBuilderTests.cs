@@ -35,10 +35,15 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     Email = "test@test.com"
                 };
-                _mockConfig.Secure.ForgotPasswordEmailFromAddress = "forgotpassword@email.com";
+	            _mockConfig.Secure = new SecureAppSettings
+	            {
+		            ForgotPasswordEmailFromAddress = "forgotpassword@email.com"
+	            };
 
+				// Act
                 var dto = _emailBuilder.BuildForgotPasswordEmail(user, "http://www.rpthreadtracker.com", "12345", _mockConfig);
 
+				// Assert
                 dto.Subject.Should().Be("RPThreadTracker Password Reset");
                 dto.RecipientEmail.Should().Be("test@test.com");
                 dto.SenderEmail.Should().Be("forgotpassword@email.com");
@@ -54,10 +59,15 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void BuildsEmailWithMessage()
             {
                 // Arrange
-                _mockConfig.Secure.ContactFormEmailToAddress = "contact@email.com";
+	            _mockConfig.Secure = new SecureAppSettings
+	            {
+		            ContactFormEmailToAddress = "contact@email.com"
+	            };
 
+				// Act
                 var dto = _emailBuilder.BuildContactEmail("user@email.com", "my-username", "This is my message.\r\nThis is the second line.", _mockConfig);
 
+				// Assert
                 dto.Subject.Should().Be("RPThreadTracker Contact Form Submission");
                 dto.RecipientEmail.Should().Be("contact@email.com");
                 dto.SenderEmail.Should().Be("user@email.com");

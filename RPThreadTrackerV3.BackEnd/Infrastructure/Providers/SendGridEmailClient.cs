@@ -9,6 +9,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     using System.Threading.Tasks;
     using Interfaces.Services;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Models.ViewModels;
     using SendGrid;
@@ -28,9 +29,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// Initializes a new instance of the <see cref="SendGridEmailClient"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public SendGridEmailClient(AppSettings config)
+        public SendGridEmailClient(IOptions<AppSettings> config)
         {
-            var apiKey = config.Secure.SendGridAPIKey;
+            var apiKey = config.Value.Secure.SendGridAPIKey;
             _client = new SendGridClient(apiKey);
 	    }
 

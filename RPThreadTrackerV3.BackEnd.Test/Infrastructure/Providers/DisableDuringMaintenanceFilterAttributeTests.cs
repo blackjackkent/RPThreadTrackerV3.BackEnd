@@ -17,6 +17,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.AspNetCore.Routing;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Moq;
     using Xunit;
 
@@ -31,7 +32,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
         public DisableDuringMaintenanceFilterAttributeTests()
         {
             _mockLogger = new Mock<ILogger<DisableDuringMaintenanceFilterAttribute>>();
-            _mockConfig = new AppSettings();
             _mockContext = new ActionExecutingContext(
                 new ActionContext
                 {
@@ -45,7 +45,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
             {
                 Result = new OkResult()
             };
-            _filter = new DisableDuringMaintenanceFilterAttribute(_mockLogger.Object, _mockConfig);
+
+	        _mockConfig = new AppSettings();
+	        var configWrapper = new Mock<IOptions<AppSettings>>();
+	        configWrapper.SetupGet(s => s.Value).Returns(_mockConfig);
+            _filter = new DisableDuringMaintenanceFilterAttribute(_mockLogger.Object, configWrapper.Object);
         }
 
         public class OnActionExecuting : DisableDuringMaintenanceFilterAttributeTests
@@ -54,7 +58,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
             public void Triggers503StatusCodeWhenMaintenanceModeEnabledInConfig()
             {
                 // Arrange
-                _mockConfig.Maintenance.MaintenanceMode = true;
+	            _mockConfig.Maintenance = new MaintenanceAppSettings
+	            {
+		            MaintenanceMode = true
+	            };
 
                 // Act
                 _filter.OnActionExecuting(_mockContext);
@@ -67,7 +74,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
             public void DoesNotTrigger503StatusCodeWhenMaintenanceModeNotEnabledInConfig()
             {
                 // Arrange
-                _mockConfig.Maintenance.MaintenanceMode = false;
+	            _mockConfig.Maintenance = new MaintenanceAppSettings
+	            {
+		            MaintenanceMode = false
+	            };
 
                 // Act
                 _filter.OnActionExecuting(_mockContext);

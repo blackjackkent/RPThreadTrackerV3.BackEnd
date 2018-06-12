@@ -15,6 +15,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Models.RequestModels;
 
@@ -44,9 +45,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <param name="authService">The authentication service.</param>
         /// <param name="userManager">The user manager.</param>
         /// <param name="mapper">The mapper.</param>
-        public ContactController(AppSettings config, ILogger<ContactController> logger, IEmailClient emailClient, IEmailBuilder emailBuilder, IAuthService authService, UserManager<IdentityUser> userManager, IMapper mapper)
+        public ContactController(IOptions<AppSettings> config, ILogger<ContactController> logger, IEmailClient emailClient, IEmailBuilder emailBuilder, IAuthService authService, UserManager<IdentityUser> userManager, IMapper mapper)
         {
-            _config = config;
+            _config = config.Value;
             _logger = logger;
             _emailClient = emailClient;
             _emailBuilder = emailBuilder;

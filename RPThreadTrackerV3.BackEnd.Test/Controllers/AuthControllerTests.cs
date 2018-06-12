@@ -23,6 +23,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Moq;
     using Xunit;
     using Entities = BackEnd.Infrastructure.Data.Entities;
@@ -44,13 +45,15 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockLogger = new Mock<ILogger<AuthController>>();
             var userStoreMock = new Mock<IUserStore<IdentityUser>>();
             _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
-            _mockConfig = new AppSettings();
             _mockAuthService = new Mock<IAuthService>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();
             _mockEmailClient = new Mock<IEmailClient>();
             _mockEmailBuilder = new Mock<IEmailBuilder>();
             _mockRefreshTokenRepository = new Mock<IRepository<Entities.RefreshToken>>();
-            Controller = new AuthController(_mockLogger.Object, _mockUserManager.Object, _mockConfig, _mockAuthService.Object, _mockProfileSettingsRepository.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockRefreshTokenRepository.Object);
+	        _mockConfig = new AppSettings();
+			var configWrapper = new Mock<IOptions<AppSettings>>();
+	        configWrapper.SetupGet(c => c.Value).Returns(_mockConfig);
+            Controller = new AuthController(_mockLogger.Object, _mockUserManager.Object, configWrapper.Object, _mockAuthService.Object, _mockProfileSettingsRepository.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockRefreshTokenRepository.Object);
         }
 
         public class CreateToken : AuthControllerTests

@@ -83,7 +83,9 @@ namespace RPThreadTrackerV3.BackEnd
 				{
 					options.SlidingExpiration = true;
 				});
-		    services.Configure<AppSettings>(Configuration);
+
+			services.AddOptions();
+			services.Configure<AppSettings>(Configuration);
 
 			services.AddScoped<IAuthService, AuthService>();
 			services.AddScoped<IThreadService, ThreadService>();
@@ -118,7 +120,7 @@ namespace RPThreadTrackerV3.BackEnd
 			app.AddNLogWeb();
 			app.UseAuthentication();
 			app.UseCors(builder =>
-				builder.WithOrigins(Configuration["CorsUrl"]).AllowAnyHeader().AllowAnyMethod());
+				builder.WithOrigins(Configuration["Cors:CorsUrl"]).AllowAnyHeader().AllowAnyMethod());
 			app.UseMvc();
 			LogManager.Configuration.Variables["connectionString"] = Configuration.GetConnectionString("Database");
 		}

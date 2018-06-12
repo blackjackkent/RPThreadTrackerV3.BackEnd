@@ -18,6 +18,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Models.RequestModels;
     using Models.ViewModels.Auth;
@@ -51,7 +52,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         public AuthController(
 	        ILogger<AuthController> logger,
 	        UserManager<IdentityUser> userManager,
-			AppSettings config,
+			IOptions<AppSettings> config,
 	        IAuthService authService,
 	        IRepository<ProfileSettingsCollection> profileSettingsRepository,
 			IEmailClient emailClient,
@@ -60,7 +61,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			_logger = logger;
 			_userManager = userManager;
-			_config = config;
+			_config = config.Value;
 			_authService = authService;
 			_profileSettingsRepository = profileSettingsRepository;
 			_emailClient = emailClient;

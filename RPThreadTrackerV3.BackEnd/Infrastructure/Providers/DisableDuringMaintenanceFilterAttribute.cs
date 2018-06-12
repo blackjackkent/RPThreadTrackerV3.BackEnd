@@ -11,6 +11,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     using Microsoft.AspNetCore.Mvc.Filters;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Services;
 
@@ -30,10 +31,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// </summary>
         /// <param name="logger">The logger.</param>
         /// <param name="config">The configuration.</param>
-        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, AppSettings config)
+        public DisableDuringMaintenanceFilterAttribute(ILogger<DisableDuringMaintenanceFilterAttribute> logger, IOptions<AppSettings> config)
         {
             _logger = logger;
-            _config = config;
+            _config = config.Value;
         }
 
         /// <inheritdoc />

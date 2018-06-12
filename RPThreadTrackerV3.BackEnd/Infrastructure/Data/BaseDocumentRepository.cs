@@ -16,6 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Options;
     using Models.Configuration;
 
     /// <inheritdoc cref="IDocumentRepository{T}" />
@@ -30,8 +31,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        public BaseDocumentRepository(AppSettings config)
+        public BaseDocumentRepository(IOptions<AppSettings> options)
         {
+	        var config = options.Value;
             var key = config.Secure.Documents.Key;
             var endpoint = config.Secure.Documents.Endpoint;
             _databaseId = config.Secure.Documents.DatabaseId;

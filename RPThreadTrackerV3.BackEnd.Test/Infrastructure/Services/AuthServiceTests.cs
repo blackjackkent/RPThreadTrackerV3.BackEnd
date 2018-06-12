@@ -119,11 +119,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             {
                 // Arrange
                 _mockUserManager.Setup(u => u.GetClaimsAsync(It.IsAny<IdentityUser>())).ReturnsAsync(new List<Claim>());
-                _mockConfig.Tokens.Key = "oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN";
-                _mockConfig.Tokens.AccessExpireMinutes = 12345;
-                _mockConfig.Tokens.Audience = "tokenaudience";
-                _mockConfig.Tokens.Issuer = "tokenissuer";
-                var user = new IdentityUser
+	            _mockConfig.Tokens = new TokensAppSettings
+	            {
+		            Key = "oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN",
+		            AccessExpireMinutes = 12345,
+		            Audience = "tokenaudience",
+		            Issuer = "tokenissuer"
+	            };
+	            var user = new IdentityUser
                 {
                     Id = "12345",
                     UserName = "my-user",
@@ -146,11 +149,15 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             {
                 // Arrange
                 _mockUserManager.Setup(u => u.GetClaimsAsync(It.IsAny<IdentityUser>())).ReturnsAsync(new List<Claim>());
-                _mockConfig.Tokens.Key = "oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN";
-                _mockConfig.Tokens.RefreshExpireMinutes = 12345;
-                _mockConfig.Tokens.Audience = "tokenaudience";
-                _mockConfig.Tokens.Issuer = "tokenissuer"; 
-                var user = new IdentityUser
+	            _mockConfig.Tokens = new TokensAppSettings
+	            {
+		            Key = "oXHqjGKtAIRBzonnhpmMJuQLoPUd8xH9E1NNlcO5oMhtN",
+		            RefreshExpireMinutes = 12345,
+		            Audience = "tokenaudience",
+		            Issuer = "tokenissuer"
+	            };
+
+	            var user = new IdentityUser
                 {
                     Id = "12345",
                     UserName = "my-user",
