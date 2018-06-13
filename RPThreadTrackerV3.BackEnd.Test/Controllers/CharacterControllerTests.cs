@@ -28,15 +28,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     [Trait("Class", "CharacterController")]
     public class CharacterControllerTests : ControllerTests<CharacterController>
     {
-        private readonly Mock<ILogger<CharacterController>> _mockLogger;
-        private readonly AppSettings _mockConfig;
         private readonly Mock<ICharacterService> _mockCharacterService;
         private readonly Mock<IRepository<Entities.Character>> _mockCharacterRepository;
         private readonly Mock<IMapper> _mockMapper;
 
         public CharacterControllerTests()
         {
-            _mockLogger = new Mock<ILogger<CharacterController>>();
+            var mockLogger = new Mock<ILogger<CharacterController>>();
             _mockCharacterService = new Mock<ICharacterService>();
             _mockCharacterRepository = new Mock<IRepository<Entities.Character>>();
             _mockMapper = new Mock<IMapper>();
@@ -57,10 +55,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     CharacterName = dto.CharacterName,
                     IsOnHiatus = dto.IsOnHiatus
                 });
-            _mockConfig = new AppSettings();
+            var mockConfig = new AppSettings();
             var configWrapper = new Mock<IOptions<AppSettings>>();
-            configWrapper.SetupGet(c => c.Value).Returns(_mockConfig);
-            Controller = new CharacterController(_mockLogger.Object, _mockMapper.Object, _mockCharacterService.Object, _mockCharacterRepository.Object);
+            configWrapper.SetupGet(c => c.Value).Returns(mockConfig);
+            Controller = new CharacterController(mockLogger.Object, _mockMapper.Object, _mockCharacterService.Object, _mockCharacterRepository.Object);
             InitControllerContext();
         }
 
