@@ -66,8 +66,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
-                var characters = await _publicViewService.GetPublicViews(UserId, _publicViewRepository, _mapper);
-                var result = characters.Select(_mapper.Map<PublicViewDto>).ToList();
+                var views = await _publicViewService.GetPublicViews(UserId, _publicViewRepository, _mapper);
+                var result = views.Select(_mapper.Map<PublicViewDto>).ToList();
                 return Ok(result);
             }
             catch (Exception e)
@@ -100,7 +100,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
                 var publicView = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(model);
                 var createdView =
                     await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
-                return Ok(createdView);
+                return Ok(_mapper.Map<PublicViewDto>(createdView));
             }
             catch (PublicViewSlugExistsException)
             {
@@ -142,8 +142,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
                 viewModel.UserId = UserId;
                 await _publicViewService.AssertUserOwnsPublicView(publicViewId, UserId, _publicViewRepository);
                 var model = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(viewModel);
-                var updatedCharacter = await _publicViewService.UpdatePublicView(model, _publicViewRepository, _mapper);
-                return Ok(updatedCharacter);
+                var updatedView = await _publicViewService.UpdatePublicView(model, _publicViewRepository, _mapper);
+                return Ok(_mapper.Map<PublicViewDto>(updatedView));
             }
             catch (PublicViewSlugExistsException)
             {
@@ -158,7 +158,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             catch (PublicViewNotFoundException)
             {
                 _logger.LogWarning($"User {UserId} attempted to update public view {viewModel.Id} illegally.");
-                return BadRequest("You do not have permission to update this character.");
+                return BadRequest("You do not have permission to update this view.");
             }
             catch (Exception e)
             {

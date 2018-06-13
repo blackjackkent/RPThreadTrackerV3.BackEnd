@@ -384,7 +384,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 };
                 _legacyDto.CharacterUrlIdentifier = null;
 
-
                 // Act
                 var result = _publicViewService.GetViewFromLegacyDto(_legacyDto, characters);
 

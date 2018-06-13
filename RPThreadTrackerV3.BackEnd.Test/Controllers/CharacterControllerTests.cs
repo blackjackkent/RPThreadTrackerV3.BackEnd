@@ -38,7 +38,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockCharacterService = new Mock<ICharacterService>();
             _mockCharacterRepository = new Mock<IRepository<Entities.Character>>();
             _mockMapper = new Mock<IMapper>();
-
             _mockMapper.Setup(m => m.Map<CharacterDto>(It.IsAny<Character>()))
                 .Returns((Character model) => new CharacterDto
                 {

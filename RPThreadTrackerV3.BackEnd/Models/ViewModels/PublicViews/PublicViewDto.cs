@@ -107,7 +107,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
         /// Throws an exception if the public view model is not valid.
         /// </summary>
         /// <exception cref="InvalidPublicViewException">Thrown if the public view model is not valid.</exception>
-        public void AssertIsValid()
+        public virtual void AssertIsValid()
         {
             TurnFilter.AssertIsValid();
             var slugRegex = new Regex(@"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$");
