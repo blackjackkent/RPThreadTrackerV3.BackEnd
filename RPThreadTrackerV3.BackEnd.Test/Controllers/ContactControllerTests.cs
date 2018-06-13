@@ -54,7 +54,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
         public class Post : ContactControllerTests
         {
-
             [Fact]
             public async Task ReturnsServerErrorWhenUnexpectedErrorOccurs()
             {

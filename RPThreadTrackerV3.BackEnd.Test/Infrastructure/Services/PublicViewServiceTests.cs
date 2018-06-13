@@ -14,6 +14,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using BackEnd.Infrastructure.Data.Documents;
     using BackEnd.Infrastructure.Exceptions.PublicViews;
     using BackEnd.Infrastructure.Services;
+    using BackEnd.Models.DomainModels;
+    using BackEnd.Models.ViewModels.PublicViews;
     using FluentAssertions;
     using Interfaces.Data;
     using Moq;
@@ -286,6 +288,110 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Assert
                 result.Slug.Should().Be("my-slug");
                 result.Name.Should().Be("My View");
+            }
+        }
+
+        public class GetViewFromLegacyDto : PublicViewServiceTests
+        {
+            private readonly LegacyPublicViewDto _legacyDto;
+
+            public GetViewFromLegacyDto()
+            {
+                _legacyDto = new LegacyPublicViewDto
+                {
+                    UserId = "12345",
+                    Slug = "my-view",
+                    Name = "My View",
+                    SortDescending = true,
+                    CharacterUrlIdentifier = "my-character",
+                    Columns = new List<string> { "column1", "column2" },
+                    SortKey = "column2",
+                    Tags = new List<string> { "tag1", "tag2", "tag3" },
+                    TurnFilter = new PublicTurnFilterDto
+                    {
+                        IncludeMyTurn = true,
+                        IncludeTheirTurn = true,
+                        IncludeArchived = true,
+                        IncludeQueued = true
+                    }
+                };
+            }
+
+            [Fact]
+            public void PopulatesSimpleFields()
+            {
+                // Act
+                var result = _publicViewService.GetViewFromLegacyDto(_legacyDto, new List<Character>());
+
+                // Assert
+                result.Id.Should().BeNullOrEmpty();
+                result.Name.Should().Be("My View");
+                result.Slug.Should().Be("my-view");
+                result.CharacterIds.Should().HaveCount(0);
+                result.Columns.Should().HaveCount(2);
+                result.SortKey.Should().Be("column2");
+                result.SortDescending.Should().BeTrue();
+                result.Tags.Should().HaveCount(3);
+                result.TurnFilter.IncludeMyTurn.Should().BeTrue();
+                result.TurnFilter.IncludeTheirTurn.Should().BeTrue();
+                result.TurnFilter.IncludeArchived.Should().BeTrue();
+                result.TurnFilter.IncludeQueued.Should().BeTrue();
+                result.UserId.Should().Be("12345");
+            }
+
+            [Fact]
+            public void PopulatesCharacterFromUrlIdentifier()
+            {
+                // Arrange
+                var characters = new List<Character>
+                {
+                    new Character
+                    {
+                        UrlIdentifier = "my-character",
+                        CharacterId = 13579
+                    },
+                    new Character
+                    {
+                        UrlIdentifier = "my-other-character",
+                        CharacterId = 97531
+                    }
+                };
+
+                // Act
+                var result = _publicViewService.GetViewFromLegacyDto(_legacyDto, characters);
+
+                // Assert
+                result.CharacterIds.Should().HaveCount(1);
+                result.CharacterIds.Should().Contain(13579);
+            }
+
+            [Fact]
+            public void PopulatesAllCharactersIfNoUrlIdentifierProvided()
+            {
+                // Arrange
+                var characters = new List<Character>
+                {
+                    new Character
+                    {
+                        UrlIdentifier = "my-character",
+                        CharacterId = 13579
+                    },
+                    new Character
+                    {
+                        UrlIdentifier = "my-other-character",
+                        CharacterId = 97531
+                    }
+                };
+                _legacyDto.CharacterUrlIdentifier = null;
+
+
+                // Act
+                var result = _publicViewService.GetViewFromLegacyDto(_legacyDto, characters);
+
+                // Assert
+                result.CharacterIds.Should().HaveCount(2);
+                result.CharacterIds.Should().Contain(13579);
+                result.CharacterIds.Should().Contain(97531);
             }
         }
     }

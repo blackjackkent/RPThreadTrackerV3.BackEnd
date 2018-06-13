@@ -12,7 +12,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     using Exceptions.PublicViews;
     using Interfaces.Data;
     using Interfaces.Services;
+    using Models.DomainModels;
     using Models.DomainModels.PublicViews;
+    using Models.ViewModels.PublicViews;
     using Documents = Data.Documents;
 
     /// <inheritdoc />
@@ -87,5 +89,37 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    }
 		    return mapper.Map<PublicView>(view);
 	    }
+
+        /// <inheritdoc />
+        public PublicView GetViewFromLegacyDto(LegacyPublicViewDto legacyDto, IEnumerable<Character> characters)
+        {
+            var view = new PublicView
+            {
+                Slug = legacyDto.Slug,
+                Columns = legacyDto.Columns,
+                Name = legacyDto.Name,
+                SortDescending = legacyDto.SortDescending,
+                SortKey = legacyDto.SortKey,
+                Tags = legacyDto.Tags,
+                TurnFilter = new PublicTurnFilter
+                {
+                    IncludeMyTurn = legacyDto.TurnFilter.IncludeMyTurn,
+                    IncludeTheirTurn = legacyDto.TurnFilter.IncludeTheirTurn,
+                    IncludeArchived = legacyDto.TurnFilter.IncludeArchived,
+                    IncludeQueued = legacyDto.TurnFilter.IncludeQueued
+                },
+                UserId = legacyDto.UserId
+            };
+            if (string.IsNullOrEmpty(legacyDto.CharacterUrlIdentifier))
+            {
+                view.CharacterIds = characters.Select(c => c.CharacterId).ToList();
+            }
+            else
+            {
+                view.CharacterIds = characters.Where(c => c.UrlIdentifier == legacyDto.CharacterUrlIdentifier)
+                    .Select(c => c.CharacterId).ToList();
+            }
+            return view;
+        }
     }
 }

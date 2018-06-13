@@ -5,11 +5,14 @@
 
 namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using AutoMapper;
     using Data;
+    using Models.DomainModels;
     using Models.DomainModels.PublicViews;
+    using Models.ViewModels.PublicViews;
     using Documents = Infrastructure.Data.Documents;
 
     /// <summary>
@@ -85,5 +88,14 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// The task result contains the requested public view.
         /// </returns>
         Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper);
+
+        /// <summary>
+        /// Builds a representation of a public view from information about a legacy view.
+        /// </summary>
+        /// <param name="legacyDto">The legacy view information.</param>
+        /// <param name="characters">The belonging to the user who owns the view.</param>
+        /// <returns>Representation of a public view equivalent to the passed legacy one.</returns>
+        [Obsolete("No longer relevant after removal of legacy views.")]
+        PublicView GetViewFromLegacyDto(LegacyPublicViewDto legacyDto, IEnumerable<Character> characters);
     }
 }

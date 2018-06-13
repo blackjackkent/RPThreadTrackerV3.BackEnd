@@ -27,7 +27,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     [Route("api/[controller]")]
 	public class PublicThreadController : BaseController
     {
-	    private readonly ILogger<ThreadController> _logger;
+	    private readonly ILogger<PublicThreadController> _logger;
 	    private readonly IMapper _mapper;
 	    private readonly IThreadService _threadService;
 	    private readonly IRepository<Thread> _threadRepository;
@@ -48,7 +48,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <param name="characterService">The character service.</param>
         /// <param name="characterRepository">The character repository.</param>
         public PublicThreadController(
-		    ILogger<ThreadController> logger,
+		    ILogger<PublicThreadController> logger,
 		    IMapper mapper,
 		    IThreadService threadService,
 		    IRepository<Thread> threadRepository,
@@ -122,31 +122,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
-                var viewDto = new PublicViewDto
-                {
-                    Slug = model.Slug,
-                    Columns = model.Columns,
-                    Name = model.Name,
-                    SortDescending = model.SortDescending,
-                    SortKey = model.SortKey,
-                    Tags = model.Tags,
-                    TurnFilter = model.TurnFilter,
-                    UserId = model.UserId
-                };
                 var characters = _characterService.GetCharacters(model.UserId, _characterRepository, _mapper, false);
-                if (string.IsNullOrEmpty(model.CharacterUrlIdentifier))
-                {
-                    viewDto.CharacterIds = characters.Select(c => c.CharacterId).ToList();
-                }
-                else
-                {
-                    viewDto.CharacterIds = characters.Where(c => c.UrlIdentifier == model.CharacterUrlIdentifier)
-                        .Select(c => c.CharacterId).ToList();
-                }
-
-                var view = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(viewDto);
+                var view = _publicViewService.GetViewFromLegacyDto(model, characters);
                 var threads = _threadService.GetThreadsForView(view, _threadRepository, _mapper);
                 var dtos = _mapper.Map<List<ThreadDto>>(threads);
+                var viewDto = _mapper.Map<PublicViewDto>(view);
                 var collection = new PublicThreadDtoCollection(dtos, viewDto);
                 return Ok(collection);
             }
