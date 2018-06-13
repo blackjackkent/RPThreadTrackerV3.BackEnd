@@ -97,7 +97,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 				character.UserId = UserId;
 				var model = _mapper.Map<Models.DomainModels.Character>(character);
 				var createdCharacter = _characterService.CreateCharacter(model, _characterRepository, _mapper);
-				return Ok(createdCharacter);
+				return Ok(_mapper.Map<CharacterDto>(createdCharacter));
 			}
 			catch (InvalidCharacterException)
 			{
@@ -134,7 +134,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 				_characterService.AssertUserOwnsCharacter(characterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Character>(character);
 				var updatedCharacter = _characterService.UpdateCharacter(model, _characterRepository, _mapper);
-				return Ok(updatedCharacter);
+				return Ok(_mapper.Map<CharacterDto>(updatedCharacter));
 			}
 			catch (InvalidCharacterException)
 			{

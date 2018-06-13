@@ -48,14 +48,14 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <summary>
         /// Generates a refresh token for the given user.
         /// </summary>
-        /// <param name="userId">The unique ID of the user.</param>
+        /// <param name="user">The user.</param>
         /// <param name="config">The user manager.</param>
         /// <param name="refreshTokenRepository">The refresh token repository.</param>
         /// <returns>
         /// A task that represents the asynchronous operation.
         /// The task result contains an <see cref="AuthToken" /> containing the refresh token information information.
         /// </returns>
-        AuthToken GenerateRefreshToken(IdentityUser userId, AppSettings config, IRepository<RefreshToken> refreshTokenRepository);
+        AuthToken GenerateRefreshToken(IdentityUser user, AppSettings config, IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>
         /// Gets the user with whom the given refresh token is associated.

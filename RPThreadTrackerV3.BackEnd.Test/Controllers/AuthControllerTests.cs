@@ -13,9 +13,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using BackEnd.Infrastructure.Data.Entities;
     using BackEnd.Infrastructure.Enums;
     using BackEnd.Infrastructure.Exceptions.Account;
-    using BackEnd.Infrastructure.Services;
     using BackEnd.Models.Configuration;
     using BackEnd.Models.RequestModels;
+    using BackEnd.Models.ViewModels;
     using BackEnd.Models.ViewModels.Auth;
     using FluentAssertions;
     using Interfaces.Data;
@@ -32,29 +32,27 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     [Trait("Class", "AuthController")]
     public class AuthControllerTests : ControllerTests<AuthController>
     {
-        private readonly Mock<ILogger<AuthController>> _mockLogger;
         private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
         private readonly AppSettings _mockConfig;
         private readonly Mock<IAuthService> _mockAuthService;
         private readonly Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
-        private readonly Mock<IEmailClient> _mockEmailClient;
-        private readonly Mock<IEmailBuilder> _mockEmailBuilder;
         private readonly Mock<IRepository<Entities.RefreshToken>> _mockRefreshTokenRepository;
+        private Mock<IEmailClient> _mockEmailClient;
 
         public AuthControllerTests()
         {
-            _mockLogger = new Mock<ILogger<AuthController>>();
+            var mockLogger = new Mock<ILogger<AuthController>>();
             var userStoreMock = new Mock<IUserStore<IdentityUser>>();
             _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
             _mockAuthService = new Mock<IAuthService>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();
             _mockEmailClient = new Mock<IEmailClient>();
-            _mockEmailBuilder = new Mock<IEmailBuilder>();
+            var mockEmailBuilder = new Mock<IEmailBuilder>();
             _mockRefreshTokenRepository = new Mock<IRepository<Entities.RefreshToken>>();
 	        _mockConfig = new AppSettings();
 			var configWrapper = new Mock<IOptions<AppSettings>>();
 	        configWrapper.SetupGet(c => c.Value).Returns(_mockConfig);
-            Controller = new AuthController(_mockLogger.Object, _mockUserManager.Object, configWrapper.Object, _mockAuthService.Object, _mockProfileSettingsRepository.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockRefreshTokenRepository.Object);
+            Controller = new AuthController(mockLogger.Object, _mockUserManager.Object, configWrapper.Object, _mockAuthService.Object, _mockProfileSettingsRepository.Object, _mockEmailClient.Object, mockEmailBuilder.Object, _mockRefreshTokenRepository.Object);
         }
 
         public class CreateToken : AuthControllerTests
@@ -75,6 +73,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
+                _mockAuthService.Verify(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig), Times.Never);
+                _mockAuthService.Verify(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig, _mockRefreshTokenRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -95,6 +95,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
+                _mockAuthService.Verify(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig), Times.Never);
+                _mockAuthService.Verify(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig, _mockRefreshTokenRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -175,6 +177,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<StatusCodeResult>();
                 ((StatusCodeResult)result).StatusCode.Should().Be(498);
+                _mockAuthService.Verify(s => s.GenerateJwt(It.IsAny<IdentityUser>(), _mockUserManager.Object, _mockConfig), Times.Never);
+                _mockAuthService.Verify(s => s.GenerateRefreshToken(It.IsAny<IdentityUser>(), _mockConfig, _mockRefreshTokenRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -301,6 +305,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
                 body.Should().HaveCount(2);
+                _mockAuthService.Verify(s => s.CreateUser(It.IsAny<IdentityUser>(), It.IsAny<string>(), _mockUserManager.Object), Times.Never);
+                _mockAuthService.Verify(s => s.AddUserToRole(It.IsAny<IdentityUser>(), It.IsAny<string>(), _mockUserManager.Object), Times.Never);
+                _mockAuthService.Verify(s => s.InitProfileSettings(It.IsAny<string>(), _mockProfileSettingsRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -319,6 +326,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
                 body.Should().HaveCount(2);
+                _mockAuthService.Verify(s => s.CreateUser(It.IsAny<IdentityUser>(), It.IsAny<string>(), _mockUserManager.Object), Times.Never);
+                _mockAuthService.Verify(s => s.AddUserToRole(It.IsAny<IdentityUser>(), It.IsAny<string>(), _mockUserManager.Object), Times.Never);
+                _mockAuthService.Verify(s => s.InitProfileSettings(It.IsAny<string>(), _mockProfileSettingsRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -337,6 +347,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
                 body.Should().HaveCount(2);
+                _mockAuthService.Verify(s => s.AddUserToRole(It.IsAny<IdentityUser>(), It.IsAny<string>(), _mockUserManager.Object), Times.Never);
+                _mockAuthService.Verify(s => s.InitProfileSettings(It.IsAny<string>(), _mockProfileSettingsRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -355,6 +367,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
                 body.Should().HaveCount(2);
+                _mockAuthService.Verify(s => s.InitProfileSettings(It.IsAny<string>(), _mockProfileSettingsRepository.Object), Times.Never);
             }
 
             [Fact]
@@ -405,6 +418,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkResult>();
+                _mockEmailClient.Verify(c => c.SendEmail(It.IsAny<EmailDto>(), _mockConfig), Times.Never);
             }
 
             [Fact]
@@ -424,6 +438,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<ObjectResult>();
                 ((ObjectResult)result).StatusCode.Should().Be(500);
+                _mockEmailClient.Verify(c => c.SendEmail(It.IsAny<EmailDto>(), _mockConfig), Times.Never);
             }
 
             [Fact]

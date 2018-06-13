@@ -12,7 +12,6 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Infrastructure.Data.Entities;
     using Infrastructure.Enums;
     using Infrastructure.Exceptions.Account;
-    using Infrastructure.Services;
     using Interfaces.Data;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;

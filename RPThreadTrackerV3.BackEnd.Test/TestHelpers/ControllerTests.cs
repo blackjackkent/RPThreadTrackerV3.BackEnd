@@ -6,9 +6,12 @@
 namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
 {
     using System;
+    using System.Security.Claims;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
 
     public class ControllerTests<T> : IDisposable
-        where T : IDisposable
+        where T : Controller, IDisposable
     {
         protected T Controller { get; set; }
 
@@ -28,6 +31,18 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
             {
                 Controller?.Dispose();
             }
+        }
+
+        protected void InitControllerContext()
+        {
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "12345")
+            }));
+            Controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user }
+            };
         }
     }
 }
