@@ -367,10 +367,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class ResetPassword : AuthServiceTests
         {
             [Fact]
+            public async Task ThrowsExceptionIfPasswordsDoNotMatch()
+            {
+                // Act/Assert
+                await Assert.ThrowsAsync<InvalidPasswordResetException>(async () => await _authService.ResetPassword(null, "12345", "mypassword", "my-password", _mockUserManager.Object));
+            }
+
+            [Fact]
             public async Task ThrowsExceptionIfEmailNotProvided()
             {
                 // Act/Assert
-                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword(null, "12345", "mypassword", _mockUserManager.Object));
+                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword(null, "12345", "mypassword", "mypassword", _mockUserManager.Object));
             }
 
             [Fact]
@@ -380,7 +387,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.FindByEmailAsync("me@me.com")).Returns(Task.FromResult((IdentityUser)null));
 
                 // Act/Assert
-                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", _mockUserManager.Object));
+                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object));
             }
 
             [Fact]
@@ -401,7 +408,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(failureResult));
 
                 // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidPasswordResetException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", _mockUserManager.Object));
+                var ex = await Assert.ThrowsAsync<InvalidPasswordResetException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object));
                 ex.Errors.Should().HaveCount(2);
                 ex.Errors.Should().Contain("Test Error 1");
                 ex.Errors.Should().Contain("Test Error 2");
@@ -420,7 +427,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(IdentityResult.Success));
 
                 // Act
-                await _authService.ResetPassword("me@me.com", "12345", "mypassword", _mockUserManager.Object);
+                await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object);
 
                 // Assert
                 _mockUserManager.Verify(m => m.ResetPasswordAsync(user, "12345", "mypassword"), Times.Once);

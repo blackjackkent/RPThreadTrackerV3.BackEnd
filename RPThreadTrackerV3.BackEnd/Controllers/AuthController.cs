@@ -282,11 +282,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-				if (!model.NewPassword.Equals(model.ConfirmNewPassword, StringComparison.CurrentCulture))
-				{
-					throw new InvalidPasswordResetException(new List<string> { "Passwords do not match." });
-				}
-				await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, _userManager);
+				await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, model.ConfirmNewPassword, _userManager);
 				return Ok();
 			}
 			catch (InvalidPasswordResetException e)

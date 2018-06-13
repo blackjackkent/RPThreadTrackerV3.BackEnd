@@ -19,15 +19,27 @@ namespace RPThreadTrackerV3.BackEnd.Models.Configuration
         public TokensAppSettings Tokens { get; set; }
 
         /// <summary>
-        /// Gets or sets the cors.
+        /// Gets or sets the application settings related to cross-origin requests.
         /// </summary>
         /// <value>
-        /// The cors.
+        /// The application settings related to cross-origin requests.
         /// </value>
         public CorsAppSettings Cors { get; set; }
 
+        /// <summary>
+        /// Gets or sets the application settings related to site maintenance.
+        /// </summary>
+        /// <value>
+        /// The application settings related to site maintenance.
+        /// </value>
         public MaintenanceAppSettings Maintenance { get; set; }
 
+        /// <summary>
+        /// Gets or sets the application settings that are secure in nature.
+        /// </summary>
+        /// <value>
+        /// The application settings that are secure in nature.
+        /// </value>
         public SecureAppSettings Secure { get; set; }
     }
 }

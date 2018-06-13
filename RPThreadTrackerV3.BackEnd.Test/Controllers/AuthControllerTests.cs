@@ -272,7 +272,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
         public class Register : AuthControllerTests
         {
-            private RegisterRequest _validRequest;
+            private readonly RegisterRequest _validRequest;
 
             public Register()
             {
@@ -385,6 +385,144 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 _mockAuthService.Verify(r => r.InitProfileSettings("12345", _mockProfileSettingsRepository.Object), Times.Once);
+                result.Should().BeOfType<OkResult>();
+            }
+        }
+
+        public class ForgotPassword : AuthControllerTests
+        {
+            [Fact]
+            public async Task ReturnsOkWhenUserNotFound()
+            {
+                // Arrange
+                var request = new ForgotPasswordRequestModel { Email = "me@me.com" };
+                _mockAuthService.Setup(s => s.GetUserByUsernameOrEmail("me@me.com", _mockUserManager.Object))
+                    .Throws<UserNotFoundException>();
+
+                // Act
+                var result = await Controller.ForgotPassword(request);
+
+                // Assert
+                result.Should().BeOfType<OkResult>();
+            }
+
+            [Fact]
+            public async Task ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                var request = new ForgotPasswordRequestModel { Email = "me@me.com" };
+                var user = new IdentityUser { Id = "12345" };
+                _mockAuthService.Setup(s => s.GetUserByUsernameOrEmail("me@me.com", _mockUserManager.Object))
+                    .Returns(Task.FromResult(user));
+                _mockUserManager.Setup(m => m.GeneratePasswordResetTokenAsync(user))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = await Controller.ForgotPassword(request);
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>();
+                ((ObjectResult)result).StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public async Task ReturnsOkWhenRequestSuccessful()
+            {
+                // Arrange
+                var request = new ForgotPasswordRequestModel { Email = "me@me.com" };
+                var user = new IdentityUser { Id = "12345" };
+                _mockConfig.Cors = new CorsAppSettings { CorsUrl = "cors" };
+                _mockAuthService.Setup(s => s.GetUserByUsernameOrEmail("me@me.com", _mockUserManager.Object))
+                    .Returns(Task.FromResult(user));
+
+                // Act
+                var result = await Controller.ForgotPassword(request);
+
+                // Assert
+                result.Should().BeOfType<OkResult>();
+            }
+        }
+
+        public class ResetPassword : AuthControllerTests
+        {
+            [Fact]
+            public async Task ReturnsBadRequestWhenPasswordResetInvalid()
+            {
+                // Arrange
+                var request = new ResetPasswordRequestModel
+                {
+                    Code = "code",
+                    Email = "me@me.com",
+                    NewPassword = "my-password",
+                    ConfirmNewPassword = "my-password"
+                };
+                var exception = new InvalidPasswordResetException(new List<string> { "error1", "error2" });
+                _mockAuthService.Setup(s => s.ResetPassword(request.Email, request.Code, request.NewPassword, request.ConfirmNewPassword, _mockUserManager.Object)).ThrowsAsync(exception);
+
+                // Act
+                var result = await Controller.ResetPassword(request);
+
+                // Assert
+                result.Should().BeOfType<BadRequestObjectResult>();
+            }
+
+            [Fact]
+            public async Task ReturnsBadRequestWhenUserNotFound()
+            {
+                // Arrange
+                var request = new ResetPasswordRequestModel
+                {
+                    Code = "code",
+                    Email = "me@me.com",
+                    NewPassword = "my-password",
+                    ConfirmNewPassword = "my-password"
+                };
+                _mockAuthService.Setup(s => s.ResetPassword(request.Email, request.Code, request.NewPassword, request.ConfirmNewPassword, _mockUserManager.Object)).Throws<UserNotFoundException>();
+
+                // Act
+                var result = await Controller.ResetPassword(request);
+
+                // Assert
+                result.Should().BeOfType<BadRequestObjectResult>();
+            }
+
+            [Fact]
+            public async Task ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                var request = new ResetPasswordRequestModel
+                {
+                    Code = "code",
+                    Email = "me@me.com",
+                    NewPassword = "my-password",
+                    ConfirmNewPassword = "my-password"
+                };
+                _mockAuthService.Setup(s => s.ResetPassword(request.Email, request.Code, request.NewPassword, request.ConfirmNewPassword, _mockUserManager.Object)).Throws<NullReferenceException>();
+
+                // Act
+                var result = await Controller.ResetPassword(request);
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>();
+                ((ObjectResult)result).StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public async Task ReturnsOkWhenRequestSuccessful()
+            {
+                // Arrange
+                var request = new ResetPasswordRequestModel
+                {
+                    Code = "code",
+                    Email = "me@me.com",
+                    NewPassword = "my-password",
+                    ConfirmNewPassword = "my-password"
+                };
+
+                // Act
+                var result = await Controller.ResetPassword(request);
+
+                // Assert
                 result.Should().BeOfType<OkResult>();
             }
         }

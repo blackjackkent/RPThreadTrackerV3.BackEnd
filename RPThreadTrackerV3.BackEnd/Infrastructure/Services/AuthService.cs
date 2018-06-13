@@ -154,9 +154,13 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         /// <inheritdoc />
         /// <exception cref="UserNotFoundException">Thrown if a user could not be found for the given email</exception>
         /// <exception cref="InvalidPasswordResetException">Thrown if the password reset request could not be completed.</exception>
-        public async Task ResetPassword(string email, string passwordResetToken, string newPassword, UserManager<IdentityUser> userManager)
+        public async Task ResetPassword(string email, string passwordResetToken, string newPassword, string confirmNewPassword, UserManager<IdentityUser> userManager)
 	    {
-		    if (string.IsNullOrEmpty(email))
+	        if (!newPassword.Equals(confirmNewPassword, StringComparison.CurrentCulture))
+	        {
+	            throw new InvalidPasswordResetException(new List<string> { "Passwords do not match." });
+	        }
+            if (string.IsNullOrEmpty(email))
 		    {
 			    throw new UserNotFoundException();
 		    }

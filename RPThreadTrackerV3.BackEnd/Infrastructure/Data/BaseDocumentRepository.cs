@@ -30,7 +30,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
         /// </summary>
-        /// <param name="config">The configuration.</param>
+        /// <param name="options">Wrapper for application settings.</param>
         public BaseDocumentRepository(IOptions<AppSettings> options)
         {
 	        var config = options.Value;

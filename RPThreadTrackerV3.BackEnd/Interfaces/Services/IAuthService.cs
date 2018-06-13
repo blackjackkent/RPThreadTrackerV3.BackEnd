@@ -55,8 +55,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// A task that represents the asynchronous operation.
         /// The task result contains an <see cref="AuthToken" /> containing the refresh token information information.
         /// </returns>
-        AuthToken GenerateRefreshToken(IdentityUser userId, AppSettings config,
-            IRepository<RefreshToken> refreshTokenRepository);
+        AuthToken GenerateRefreshToken(IdentityUser userId, AppSettings config, IRepository<RefreshToken> refreshTokenRepository);
 
         /// <summary>
         /// Gets the user with whom the given refresh token is associated.
@@ -109,11 +108,12 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="email">The email of the user whose password should be reset.</param>
         /// <param name="passwordResetToken">The password reset token associated with the user's password reset request.</param>
         /// <param name="newPassword">The new password.</param>
+        /// <param name="confirmNewPassword">The new password confirmation.</param>
         /// <param name="userManager">The user manager.</param>
         /// <returns>
         /// A task that represents the asynchronous operation.
         /// </returns>
-        Task ResetPassword(string email, string passwordResetToken, string newPassword, UserManager<IdentityUser> userManager);
+        Task ResetPassword(string email, string passwordResetToken, string newPassword, string confirmNewPassword, UserManager<IdentityUser> userManager);
 
         /// <summary>
         /// Changes a user's password.
