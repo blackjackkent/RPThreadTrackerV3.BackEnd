@@ -25,6 +25,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Moq;
+    using TestHelpers;
     using Xunit;
     using Entities = BackEnd.Infrastructure.Data.Entities;
 

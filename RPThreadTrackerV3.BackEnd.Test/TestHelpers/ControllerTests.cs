@@ -3,10 +3,9 @@
 // Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-namespace RPThreadTrackerV3.BackEnd.Test.Controllers
+namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
 {
     using System;
-    using BackEnd.Controllers;
 
     public class ControllerTests<T> : IDisposable
         where T : IDisposable
