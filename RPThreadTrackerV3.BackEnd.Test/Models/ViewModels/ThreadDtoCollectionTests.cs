@@ -13,7 +13,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
     using Xunit;
 
     [Trait("Class", "ThreadDtoCollection")]
-    public class ThreadDtoCollectionTests
+    public partial class ThreadDtoCollectionTests
     {
         public class Constructor : ThreadDtoCollectionTests
         {
@@ -49,7 +49,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 // Act
                 var collection = new ThreadDtoCollection(threads);
                 var json = collection.ThreadStatusRequestJson;
-                var data = JsonConvert.DeserializeObject<List<ThreadStatusRequestItem>>(json);
+                var data = JsonConvert.DeserializeObject<List<MockThreadStatusRequestItem>>(json);
 
                 // Assert
                 data.Count.Should().Be(3);
@@ -57,11 +57,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 data.Count(t => t.PostId == "2").Should().Be(1);
                 data.Count(t => t.PostId == "3").Should().Be(1);
             }
-        }
-
-        public class ThreadStatusRequestItem
-        {
-            public string PostId { get; set; }
         }
     }
 }

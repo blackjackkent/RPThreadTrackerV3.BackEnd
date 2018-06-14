@@ -10,6 +10,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Exceptions;
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Linq;
@@ -18,8 +19,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
         where T : Resource, IDocument
     {
-        private readonly string _databaseId;
-        private readonly string _collectionId;
         private readonly IDocumentClient<T> _client;
 
         /// <summary>
@@ -120,7 +119,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 }
                 else
                 {
-                    throw;
+                    throw new DocumentDatabaseInitializationException(e.Message, e);
                 }
             }
         }
@@ -139,7 +138,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 }
                 else
                 {
-                    throw;
+                    throw new DocumentDatabaseInitializationException(e.Message, e);
                 }
             }
         }

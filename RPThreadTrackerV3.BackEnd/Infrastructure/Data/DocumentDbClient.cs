@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using Interfaces.Data;
@@ -16,6 +17,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using Newtonsoft.Json;
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     public class DocumentDbClient<T> : IDocumentClient<T>
         where T : Resource, IDocument
     {
