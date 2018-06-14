@@ -8,13 +8,11 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Interfaces.Services;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Models.ViewModels;
     using SendGrid;
     using SendGrid.Helpers.Mail;
-    using Services;
 
     /// <summary>
     /// Client for sending emails using SendGrid

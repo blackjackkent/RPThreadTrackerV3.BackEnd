@@ -6,14 +6,11 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 {
     using System;
-    using Interfaces.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Filters;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
-    using Services;
 
     /// <summary>
     /// Filter attribute which enforces 503 responses from all controllers when

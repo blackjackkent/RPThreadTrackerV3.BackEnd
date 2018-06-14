@@ -27,14 +27,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     [Trait("Class", "UserController")]
     public class UserControllerTests : ControllerTests<UserController>
     {
-        private Mock<ILogger<UserController>> _mockLogger;
-        private Mock<UserManager<IdentityUser>> _mockUserManager;
-        private Mock<IMapper> _mockMapper;
-        private Mock<IAuthService> _mockAuthService;
+        private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
+        private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<IAuthService> _mockAuthService;
 
         public UserControllerTests()
         {
-            _mockLogger = new Mock<ILogger<UserController>>();
+            var mockLogger = new Mock<ILogger<UserController>>();
             var userStoreMock = new Mock<IUserStore<IdentityUser>>();
             _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
             _mockMapper = new Mock<IMapper>();
@@ -53,7 +52,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserName = dto.UserName
                 });
             _mockAuthService = new Mock<IAuthService>();
-            Controller = new UserController(_mockLogger.Object, _mockUserManager.Object, _mockMapper.Object, _mockAuthService.Object);
+            Controller = new UserController(mockLogger.Object, _mockUserManager.Object, _mockMapper.Object, _mockAuthService.Object);
             InitControllerContext();
         }
 

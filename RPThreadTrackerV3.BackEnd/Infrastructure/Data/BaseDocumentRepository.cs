@@ -11,11 +11,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Interfaces.Data;
-    using Interfaces.Services;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
 

@@ -110,7 +110,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
         public class Post : CharacterControllerTests
         {
-            private CharacterDto _validRequest;
+            private readonly CharacterDto _validRequest;
 
             public Post()
             {
@@ -173,7 +173,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
         public class Put : CharacterControllerTests
         {
-            private CharacterDto _validRequest;
+            private readonly CharacterDto _validRequest;
 
             public Put()
             {

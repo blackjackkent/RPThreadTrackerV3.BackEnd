@@ -8,9 +8,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using BackEnd.Infrastructure.Services;
     using BackEnd.Models.Configuration;
     using FluentAssertions;
-    using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
-    using Moq;
     using Xunit;
 
     [Trait("Class", "EmailBuilder")]

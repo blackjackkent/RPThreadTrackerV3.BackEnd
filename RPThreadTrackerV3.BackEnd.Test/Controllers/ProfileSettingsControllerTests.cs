@@ -26,10 +26,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     [Trait("Class", "ProfileSettingsController")]
     public class ProfileSettingsControllerTests : ControllerTests<ProfileSettingsController>
     {
-        private readonly AppSettings _mockConfig;
         private readonly Mock<IAuthService> _mockAuthService;
         private readonly Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
-        private Mock<IMapper> _mockMapper;
+        private readonly Mock<IMapper> _mockMapper;
 
         public ProfileSettingsControllerTests()
         {
@@ -54,9 +53,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 });
             _mockAuthService = new Mock<IAuthService>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();
-            _mockConfig = new AppSettings();
+            var mockConfig = new AppSettings();
             var configWrapper = new Mock<IOptions<AppSettings>>();
-            configWrapper.SetupGet(c => c.Value).Returns(_mockConfig);
+            configWrapper.SetupGet(c => c.Value).Returns(mockConfig);
             Controller = new ProfileSettingsController(mockLogger.Object, _mockMapper.Object, _mockAuthService.Object, _mockProfileSettingsRepository.Object);
             InitControllerContext();
         }

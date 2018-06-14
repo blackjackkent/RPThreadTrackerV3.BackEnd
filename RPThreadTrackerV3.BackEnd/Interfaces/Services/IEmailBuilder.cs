@@ -5,9 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 {
-    using Infrastructure.Services;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Models.Configuration;
     using Models.ViewModels;
 

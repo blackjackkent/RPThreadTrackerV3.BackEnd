@@ -9,7 +9,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
     using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using Microsoft.Azure.Documents;
 
     /// <summary>
     /// Generic repository for retrieving documents from a document store.

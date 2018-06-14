@@ -23,7 +23,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     {
         private readonly Mock<IRepository<Character>> _mockCharacterRepository;
         private readonly CharacterService _characterService;
-        private Mock<IMapper> _mockMapper;
+        private readonly Mock<IMapper> _mockMapper;
 
         public CharacterServiceTests()
         {

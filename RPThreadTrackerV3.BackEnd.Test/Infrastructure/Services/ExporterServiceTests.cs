@@ -6,12 +6,10 @@
 namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 {
     using System.Collections.Generic;
-    using System.Drawing;
     using System.Linq;
     using BackEnd.Infrastructure.Services;
     using BackEnd.Models.DomainModels;
     using FluentAssertions;
-    using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
     using Xunit;
 
     [Trait("Class", "ExporterService")]

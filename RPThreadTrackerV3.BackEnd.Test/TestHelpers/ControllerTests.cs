@@ -35,7 +35,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
 
         protected void InitControllerContext()
         {
-            var user = new ClaimsPrincipal(new ClaimsIdentity(new Claim[]
+            var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, "12345")
             }));

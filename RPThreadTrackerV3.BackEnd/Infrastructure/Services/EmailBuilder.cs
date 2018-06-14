@@ -10,7 +10,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     using System.Text.RegularExpressions;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Models.Configuration;
     using Models.ViewModels;
 

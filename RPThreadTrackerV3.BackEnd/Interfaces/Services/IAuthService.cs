@@ -10,9 +10,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
     using AutoMapper;
     using Data;
     using Infrastructure.Data.Entities;
-    using Infrastructure.Services;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Models.Configuration;
     using Models.DomainModels;
     using Models.ViewModels.Auth;

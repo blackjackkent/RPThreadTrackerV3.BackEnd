@@ -7,10 +7,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
 {
     using System.Collections.Generic;
     using BackEnd.Infrastructure.Providers;
-    using BackEnd.Infrastructure.Services;
     using BackEnd.Models.Configuration;
     using FluentAssertions;
-    using Interfaces.Services;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -24,14 +22,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
     [Trait("Class", "DisableDuringMaintenanceFilterAttribute")]
     public class DisableDuringMaintenanceFilterAttributeTests
     {
-        private readonly Mock<ILogger<DisableDuringMaintenanceFilterAttribute>> _mockLogger;
         private readonly AppSettings _mockConfig;
         private readonly DisableDuringMaintenanceFilterAttribute _filter;
         private readonly ActionExecutingContext _mockContext;
 
         public DisableDuringMaintenanceFilterAttributeTests()
         {
-            _mockLogger = new Mock<ILogger<DisableDuringMaintenanceFilterAttribute>>();
+            var mockLogger = new Mock<ILogger<DisableDuringMaintenanceFilterAttribute>>();
             _mockContext = new ActionExecutingContext(
                 new ActionContext
                 {
@@ -49,7 +46,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
 	        _mockConfig = new AppSettings();
 	        var configWrapper = new Mock<IOptions<AppSettings>>();
 	        configWrapper.SetupGet(s => s.Value).Returns(_mockConfig);
-            _filter = new DisableDuringMaintenanceFilterAttribute(_mockLogger.Object, configWrapper.Object);
+            _filter = new DisableDuringMaintenanceFilterAttribute(mockLogger.Object, configWrapper.Object);
         }
 
         public class OnActionExecuting : DisableDuringMaintenanceFilterAttributeTests

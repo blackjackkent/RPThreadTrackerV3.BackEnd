@@ -6,8 +6,6 @@
 namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 {
     using System.Threading.Tasks;
-    using Infrastructure.Services;
-    using Microsoft.Extensions.Configuration;
     using Models.Configuration;
     using Models.ViewModels;
 

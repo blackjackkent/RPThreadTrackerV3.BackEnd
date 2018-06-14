@@ -8,7 +8,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
     using System.Collections.Generic;
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// Data-layer representation of a user's settings for a particular public thread view.

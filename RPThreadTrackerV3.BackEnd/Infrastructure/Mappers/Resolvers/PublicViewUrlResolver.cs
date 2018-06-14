@@ -6,8 +6,6 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers.Resolvers
 {
     using AutoMapper;
-    using Interfaces.Services;
-    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Models.DomainModels.PublicViews;

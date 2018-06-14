@@ -106,7 +106,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
         public class Post : PublicViewManagementControllerTests
         {
-            private PublicViewDto _validRequest;
+            private readonly PublicViewDto _validRequest;
 
             public Post()
             {
@@ -228,7 +228,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 result.Should().BeOfType<BadRequestObjectResult>();
                 _mockPublicViewService.Verify(s => s.UpdatePublicView(It.IsAny<PublicView>(), _mockPublicViewRepository.Object, _mockMapper.Object), Times.Never);
             }
-
 
             [Fact]
             public async Task ReturnsBadRequestWhenViewSlugExists()

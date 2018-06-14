@@ -15,7 +15,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using BackEnd.Models.RequestModels;
     using BackEnd.Models.ViewModels;
     using FluentAssertions;
-    using Interfaces.Data;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -28,17 +27,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     [Trait("Class", "CharacterController")]
     public class ContactControllerTests : ControllerTests<ContactController>
     {
-        private readonly Mock<ILogger<ContactController>> _mockLogger;
         private readonly AppSettings _mockConfig;
         private readonly Mock<IMapper> _mockMapper;
-        private Mock<IEmailClient> _mockEmailClient;
-        private Mock<IEmailBuilder> _mockEmailBuilder;
-        private Mock<IAuthService> _mockAuthService;
-        private Mock<UserManager<IdentityUser>> _mockUserManager;
+        private readonly Mock<IEmailClient> _mockEmailClient;
+        private readonly Mock<IEmailBuilder> _mockEmailBuilder;
+        private readonly Mock<IAuthService> _mockAuthService;
+        private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
 
         public ContactControllerTests()
         {
-            _mockLogger = new Mock<ILogger<ContactController>>();
+            var mockLogger = new Mock<ILogger<ContactController>>();
             _mockConfig = new AppSettings();
             var configWrapper = new Mock<IOptions<AppSettings>>();
             configWrapper.SetupGet(c => c.Value).Returns(_mockConfig);
@@ -48,7 +46,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockMapper = new Mock<IMapper>();
             var userStoreMock = new Mock<IUserStore<IdentityUser>>();
             _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
-            Controller = new ContactController(configWrapper.Object, _mockLogger.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockAuthService.Object, _mockUserManager.Object, _mockMapper.Object);
+            Controller = new ContactController(configWrapper.Object, mockLogger.Object, _mockEmailClient.Object, _mockEmailBuilder.Object, _mockAuthService.Object, _mockUserManager.Object, _mockMapper.Object);
             InitControllerContext();
         }
 

@@ -1,4 +1,4 @@
-﻿// <copyright file="PublicThreadControllerTests.cs" company="Rosalind Wills">
+﻿// <copyright file="ThreadControllerTests.cs" company="Rosalind Wills">
 // Copyright (c) Rosalind Wills. All rights reserved.
 // Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
 // </copyright>
@@ -9,8 +9,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using AutoMapper;
     using BackEnd.Controllers;
     using BackEnd.Infrastructure.Exceptions.Characters;

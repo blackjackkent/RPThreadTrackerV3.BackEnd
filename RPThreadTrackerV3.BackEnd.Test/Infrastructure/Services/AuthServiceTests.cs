@@ -19,9 +19,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using BackEnd.Models.DomainModels;
     using FluentAssertions;
     using Interfaces.Data;
-    using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
-    using Microsoft.Extensions.Configuration;
     using Moq;
     using Xunit;
 
