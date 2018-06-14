@@ -97,6 +97,7 @@ namespace RPThreadTrackerV3.BackEnd
 		    services.AddScoped<IRepository<Thread>, ThreadRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 		    services.AddSingleton(typeof(IDocumentRepository<>), typeof(BaseDocumentRepository<>));
+		    services.AddSingleton(typeof(IDocumentClient<>), typeof(DocumentDbClient<>));
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddSingleton<IEmailBuilder, EmailBuilder>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();

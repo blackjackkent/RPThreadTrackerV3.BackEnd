@@ -9,13 +9,14 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
     using System.Collections.Generic;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
+    using Microsoft.Azure.Documents;
 
     /// <summary>
     /// Generic repository for retrieving documents from a document store.
     /// </summary>
     /// <typeparam name="T">The type to which retrieved documents should be cast.</typeparam>
     public interface IDocumentRepository<T>
-        where T : class, IDocument
+        where T : Resource, IDocument
     {
         /// <summary>
         /// Creates a new document representing an object of type <c>T</c>.

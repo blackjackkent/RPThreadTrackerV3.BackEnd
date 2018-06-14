@@ -12,31 +12,23 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using System.Threading.Tasks;
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.Client;
     using Microsoft.Azure.Documents.Linq;
-    using Microsoft.Extensions.Options;
-    using Models.Configuration;
 
     /// <inheritdoc cref="IDocumentRepository{T}" />
     public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
-        where T : Document, IDocument
+        where T : Resource, IDocument
     {
         private readonly string _databaseId;
         private readonly string _collectionId;
-        private readonly DocumentClient _client;
+        private readonly IDocumentClient<T> _client;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
         /// </summary>
-        /// <param name="options">Wrapper for application settings.</param>
-        public BaseDocumentRepository(IOptions<AppSettings> options)
+        /// <param name="client">Wrapper for document database client.</param>
+        public BaseDocumentRepository(IDocumentClient<T> client)
         {
-	        var config = options.Value;
-            var key = config.Secure.Documents.Key;
-            var endpoint = config.Secure.Documents.Endpoint;
-            _databaseId = config.Secure.Documents.DatabaseId;
-            _collectionId = config.Secure.Documents.CollectionId;
-            _client = new DocumentClient(new Uri(endpoint), key);
+            _client = client;
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();
         }
@@ -46,14 +38,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         {
             try
             {
-                Document document = await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
-                return (T)(dynamic)document;
+                var document = await _client.ReadDocumentAsync(id);
+                return (T)document;
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    return null;
+                    return default(T);
                 }
                 throw;
             }
@@ -62,9 +54,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// <inheritdoc />
         public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
         {
-            var query = _client.CreateDocumentQuery<T>(
-                UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId),
-                new FeedOptions { MaxItemCount = -1 })
+            var query = _client.CreateDocumentQuery()
                 .Where(predicate)
                 .AsDocumentQuery();
 
@@ -80,21 +70,21 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// <inheritdoc />
         public async Task<T> CreateItemAsync(T item)
         {
-            var result = await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
+            var result = await _client.CreateDocumentAsync(item);
             return (T)result;
         }
 
         /// <inheritdoc />
         public async Task<T> UpdateItemAsync(string id, T item)
         {
-            var result = await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
+            var result = await _client.ReplaceDocumentAsync(id, item);
             return (T)result;
         }
 
         /// <inheritdoc />
         public async Task DeleteItemAsync(string id)
         {
-            await _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
+            await _client.DeleteDocumentAsync(id);
         }
 
         /// <inheritdoc />
@@ -120,13 +110,13 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         {
             try
             {
-                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
+                await _client.AssertDatabaseExists();
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await _client.CreateDatabaseAsync(new Database { Id = _databaseId });
+                    await _client.CreateDatabaseAsync();
                 }
                 else
                 {
@@ -139,16 +129,13 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         {
             try
             {
-                await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId));
+                await _client.AssertCollectionExists();
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await _client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri(_databaseId),
-                        new DocumentCollection { Id = _collectionId },
-                        new RequestOptions { OfferThroughput = 1000 });
+                    await _client.CreateDocumentCollectionAsync();
                 }
                 else
                 {

@@ -63,7 +63,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="mapper">The application's object mapper.</param>
         /// <returns>
         /// A task that represents the asynchronous operation.
-        /// The task result contains the updated public view object
+        /// The task result contains the updated public view object.
         /// </returns>
         Task<PublicView> UpdatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper);
 

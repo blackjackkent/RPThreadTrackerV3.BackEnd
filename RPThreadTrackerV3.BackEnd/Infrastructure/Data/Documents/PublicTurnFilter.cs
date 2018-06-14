@@ -12,8 +12,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
     /// Data-layer representation of a public view's turn-based filter settings.
     /// </summary>
     /// <seealso cref="IDocument" />
-    /// <seealso cref="Document" />
-    public class PublicTurnFilter : Document, IDocument
+    public class PublicTurnFilter
     {
         /// <summary>
         /// Gets or sets a value indicating whether the public view should include threads for which it is the user's turn.

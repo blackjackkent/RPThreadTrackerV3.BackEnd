@@ -13,8 +13,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
     /// Data-layer representation of a user's settings for a particular public thread view.
     /// </summary>
     /// <seealso cref="IDocument" />
-    /// <seealso cref="Document" />
-    public class PublicView : Document, IDocument
+    public class PublicView : Resource, IDocument
     {
         /// <summary>
         /// Gets or sets the name of the public view.

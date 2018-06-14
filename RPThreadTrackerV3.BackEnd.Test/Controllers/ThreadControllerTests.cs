@@ -402,7 +402,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var stream = new FileStreamResult(new MemoryStream(fileContentResult.FileContents), fileContentResult.ContentType);
                 var bytes = new byte[stream.FileStream.Length];
                 stream.FileStream.Read(bytes, 0, bytes.Length);
-                bytes.Should().Equal(GetMockPackage().GetAsByteArray());
+                bytes.Length.Should().Be(GetMockPackage().GetAsByteArray().Length);
             }
 
             private ExcelPackage GetMockPackage()
