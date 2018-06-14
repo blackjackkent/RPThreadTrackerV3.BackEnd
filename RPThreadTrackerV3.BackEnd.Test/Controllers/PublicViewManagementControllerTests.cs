@@ -244,7 +244,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 result.Should().BeOfType<BadRequestObjectResult>();
             }
 
-
             [Fact]
             public async Task ReturnsBadRequestWhenViewDoesNotExistForUser()
             {

@@ -114,7 +114,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var createdThread = _threadService.CreateThread(model, _threadRepository, _mapper);
-				return Ok(createdThread);
+				return Ok(_mapper.Map<ThreadDto>(createdThread));
 			}
 			catch (InvalidThreadException)
 			{
@@ -157,7 +157,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var updatedThread = _threadService.UpdateThread(model, _threadRepository, _mapper);
-				return Ok(updatedThread);
+				return Ok(_mapper.Map<ThreadDto>(updatedThread));
 			}
 			catch (InvalidThreadException)
 			{
@@ -226,19 +226,28 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		[Route("export")]
 		public IActionResult Export([FromQuery] bool includeHiatused = false, [FromQuery] bool includeArchive = false)
 		{
-			var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
-			var threads = _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
-			var excelPackage = _exporterService.GetExcelPackage(characters, threads);
-		    var byteArray = excelPackage.GetAsByteArray();
-			var cd = new System.Net.Mime.ContentDisposition
-			{
-				FileName = "Export.xlsx",
-				Inline = false
-			};
-			Response.Headers.Add("Content-Disposition", cd.ToString());
-			Response.Headers.Add("X-Content-Type-Options", "nosniff");
-			return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-	    }
+		    try
+		    {
+		        var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
+		        var threads =
+		            _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
+		        var excelPackage = _exporterService.GetExcelPackage(characters, threads);
+		        var byteArray = excelPackage.GetAsByteArray();
+		        var cd = new System.Net.Mime.ContentDisposition
+		        {
+		            FileName = "Export.xlsx",
+		            Inline = false
+		        };
+		        Response.Headers.Add("Content-Disposition", cd.ToString());
+		        Response.Headers.Add("X-Content-Type-Options", "nosniff");
+		        return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		    }
+		    catch (Exception e)
+		    {
+                _logger.LogError(e, $"Error exporting threads for User {UserId}: {e.Message}");
+		        return StatusCode(500, "An unknown error occurred.");
+		    }
+		}
 
         /// <summary>
         /// Processes a request to get all tags for all threads belonging to the current user.

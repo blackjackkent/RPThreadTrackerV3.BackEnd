@@ -102,7 +102,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
         /// Throws an exception if the thread model is not valid.
         /// </summary>
         /// <exception cref="InvalidThreadException">Thrown if the thread model is not valid.</exception>
-        public void AssertIsValid()
+        public virtual void AssertIsValid()
 		{
 			if (string.IsNullOrEmpty(UserTitle))
 			{
