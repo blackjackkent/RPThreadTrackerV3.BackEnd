@@ -37,7 +37,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
         private readonly Mock<IAuthService> _mockAuthService;
         private readonly Mock<IRepository<ProfileSettingsCollection>> _mockProfileSettingsRepository;
         private readonly Mock<IRepository<Entities.RefreshToken>> _mockRefreshTokenRepository;
-        private Mock<IEmailClient> _mockEmailClient;
+        private readonly Mock<IEmailClient> _mockEmailClient;
 
         public AuthControllerTests()
         {
