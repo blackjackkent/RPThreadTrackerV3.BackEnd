@@ -17,13 +17,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     [ExcludeFromCodeCoverage]
     public class TrackerContext : IdentityDbContext
 	{
-	    /// <summary>
-	    /// Initializes a new instance of the <see cref="TrackerContext"/> class.
-	    /// </summary>
-	    public TrackerContext()
-	    {
-	    }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="TrackerContext"/> class.
         /// </summary>

@@ -29,7 +29,15 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 PartnerUrlIdentifier = "my-partner",
                 ThreadHomeUrl = "http://www.test.com",
                 Character = new CharacterDto(),
-                ThreadTags = new List<ThreadTagDto>(),
+                ThreadTags = new List<ThreadTagDto>
+                {
+                    new ThreadTagDto
+                    {
+                        ThreadId = 1357,
+                        TagText = "My Tag",
+                        ThreadTagId = "7531"
+                    }
+                },
                 UserTitle = "My Title"
             };
         }
