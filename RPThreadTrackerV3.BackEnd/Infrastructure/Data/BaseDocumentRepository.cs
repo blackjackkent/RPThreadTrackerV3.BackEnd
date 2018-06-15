@@ -18,7 +18,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using IDocumentClient = Interfaces.Data.IDocumentClient;
 
     /// <inheritdoc cref="IDocumentRepository{T}" />
-    public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
+    public class BaseDocumentRepository<T> : IDocumentRepository<T>
         where T : Resource, IDocument
     {
         private readonly IDocumentClient _client;
@@ -56,9 +56,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// <inheritdoc />
         public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
         {
-            var query = _client.CreateDocumentQuery<T>()
-                .Where(predicate)
-                .AsDocumentQuery();
+            var query = _client.CreateDocumentQuery(predicate);
 
             var results = new List<T>();
             while (query.HasMoreResults)
@@ -87,25 +85,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         public async Task DeleteItemAsync(string id)
         {
             await _client.DeleteDocumentAsync(id);
-        }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _client?.Dispose();
-            }
         }
 
         private async Task CreateDatabaseIfNotExistsAsync()

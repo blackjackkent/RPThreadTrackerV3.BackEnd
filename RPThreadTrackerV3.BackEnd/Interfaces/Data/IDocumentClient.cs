@@ -7,8 +7,11 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
 {
     using System;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Linq;
+    using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 
     /// <summary>
     /// Wrapper for document database client functionality.
@@ -58,11 +61,12 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         Task CreateDocumentCollectionAsync();
 
         /// <summary>
-        /// Creates a query statement for retrieving objects of type <c>T</c> from the database.
+        /// Creates a query statement for retrieving objects of type <c>T</c> from the database matching the passed predicate.
         /// </summary>
         /// <typeparam name="T">The type for which the query object should search.</typeparam>
-        /// <returns>A query statement for retrieving objects of type <c>T</c> from the database..</returns>
-        IOrderedQueryable<T> CreateDocumentQuery<T>()
+        /// <param name="predicate">The predicate which queried objects should match.</param>
+        /// <returns>A query statement for retrieving objects of type <c>T</c> from the database matching the predicate.</returns>
+        IDocumentQuery<T> CreateDocumentQuery<T>(Expression<Func<T, bool>> predicate)
             where T : Resource, IDocument;
 
         /// <summary>

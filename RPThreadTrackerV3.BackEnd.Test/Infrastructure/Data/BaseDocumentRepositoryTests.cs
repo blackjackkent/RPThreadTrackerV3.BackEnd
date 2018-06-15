@@ -6,13 +6,18 @@
 namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Net;
+    using System.Threading;
     using System.Threading.Tasks;
     using BackEnd.Infrastructure.Data;
     using BackEnd.Infrastructure.Exceptions;
     using FluentAssertions;
     using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Documents.Client;
+    using Microsoft.Azure.Documents.Linq;
     using Moq;
     using TestHelpers;
     using Xunit;
@@ -195,6 +200,130 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
                     .WithInnerException<DocumentDatabaseException>()
                         .WithInnerException<DocumentClientException>()
                         .Which.Should().Be(exception);
+            }
+        }
+
+        public class GetItemsAsync : BaseDocumentRepositoryTests
+        {
+            [Fact]
+            public async Task ReturnsEmptyListIfNoResults()
+            {
+                // Arrange
+                var mockQuery = new Mock<IDocumentQuery<MockDocumentPoco>>();
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>())).Returns(mockQuery.Object);
+                mockQuery.SetupGet(q => q.HasMoreResults).Returns(false);
+
+                // Act
+                var result = await _repo.GetItemsAsync(p => p.Name == "Test");
+
+                // Assert
+                result.Should().HaveCount(0);
+            }
+
+            [Fact]
+            public async Task ReturnsQueryResultsWhenQuerySuccessful()
+            {
+                // Arrange
+                var querySet1 = new FeedResponse<MockDocumentPoco>(new List<MockDocumentPoco>
+                {
+                    new MockDocumentPoco { Name = "Test 1" },
+                    new MockDocumentPoco { Name = "Test 2" }
+                });
+                var querySet2 = new FeedResponse<MockDocumentPoco>(new List<MockDocumentPoco>
+                {
+                    new MockDocumentPoco { Name = "Test 3" },
+                    new MockDocumentPoco { Name = "Test 4" }
+                });
+                var mockQuery = new Mock<IDocumentQuery<MockDocumentPoco>>();
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>())).Returns(mockQuery.Object);
+                mockQuery.SetupSequence(q => q.HasMoreResults)
+                    .Returns(true)
+                    .Returns(true)
+                    .Returns(false);
+                mockQuery.SetupSequence(q => q.ExecuteNextAsync<MockDocumentPoco>(It.IsAny<CancellationToken>()))
+                    .Returns(Task.FromResult(querySet1))
+                    .Returns(Task.FromResult(querySet2));
+
+                // Act
+                var result = await _repo.GetItemsAsync(p => p.Name == "Test");
+
+                // Assert
+                result.Should().HaveCount(4)
+                    .And.Contain(p => p.Name == "Test 1")
+                    .And.Contain(p => p.Name == "Test 2")
+                    .And.Contain(p => p.Name == "Test 3")
+                    .And.Contain(p => p.Name == "Test 4");
+            }
+        }
+
+        public class CreateItemAsync : BaseDocumentRepositoryTests
+        {
+            [Fact]
+            public async Task ReturnsTypedObjectWhenCreationIsSuccessful()
+            {
+                // Arrange
+                var item = new MockDocumentPoco
+                {
+                    Name = "Test Name",
+                    Slug = "test-slug",
+                    Size = 15
+                };
+                var document = new Document();
+                document.SetPropertyValue("Name", "Test Name");
+                document.SetPropertyValue("Slug", "test-slug");
+                document.SetPropertyValue("Size", 15);
+                _mockClient.Setup(c => c.CreateDocumentAsync(item)).Returns(Task.FromResult(document));
+
+                // Act
+                var result = await _repo.CreateItemAsync(item);
+
+                // Assert
+                result.Should().BeOfType<MockDocumentPoco>();
+                result.Name.Should().Be("Test Name");
+                result.Size.Should().Be(15);
+                result.Slug.Should().Be("test-slug");
+            }
+        }
+
+        public class UpdateItemAsync : BaseDocumentRepositoryTests
+        {
+            [Fact]
+            public async Task ReturnsTypedObjectWhenCreationIsSuccessful()
+            {
+                // Arrange
+                var item = new MockDocumentPoco
+                {
+                    Name = "Test Name",
+                    Slug = "test-slug",
+                    Size = 15
+                };
+                var document = new Document();
+                document.SetPropertyValue("Name", "Test Name");
+                document.SetPropertyValue("Slug", "test-slug");
+                document.SetPropertyValue("Size", 15);
+                _mockClient.Setup(c => c.ReplaceDocumentAsync("12345", item)).Returns(Task.FromResult(document));
+
+                // Act
+                var result = await _repo.UpdateItemAsync("12345", item);
+
+                // Assert
+                result.Should().BeOfType<MockDocumentPoco>();
+                result.Name.Should().Be("Test Name");
+                result.Size.Should().Be(15);
+                result.Slug.Should().Be("test-slug");
+            }
+        }
+
+        public class DeleteItemAsync : BaseDocumentRepositoryTests
+        {
+            [Fact]
+            public async Task DeletesItemFromDatabase()
+            {
+                // Act
+                await _repo.DeleteItemAsync("12345");
+
+                // Assert
+                _mockClient.Verify(c => c.DeleteDocumentAsync("12345"), Times.Once);
             }
         }
     }

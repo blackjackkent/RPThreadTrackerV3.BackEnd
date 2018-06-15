@@ -8,10 +8,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Client;
+    using Microsoft.Azure.Documents.Linq;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
     using IDocumentClient = Interfaces.Data.IDocumentClient;
@@ -45,12 +47,13 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         }
 
         /// <inheritdoc />
-        public IOrderedQueryable<T> CreateDocumentQuery<T>()
+        public IDocumentQuery<T> CreateDocumentQuery<T>(Expression<Func<T, bool>> predicate)
             where T : Resource, IDocument
         {
-            return _client.CreateDocumentQuery<T>(
+            var query = _client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId),
                 new FeedOptions { MaxItemCount = -1 });
+            return query.Where(predicate).AsDocumentQuery();
         }
 
         /// <inheritdoc />
