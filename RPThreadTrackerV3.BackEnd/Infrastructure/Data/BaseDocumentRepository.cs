@@ -14,18 +14,20 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Linq;
+    using Newtonsoft.Json;
+    using IDocumentClient = Interfaces.Data.IDocumentClient;
 
     /// <inheritdoc cref="IDocumentRepository{T}" />
     public class BaseDocumentRepository<T> : IDocumentRepository<T>, IDisposable
         where T : Resource, IDocument
     {
-        private readonly IDocumentClient<T> _client;
+        private readonly IDocumentClient _client;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseDocumentRepository{T}"/> class.
         /// </summary>
         /// <param name="client">Wrapper for document database client.</param>
-        public BaseDocumentRepository(IDocumentClient<T> client)
+        public BaseDocumentRepository(IDocumentClient client)
         {
             _client = client;
             CreateDatabaseIfNotExistsAsync().Wait();
@@ -38,7 +40,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
             try
             {
                 var document = await _client.ReadDocumentAsync(id);
-                return (T)document;
+                return JsonConvert.DeserializeObject<T>(document.ToString());
             }
             catch (DocumentClientException e)
             {
@@ -53,7 +55,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// <inheritdoc />
         public async Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate)
         {
-            var query = _client.CreateDocumentQuery()
+            var query = _client.CreateDocumentQuery<T>()
                 .Where(predicate)
                 .AsDocumentQuery();
 
@@ -70,14 +72,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         public async Task<T> CreateItemAsync(T item)
         {
             var result = await _client.CreateDocumentAsync(item);
-            return (T)result;
+            return JsonConvert.DeserializeObject<T>(result.ToString());
         }
 
         /// <inheritdoc />
         public async Task<T> UpdateItemAsync(string id, T item)
         {
             var result = await _client.ReplaceDocumentAsync(id, item);
-            return (T)result;
+            return JsonConvert.DeserializeObject<T>(result.ToString());
         }
 
         /// <inheritdoc />
@@ -122,6 +124,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                     throw new DocumentDatabaseInitializationException(e.Message, e);
                 }
             }
+            catch (Exception e)
+            {
+                throw new DocumentDatabaseInitializationException(e.Message, e);
+            }
         }
 
         private async Task CreateCollectionIfNotExistsAsync()
@@ -140,6 +146,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 {
                     throw new DocumentDatabaseInitializationException(e.Message, e);
                 }
+            }
+            catch (Exception e)
+            {
+                throw new DocumentDatabaseInitializationException(e.Message, e);
             }
         }
     }

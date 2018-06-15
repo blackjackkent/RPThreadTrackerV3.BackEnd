@@ -13,9 +13,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
     /// <summary>
     /// Wrapper for document database client functionality.
     /// </summary>
-    /// <typeparam name="T">The type of document which this client interacts with.</typeparam>
-    public interface IDocumentClient<T> : IDisposable
-        where T : Resource, IDocument
+    public interface IDocumentClient : IDisposable
     {
         /// <summary>
         /// Throws an exception if the database collection does not exist.
@@ -49,7 +47,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         /// A task that represents the asynchronous operation.
         /// The task result contains the created document.
         /// </returns>
-        Task<T> CreateDocumentAsync(T item);
+        Task<Document> CreateDocumentAsync(object item);
 
         /// <summary>
         /// Creates the document collection.
@@ -60,10 +58,12 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         Task CreateDocumentCollectionAsync();
 
         /// <summary>
-        /// Creates a document query for a particular document type.
+        /// Creates a query statement for retrieving objects of type <c>T</c> from the database.
         /// </summary>
-        /// <returns>A queryable object of type <c>T</c>.</returns>
-        IOrderedQueryable<T> CreateDocumentQuery();
+        /// <typeparam name="T">The type for which the query object should search.</typeparam>
+        /// <returns>A query statement for retrieving objects of type <c>T</c> from the database..</returns>
+        IOrderedQueryable<T> CreateDocumentQuery<T>()
+            where T : Resource, IDocument;
 
         /// <summary>
         /// Deletes the document with the passed ID.
@@ -82,7 +82,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         /// A task that represents the asynchronous operation.
         /// The task result contains the retrieved document.
         /// </returns>
-        Task<T> ReadDocumentAsync(string id);
+        Task<Document> ReadDocumentAsync(string id);
 
         /// <summary>
         /// Updates the document with the passed ID.
@@ -93,6 +93,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         /// A task that represents the asynchronous operation.
         /// The task result contains the updated document.
         /// </returns>
-        Task<T> ReplaceDocumentAsync(string id, T item);
+        Task<Document> ReplaceDocumentAsync(string id, object item);
     }
 }

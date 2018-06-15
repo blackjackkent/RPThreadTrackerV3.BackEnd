@@ -14,19 +14,18 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using Microsoft.Azure.Documents.Client;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
-    using Newtonsoft.Json;
+    using IDocumentClient = Interfaces.Data.IDocumentClient;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    public class DocumentDbClient<T> : IDocumentClient<T>
-        where T : Resource, IDocument
+    public class DocumentDbClient : IDocumentClient
     {
         private readonly DocumentClient _client;
         private readonly string _databaseId;
         private readonly string _collectionId;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DocumentDbClient{T}"/> class.
+        /// Initializes a new instance of the <see cref="DocumentDbClient"/> class.
         /// </summary>
         /// <param name="options">The application settings.</param>
         public DocumentDbClient(IOptions<AppSettings> options)
@@ -40,14 +39,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         }
 
         /// <inheritdoc />
-        public async Task<T> ReadDocumentAsync(string id)
+        public async Task<Document> ReadDocumentAsync(string id)
         {
-            var document = await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
-            return JsonConvert.DeserializeObject<T>(document.Resource.ToString());
+            return await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
         }
 
         /// <inheritdoc />
-        public IOrderedQueryable<T> CreateDocumentQuery()
+        public IOrderedQueryable<T> CreateDocumentQuery<T>()
+            where T : Resource, IDocument
         {
             return _client.CreateDocumentQuery<T>(
                 UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId),
@@ -55,17 +54,15 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         }
 
         /// <inheritdoc />
-        public async Task<T> CreateDocumentAsync(T item)
+        public async Task<Document> CreateDocumentAsync(object item)
         {
-            var document = await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
-            return JsonConvert.DeserializeObject<T>(document.Resource.ToString());
+            return await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
         }
 
         /// <inheritdoc />
-        public async Task<T> ReplaceDocumentAsync(string id, T item)
+        public async Task<Document> ReplaceDocumentAsync(string id, object item)
         {
-            var document = await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
-            return JsonConvert.DeserializeObject<T>(document.Resource.ToString());
+            return await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
         }
 
         /// <inheritdoc />

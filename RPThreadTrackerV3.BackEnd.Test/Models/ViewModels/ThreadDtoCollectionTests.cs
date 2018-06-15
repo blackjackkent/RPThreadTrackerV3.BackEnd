@@ -10,10 +10,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
     using BackEnd.Models.ViewModels;
     using FluentAssertions;
     using Newtonsoft.Json;
+    using TestHelpers;
     using Xunit;
 
     [Trait("Class", "ThreadDtoCollection")]
-    public partial class ThreadDtoCollectionTests
+    public class ThreadDtoCollectionTests
     {
         public class Constructor : ThreadDtoCollectionTests
         {

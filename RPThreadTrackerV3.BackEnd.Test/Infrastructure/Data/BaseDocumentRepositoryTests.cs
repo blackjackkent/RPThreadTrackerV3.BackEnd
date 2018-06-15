@@ -11,20 +11,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
     using BackEnd.Infrastructure.Data;
     using BackEnd.Infrastructure.Exceptions;
     using FluentAssertions;
-    using Interfaces.Data;
     using Microsoft.Azure.Documents;
     using Moq;
     using TestHelpers;
     using Xunit;
+    using IDocumentClient = Interfaces.Data.IDocumentClient;
 
     [Trait("Class", "BaseDocumentRepository")]
     public class BaseDocumentRepositoryTests
     {
-        private readonly Mock<IDocumentClient<MockDocumentPoco>> _mockClient;
+        private readonly Mock<IDocumentClient> _mockClient;
 
         public BaseDocumentRepositoryTests()
         {
-            _mockClient = new Mock<IDocumentClient<MockDocumentPoco>>();
+            _mockClient = new Mock<IDocumentClient>();
         }
 
         public class Constructor : BaseDocumentRepositoryTests
@@ -58,7 +58,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             }
 
             [Fact]
-            public void ThrowsIfUnexpectedErrorOccursInReadingDatabase()
+            public void ThrowsIfUnexpectedDocumentClientExceptionOccursInReadingDatabase()
             {
                 // Arrange
                 var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.BadGateway);
@@ -73,7 +73,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             }
 
             [Fact]
-            public void ThrowsIfUnexpectedErrorOccursInReadingCollection()
+            public void ThrowsIfUnexpectedDocumentClientExceptionOccursInReadingCollection()
             {
                 // Arrange
                 var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.BadGateway);
@@ -85,6 +85,36 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
                 thrown.InnerExceptions.FirstOrDefault().Should().BeOfType<DocumentDatabaseInitializationException>();
                 thrown.InnerExceptions.FirstOrDefault().InnerException.Should().Be(exception);
                 _mockClient.Verify(c => c.CreateDocumentCollectionAsync(), Times.Never);
+            }
+
+            [Fact]
+            public void ThrowsIfUnexpectedExceptionOccursInReadingDatabase()
+            {
+                // Arrange
+                var exception = new NullReferenceException();
+                _mockClient.Setup(c => c.AssertDatabaseExists()).Throws(exception);
+
+                // Act/Assert
+                var thrown = Assert.Throws<AggregateException>(() => new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object));
+                thrown.InnerExceptions.Count.Should().Be(1);
+                thrown.InnerExceptions.FirstOrDefault().Should().BeOfType<DocumentDatabaseInitializationException>();
+                thrown.InnerExceptions.FirstOrDefault().InnerException.Should().Be(exception);
+                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Never);
+            }
+
+            [Fact]
+            public void ThrowsIfUnexpectedExceptionOccursInReadingCollection()
+            {
+                // Arrange
+                var exception = new NullReferenceException();
+                _mockClient.Setup(c => c.AssertCollectionExists()).Throws(exception);
+
+                // Act/Assert
+                var thrown = Assert.Throws<AggregateException>(() => new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object));
+                thrown.InnerExceptions.Count.Should().Be(1);
+                thrown.InnerExceptions.FirstOrDefault().Should().BeOfType<DocumentDatabaseInitializationException>();
+                thrown.InnerExceptions.FirstOrDefault().InnerException.Should().Be(exception);
+                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Never);
             }
 
             [Fact]
