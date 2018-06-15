@@ -5,8 +5,10 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
 {
+    using System;
     using BackEnd.Infrastructure.Exceptions.PublicViews;
     using BackEnd.Models.ViewModels.PublicViews;
+    using FluentAssertions;
     using Xunit;
 
     [Trait("Class", "PublicTurnFilterDto")]
@@ -34,7 +36,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 var dto = new PublicTurnFilterDto();
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => dto.AssertIsValid());
+                Action action = () => dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
         }
     }

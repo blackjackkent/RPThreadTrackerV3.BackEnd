@@ -70,8 +70,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Get();
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -98,9 +97,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.Should().HaveCount(2);
-                body.Should().Contain(v => v.Id == "13579");
-                body.Should().Contain(v => v.Id == "97531");
+                body.Should().HaveCount(2)
+                    .And.Contain(v => v.Id == "13579")
+                    .And.Contain(v => v.Id == "97531");
             }
         }
 
@@ -160,8 +159,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Post(_validRequest);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -270,8 +268,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Put("13579", _validRequest);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -336,8 +333,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Delete("13579");
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]

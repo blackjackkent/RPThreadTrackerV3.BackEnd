@@ -109,8 +109,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Get("my-view");
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -147,9 +146,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
                 body.View.Id.Should().Be("13579");
-                body.Threads.Should().HaveCount(2);
-                body.Threads.Should().Contain(t => t.ThreadId == 12345);
-                body.Threads.Should().Contain(t => t.ThreadId == 54321);
+                body.Threads.Should().HaveCount(2)
+                    .And.Contain(t => t.ThreadId == 12345)
+                    .And.Contain(t => t.ThreadId == 54321);
             }
         }
 
@@ -170,8 +169,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 #pragma warning restore CS0618 // Type or member is obsolete
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -213,9 +211,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
                 body.View.Id.Should().Be("13579");
-                body.Threads.Should().HaveCount(2);
-                body.Threads.Should().Contain(t => t.ThreadId == 12345);
-                body.Threads.Should().Contain(t => t.ThreadId == 54321);
+                body.Threads.Should().HaveCount(2)
+                    .And.Contain(t => t.ThreadId == 12345)
+                    .And.Contain(t => t.ThreadId == 54321);
             }
         }
     }

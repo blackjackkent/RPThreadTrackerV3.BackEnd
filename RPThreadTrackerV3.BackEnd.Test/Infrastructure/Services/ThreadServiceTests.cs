@@ -343,8 +343,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockThreadRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => y.Compile()(thread)))).Returns(true);
                 _mockThreadRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Thread, bool>>>(y => !y.Compile()(thread)))).Returns(false);
 
-                // Act/Assert
-                Assert.Throws<ThreadNotFoundException>(() => _threadService.AssertUserOwnsThread(97531, "12345", _mockThreadRepository.Object));
+                // Act
+                Action action = () => _threadService.AssertUserOwnsThread(97531, "12345", _mockThreadRepository.Object);
+
+                // Assert
+                action.Should().Throw<ThreadNotFoundException>();
             }
 
             [Fact]
@@ -408,8 +411,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 _mockThreadRepository.Setup(r => r.GetWhere(It.IsAny<Expression<Func<Thread, bool>>>(), It.IsAny<List<string>>())).Returns(new List<Thread>());
 
-                // Act/Assert
-                Assert.Throws<ThreadNotFoundException>(() => _threadService.DeleteThread(13579, _mockThreadRepository.Object));
+                // Act
+                Action action = () => _threadService.DeleteThread(13579, _mockThreadRepository.Object);
+
+                // Assert
+                action.Should().Throw<ThreadNotFoundException>();
             }
 
             [Fact]
@@ -467,10 +473,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var tags = _threadService.GetAllTags("12345", _mockThreadRepository.Object, _mockMapper.Object);
 
                 // Assert
-                tags.Should().HaveCount(3);
-                tags.Should().Contain("Tag1");
-                tags.Should().Contain("Tag2");
-                tags.Should().Contain("Tag3");
+                tags.Should().HaveCount(3)
+                    .And.Contain("Tag1")
+                    .And.Contain("Tag2")
+                    .And.Contain("Tag3");
             }
 
             [Fact]

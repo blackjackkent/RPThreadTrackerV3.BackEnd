@@ -64,8 +64,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Post(request);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
                 _mockEmailClient.Verify(c => c.SendEmail(It.IsAny<EmailDto>(), _mockConfig), Times.Never);
             }
 

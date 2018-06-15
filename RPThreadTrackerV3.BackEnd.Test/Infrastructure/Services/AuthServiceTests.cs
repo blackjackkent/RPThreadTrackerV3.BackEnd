@@ -98,15 +98,18 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfUserDoesNotExist()
+            public void ThrowsExceptionIfUserDoesNotExist()
             {
                 // Arrange
                 var email = "me@me.com";
                 _mockUserManager.Setup(u => u.FindByNameAsync(email)).Returns(Task.FromResult((IdentityUser)null));
                 _mockUserManager.Setup(u => u.FindByEmailAsync(email)).Returns(Task.FromResult((IdentityUser)null));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<UserNotFoundException>(() => _authService.GetUserByUsernameOrEmail(email, _mockUserManager.Object));
+                // Act
+                Func<Task> action = async () => await _authService.GetUserByUsernameOrEmail(email, _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<UserNotFoundException>();
             }
         }
 
@@ -209,7 +212,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(new List<RefreshToken>());
 
                 // Act
-                Assert.Throws<InvalidRefreshTokenException>(() => _authService.GetUserForRefreshToken("token", _mockRefreshTokenRepository.Object));
+                Action action = () => _authService.GetUserForRefreshToken("token", _mockRefreshTokenRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidRefreshTokenException>();
             }
 
             [Fact]
@@ -232,7 +238,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(new List<RefreshToken> { storedToken });
 
                 // Act
-                Assert.Throws<InvalidRefreshTokenException>(() => _authService.GetUserForRefreshToken("token", _mockRefreshTokenRepository.Object));
+                Action action = () => _authService.GetUserForRefreshToken("token", _mockRefreshTokenRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidRefreshTokenException>();
             }
         }
 
@@ -256,13 +265,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionWhenNotFound()
+            public void ThrowsExceptionWhenNotFound()
             {
                 // Arrange
                 _mockUserManager.Setup(m => m.GetUserAsync(It.IsAny<ClaimsPrincipal>())).ReturnsAsync((IdentityUser)null);
 
-                // Act/Assert
-                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.GetCurrentUser(new ClaimsPrincipal(), _mockUserManager.Object, _mockMapper.Object));
+                // Act
+                Func<Task> action = async () => await _authService.GetCurrentUser(new ClaimsPrincipal(), _mockUserManager.Object, _mockMapper.Object);
+
+                // Assert
+                action.Should().Throw<UserNotFoundException>();
             }
         }
 
@@ -295,8 +307,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockProfileSettingsRepository.Setup(r => r.GetWhere(It.IsAny<Expression<Func<ProfileSettingsCollection, bool>>>(), It.IsAny<List<string>>()))
                     .Returns(new List<ProfileSettingsCollection>());
 
-                // Act/Assert
-                Assert.Throws<ProfileSettingsNotFoundException>(() => _authService.GetProfileSettings("13579", _mockProfileSettingsRepository.Object, _mockMapper.Object));
+                // Act
+                Action action = () => _authService.GetProfileSettings("13579", _mockProfileSettingsRepository.Object, _mockMapper.Object);
+
+                // Assert
+                action.Should().Throw<ProfileSettingsNotFoundException>();
             }
         }
 
@@ -365,31 +380,40 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class ResetPassword : AuthServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionIfPasswordsDoNotMatch()
+            public void ThrowsExceptionIfPasswordsDoNotMatch()
             {
-                // Act/Assert
-                await Assert.ThrowsAsync<InvalidPasswordResetException>(async () => await _authService.ResetPassword(null, "12345", "mypassword", "my-password", _mockUserManager.Object));
+                // Act
+                Func<Task> action = async () => await _authService.ResetPassword(null, "12345", "mypassword", "my-password", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPasswordResetException>();
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfEmailNotProvided()
+            public void ThrowsExceptionIfEmailNotProvided()
             {
-                // Act/Assert
-                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword(null, "12345", "mypassword", "mypassword", _mockUserManager.Object));
+                // Act
+                Func<Task> action = async () => await _authService.ResetPassword(null, "12345", "mypassword", "mypassword", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<UserNotFoundException>();
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfUserNotFound()
+            public void ThrowsExceptionIfUserNotFound()
             {
                 // Arrange
                 _mockUserManager.Setup(m => m.FindByEmailAsync("me@me.com")).Returns(Task.FromResult((IdentityUser)null));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<UserNotFoundException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object));
+                // Act
+                Func<Task> action = async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<UserNotFoundException>();
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfResetUnsuccessful()
+            public void ThrowsExceptionIfResetUnsuccessful()
             {
                 // Arrange
                 var user = new IdentityUser
@@ -405,11 +429,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.ResetPasswordAsync(user, "12345", "mypassword"))
                     .Returns(Task.FromResult(failureResult));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidPasswordResetException>(async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(2);
-                ex.Errors.Should().Contain("Test Error 1");
-                ex.Errors.Should().Contain("Test Error 2");
+                // Act
+                Func<Task> action = async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPasswordResetException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
             }
 
             [Fact]
@@ -435,16 +462,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class ChangePassword : AuthServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionIfPasswordsDoNotMatch()
+            public void ThrowsExceptionIfPasswordsDoNotMatch()
             {
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidChangePasswordException>(async () => await _authService.ChangePassword(new ClaimsPrincipal(), "test1", "test2", "test3", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(1);
-                ex.Errors.Should().Contain("Passwords do not match.");
+                // Act
+                Func<Task> action = async () => await _authService.ChangePassword(new ClaimsPrincipal(), "test1", "test2", "test3", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidChangePasswordException>()
+                    .Which.Errors.Should().HaveCount(1)
+                    .And.Contain("Passwords do not match.");
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfChangeUnsuccessful()
+            public void ThrowsExceptionIfChangeUnsuccessful()
             {
                 // Arrange
                 var user = new ClaimsPrincipal();
@@ -461,11 +491,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.ChangePasswordAsync(identityUser, "12345", "23456"))
                     .Returns(Task.FromResult(failureResult));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidChangePasswordException>(async () => await _authService.ChangePassword(user, "12345", "23456", "23456", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(2);
-                ex.Errors.Should().Contain("Test Error 1");
-                ex.Errors.Should().Contain("Test Error 2");
+                // Act
+                Func<Task> action = async () => await _authService.ChangePassword(user, "12345", "23456", "23456", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidChangePasswordException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
             }
 
             [Fact]
@@ -511,7 +544,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfChangingToExistingUsername()
+            public void ThrowsExceptionIfChangingToExistingUsername()
             {
                 // Arrange
                 var currentUser = new IdentityUser
@@ -523,14 +556,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.GetUserAsync(It.IsAny<ClaimsPrincipal>())).Returns(Task.FromResult(currentUser));
                 _mockUserManager.Setup(m => m.FindByNameAsync("new-username")).Returns(Task.FromResult(existingOtherUser));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidAccountInfoUpdateException>(async () => await _authService.ChangeAccountInformation(new ClaimsPrincipal(), "test@test.com", "new-username", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(1);
-                ex.Errors.Should().Contain("That username is unavailable.");
+                // Act
+                Func<Task> action = async () => await _authService.ChangeAccountInformation(new ClaimsPrincipal(), "test@test.com", "new-username", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidAccountInfoUpdateException>()
+                    .Which.Errors.Should().HaveCount(1)
+                    .And.Contain("That username is unavailable.");
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfUsernameChangeFailed()
+            public void ThrowsExceptionIfUsernameChangeFailed()
             {
                 // Arrange
                 var currentUser = new IdentityUser
@@ -548,11 +584,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.UpdateAsync(It.Is<IdentityUser>(u => u.Id == "12345" && u.UserName == "new-username")))
                     .Returns(Task.FromResult(failureResult));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidAccountInfoUpdateException>(async () => await _authService.ChangeAccountInformation(new ClaimsPrincipal(), "test@test.com", "new-username", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(2);
-                ex.Errors.Should().Contain("Test Error 1");
-                ex.Errors.Should().Contain("Test Error 2");
+                // Act
+                Func<Task> action = async () => await _authService.ChangeAccountInformation(new ClaimsPrincipal(), "test@test.com", "new-username", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidAccountInfoUpdateException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
             }
 
             [Fact]
@@ -593,7 +632,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfCreationUnsuccessful()
+            public void ThrowsExceptionIfCreationUnsuccessful()
             {
                 // Arrange
                 var failureResult = IdentityResult.Failed(new List<IdentityError>
@@ -604,11 +643,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.CreateAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                     .Returns(Task.FromResult(failureResult));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidRegistrationException>(async () => await _authService.CreateUser(new IdentityUser("my-username"), "my-password", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(2);
-                ex.Errors.Should().Contain("Test Error 1");
-                ex.Errors.Should().Contain("Test Error 2");
+                // Act
+                Func<Task> action = async () => await _authService.CreateUser(new IdentityUser("my-username"), "my-password", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
             }
         }
 
@@ -628,7 +670,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfAddingToRoleUnsuccessful()
+            public void ThrowsExceptionIfAddingToRoleUnsuccessful()
             {
                 // Arrange
                 var failureResult = IdentityResult.Failed(new List<IdentityError>
@@ -639,11 +681,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(m => m.AddToRoleAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                     .Returns(Task.FromResult(failureResult));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidAccountInfoUpdateException>(async () => await _authService.AddUserToRole(new IdentityUser("my-username"), "my-password", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(2);
-                ex.Errors.Should().Contain("Test Error 1");
-                ex.Errors.Should().Contain("Test Error 2");
+                // Act
+                Func<Task> action = async () => await _authService.AddUserToRole(new IdentityUser("my-username"), "my-password", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidAccountInfoUpdateException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
             }
         }
 
@@ -688,7 +733,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class AssertUserInformationDoesNotExist : AuthServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionIfUsernameExists()
+            public void ThrowsExceptionIfUsernameExists()
             {
                 // Arrange
                 var user = new IdentityUser
@@ -699,14 +744,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(u => u.FindByNameAsync("my-username")).Returns(Task.FromResult(user));
                 _mockUserManager.Setup(u => u.FindByEmailAsync("my@email.com")).Returns(Task.FromResult((IdentityUser)null));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidRegistrationException>(async () => await _authService.AssertUserInformationDoesNotExist("my-username", "my@email.com", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(1);
-                ex.Errors.Should().Contain("Error creating account. An account with some or all of this information may already exist.");
+                // Act
+                Func<Task> action = async () => await _authService.AssertUserInformationDoesNotExist("my-username", "my@email.com", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1)
+                    .And.Contain("Error creating account. An account with some or all of this information may already exist.");
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfEmailExists()
+            public void ThrowsExceptionIfEmailExists()
             {
                 // Arrange
                 var user = new IdentityUser
@@ -717,14 +765,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(u => u.FindByNameAsync("my-username")).Returns(Task.FromResult((IdentityUser)null));
                 _mockUserManager.Setup(u => u.FindByEmailAsync("my@email.com")).Returns(Task.FromResult(user));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidRegistrationException>(async () => await _authService.AssertUserInformationDoesNotExist("my-username", "my@email.com", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(1);
-                ex.Errors.Should().Contain("Error creating account. An account with some or all of this information may already exist.");
+                // Act
+                Func<Task> action = async () => await _authService.AssertUserInformationDoesNotExist("my-username", "my@email.com", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1)
+                    .And.Contain("Error creating account. An account with some or all of this information may already exist.");
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfEmailAndUsernameExist()
+            public void ThrowsExceptionIfEmailAndUsernameExist()
             {
                 // Arrange
                 var user = new IdentityUser
@@ -736,10 +787,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockUserManager.Setup(u => u.FindByNameAsync("my-username")).Returns(Task.FromResult(user));
                 _mockUserManager.Setup(u => u.FindByEmailAsync("my@email.com")).Returns(Task.FromResult(user));
 
-                // Act/Assert
-                var ex = await Assert.ThrowsAsync<InvalidRegistrationException>(async () => await _authService.AssertUserInformationDoesNotExist("my-username", "my@email.com", _mockUserManager.Object));
-                ex.Errors.Should().HaveCount(1);
-                ex.Errors.Should().Contain("Error creating account. An account with some or all of this information may already exist.");
+                // Act
+                Func<Task> action = async () => await _authService.AssertUserInformationDoesNotExist("my-username", "my@email.com", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1)
+                    .And.Contain("Error creating account. An account with some or all of this information may already exist.");
             }
 
             [Fact]
@@ -770,14 +824,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfValidationUnsuccessful()
+            public void ThrowsExceptionIfValidationUnsuccessful()
             {
                 // Arrange
                 _mockUserManager.Setup(m => m.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
                     .Returns(Task.FromResult(false));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<InvalidCredentialException>(async () => await _authService.ValidatePassword(new IdentityUser("my-username"), "my-password", _mockUserManager.Object));
+                // Act
+                Func<Task> action = async () => await _authService.ValidatePassword(new IdentityUser("my-username"), "my-password", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidCredentialException>();
             }
         }
     }

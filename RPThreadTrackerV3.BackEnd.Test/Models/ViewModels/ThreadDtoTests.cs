@@ -9,6 +9,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
     using System.Collections.Generic;
     using BackEnd.Infrastructure.Exceptions.Thread;
     using BackEnd.Models.ViewModels;
+    using FluentAssertions;
     using Xunit;
 
     [Trait("Class", "ThreadDto")]
@@ -49,7 +50,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 _dto.UserTitle = string.Empty;
 
                 // Act
-                Assert.Throws<InvalidThreadException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidThreadException>();
             }
 
             [Fact]
@@ -59,7 +63,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 _dto.PostId = "blahblah1234";
 
                 // Act
-                Assert.Throws<InvalidThreadException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidThreadException>();
             }
         }
     }

@@ -11,5 +11,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
     public class MockDocumentPoco : Resource, IDocument
     {
         public string Name { get; set; }
+
+        public string Slug { get; set; }
+
+        public int Size { get; set; }
     }
 }

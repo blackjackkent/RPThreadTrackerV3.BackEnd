@@ -64,7 +64,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
                 _filter.OnActionExecuting(_mockContext);
 
                 // Assert
-                ((StatusCodeResult)_mockContext.Result).StatusCode.Should().Be(503);
+                _mockContext.Result.Should().BeOfType<StatusCodeResult>()
+                    .Which.StatusCode.Should().Be(503);
             }
 
             [Fact]
@@ -80,7 +81,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Providers
                 _filter.OnActionExecuting(_mockContext);
 
                 // Assert
-                ((StatusCodeResult)_mockContext.Result).StatusCode.Should().Be(200);
+                _mockContext.Result.Should().BeOfType<OkResult>();
             }
         }
     }

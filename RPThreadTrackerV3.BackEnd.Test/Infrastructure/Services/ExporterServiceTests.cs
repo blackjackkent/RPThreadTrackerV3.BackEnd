@@ -15,7 +15,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     [Trait("Class", "ExporterService")]
     public class ExporterServiceTests
     {
-        private ExporterService _exporterService;
+        private readonly ExporterService _exporterService;
 
         public ExporterServiceTests()
         {

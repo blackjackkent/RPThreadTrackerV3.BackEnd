@@ -74,8 +74,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = Controller.Get();
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -102,9 +101,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.Should().HaveCount(2);
-                body.Should().Contain(c => c.CharacterId == 12345);
-                body.Should().Contain(c => c.CharacterId == 54321);
+                body.Should().HaveCount(2)
+                    .And.Contain(c => c.CharacterId == 12345)
+                    .And.Contain(c => c.CharacterId == 54321);
             }
         }
 
@@ -228,8 +227,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = Controller.Put(54321, _validRequest);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -279,8 +277,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = Controller.Delete(54321);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]

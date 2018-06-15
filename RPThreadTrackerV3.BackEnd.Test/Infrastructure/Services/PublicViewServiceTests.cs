@@ -75,16 +75,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var views = await _publicViewService.GetPublicViews("12345", _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                views.Should().HaveCount(2);
-                views.Should().Contain(c => c.Id == "13579");
-                views.Should().Contain(c => c.Id == "24680");
+                views.Should().HaveCount(2)
+                    .And.Contain(c => c.Id == "13579")
+                    .And.Contain(c => c.Id == "24680");
             }
         }
 
         public class CreatePublicView : PublicViewServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionIfViewWithSlugAlreadyExists()
+            public void ThrowsExceptionIfViewWithSlugAlreadyExists()
             {
                 // Arrange
                 var existingDocument = new PublicView
@@ -99,8 +99,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingDocument)))).Returns(Task.FromResult(new List<PublicView> { existingDocument }.AsEnumerable()));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<PublicViewSlugExistsException>(async () => await _publicViewService.CreatePublicView(newDocument, _mockPublicViewRepository.Object, _mockMapper.Object));
+                // Act
+                Func<Task> action = async () => await _publicViewService.CreatePublicView(newDocument, _mockPublicViewRepository.Object, _mockMapper.Object);
+
+                // Assert
+                action.Should().Throw<PublicViewSlugExistsException>();
             }
 
             [Fact]
@@ -126,17 +129,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class AssertUserOwnsPublicView : PublicViewServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionIfViewDoesNotExist()
+            public void ThrowsExceptionIfViewDoesNotExist()
             {
                 // Arrange
                 _mockPublicViewRepository.Setup(r => r.GetItemAsync("12345")).Returns(Task.FromResult((PublicView)null));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<PublicViewNotFoundException>(async () => await _publicViewService.AssertUserOwnsPublicView("12345", "13579", _mockPublicViewRepository.Object));
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertUserOwnsPublicView("12345", "13579", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<PublicViewNotFoundException>();
             }
 
             [Fact]
-            public async Task ThrowsExceptionIfViewDoesNotBelongToUser()
+            public void ThrowsExceptionIfViewDoesNotBelongToUser()
             {
                 // Arrange
                 var publicView = new PublicView
@@ -146,8 +152,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemAsync("12345")).Returns(Task.FromResult(publicView));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<PublicViewNotFoundException>(async () => await _publicViewService.AssertUserOwnsPublicView("12345", "13579", _mockPublicViewRepository.Object));
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertUserOwnsPublicView("12345", "13579", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<PublicViewNotFoundException>();
             }
 
             [Fact]
@@ -172,7 +181,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class UpdatePublicView : PublicViewServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionIfViewWithSlugAlreadyExistsOnAnotherView()
+            public void ThrowsExceptionIfViewWithSlugAlreadyExistsOnAnotherView()
             {
                 // Arrange
                 var model = new DomainModels.PublicView
@@ -187,8 +196,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView)))).Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<PublicViewSlugExistsException>(async () => await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object));
+                // Act
+                Func<Task> action = async () => await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
+
+                // Assert
+                action.Should().Throw<PublicViewSlugExistsException>();
             }
 
             [Fact]
@@ -260,14 +272,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class GetViewBySlug : PublicViewServiceTests
         {
             [Fact]
-            public async Task ThrowsExceptionWhenViewDoesNotExist()
+            public void ThrowsExceptionWhenViewDoesNotExist()
             {
                 // Arrange
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.IsAny<Expression<Func<PublicView, bool>>>()))
                     .Returns(Task.FromResult(new List<PublicView>().AsEnumerable()));
 
-                // Act/Assert
-                await Assert.ThrowsAsync<PublicViewNotFoundException>(async () => await _publicViewService.GetViewBySlug("my-slug", _mockPublicViewRepository.Object, _mockMapper.Object));
+                // Act
+                Func<Task> action = async () => await _publicViewService.GetViewBySlug("my-slug", _mockPublicViewRepository.Object, _mockMapper.Object);
+
+                // Assert
+                action.Should().Throw<PublicViewNotFoundException>();
             }
 
             [Fact]

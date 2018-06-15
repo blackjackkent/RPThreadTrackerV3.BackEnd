@@ -62,8 +62,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockCharacterRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Character, bool>>>(y => y.Compile()(character)))).Returns(true);
                 _mockCharacterRepository.Setup(r => r.ExistsWhere(It.Is<Expression<Func<Character, bool>>>(y => !y.Compile()(character)))).Returns(false);
 
-                // Act/Assert
-                Assert.Throws<CharacterNotFoundException>(() => _characterService.AssertUserOwnsCharacter(13579, "98765", _mockCharacterRepository.Object));
+                // Act
+                Action action = () => _characterService.AssertUserOwnsCharacter(13579, "98765", _mockCharacterRepository.Object);
+
+                // Assert
+                action.Should().Throw<CharacterNotFoundException>();
             }
 
             [Fact]
@@ -111,11 +114,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var characters = _characterService.GetCharacters("12345", _mockCharacterRepository.Object, _mockMapper.Object);
 
                 // Assert
-                characters.Should().HaveCount(2);
-                characters.Should().Contain(c => c.CharacterId == 13579);
-                characters.Should().Contain(c => c.CharacterId == 97531);
-                characters.Should().Contain(c => c.IsOnHiatus);
-                characters.Should().Contain(c => !c.IsOnHiatus);
+                characters.Should().HaveCount(2)
+                    .And.Contain(c => c.CharacterId == 13579)
+                    .And.Contain(c => c.CharacterId == 97531)
+                    .And.Contain(c => c.IsOnHiatus)
+                    .And.Contain(c => !c.IsOnHiatus);
             }
 
             [Fact]
@@ -141,11 +144,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var characters = _characterService.GetCharacters("12345", _mockCharacterRepository.Object, _mockMapper.Object, false);
 
                 // Assert
-                characters.Should().HaveCount(1);
-                characters.Should().NotContain(c => c.CharacterId == 13579);
-                characters.Should().Contain(c => c.CharacterId == 97531);
-                characters.Should().NotContain(c => c.IsOnHiatus);
-                characters.Should().Contain(c => !c.IsOnHiatus);
+                characters.Should().HaveCount(1)
+                    .And.NotContain(c => c.CharacterId == 13579)
+                    .And.Contain(c => c.CharacterId == 97531)
+                    .And.NotContain(c => c.IsOnHiatus)
+                    .And.Contain(c => !c.IsOnHiatus);
             }
         }
 
@@ -205,8 +208,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 _mockCharacterRepository.Setup(r => r.GetWhere(It.IsAny<Expression<Func<Character, bool>>>(), It.IsAny<List<string>>())).Returns(new List<Character>());
 
-                // Act/Assert
-                Assert.Throws<CharacterNotFoundException>(() => _characterService.DeleteCharacter(13579, _mockCharacterRepository.Object));
+                // Act
+                Action action = () => _characterService.DeleteCharacter(13579, _mockCharacterRepository.Object);
+
+                // Assert
+                action.Should().Throw<CharacterNotFoundException>();
             }
 
             [Fact]

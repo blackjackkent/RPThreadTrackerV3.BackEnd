@@ -5,9 +5,11 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
 {
+    using System;
     using System.Collections.Generic;
     using BackEnd.Infrastructure.Exceptions.PublicViews;
     using BackEnd.Models.ViewModels.PublicViews;
+    using FluentAssertions;
     using Moq;
     using Xunit;
 
@@ -50,7 +52,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 _dto.Name = string.Empty;
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
 
             [Fact]
@@ -60,7 +65,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 _dto.Slug = string.Empty;
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
 
             [Fact]
@@ -70,7 +78,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 _dto.Slug = "my invalid slug";
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
 
             [Fact]
@@ -80,7 +91,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 _dto.Columns = new List<string>();
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
 
             [Fact]
@@ -90,7 +104,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 _dto.CharacterUrlIdentifier = string.Empty;
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
 
             [Fact]
@@ -100,7 +117,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 _dto.Slug = "yourturn";
 
                 // Act
-                Assert.Throws<InvalidPublicViewException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewException>();
             }
         }
     }

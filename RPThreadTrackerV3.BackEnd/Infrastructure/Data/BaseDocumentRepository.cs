@@ -48,7 +48,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 {
                     return default(T);
                 }
-                throw;
+
+                throw new DocumentDatabaseException(e.Message, e);
             }
         }
 
@@ -121,12 +122,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 }
                 else
                 {
-                    throw new DocumentDatabaseInitializationException(e.Message, e);
+                    throw new DocumentDatabaseException(e.Message, e);
                 }
             }
             catch (Exception e)
             {
-                throw new DocumentDatabaseInitializationException(e.Message, e);
+                throw new DocumentDatabaseException(e.Message, e);
             }
         }
 
@@ -144,12 +145,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 }
                 else
                 {
-                    throw new DocumentDatabaseInitializationException(e.Message, e);
+                    throw new DocumentDatabaseException(e.Message, e);
                 }
             }
             catch (Exception e)
             {
-                throw new DocumentDatabaseInitializationException(e.Message, e);
+                throw new DocumentDatabaseException(e.Message, e);
             }
         }
     }

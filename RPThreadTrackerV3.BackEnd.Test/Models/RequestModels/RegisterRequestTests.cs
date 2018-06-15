@@ -43,8 +43,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
                 _request.Username = string.Empty;
 
                 // Act
-                Exception ex = Assert.Throws<InvalidRegistrationException>(() => _request.AssertIsValid());
-                ((InvalidRegistrationException)ex).Errors.Should().HaveCount(1);
+                Action action = () => _request.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1);
             }
 
             [Fact]
@@ -54,8 +57,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
                 _request.Email = string.Empty;
 
                 // Act
-                Exception ex = Assert.Throws<InvalidRegistrationException>(() => _request.AssertIsValid());
-                ((InvalidRegistrationException)ex).Errors.Should().HaveCount(1);
+                Action action = () => _request.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1);
             }
 
             [Fact]
@@ -66,8 +72,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
                 _request.ConfirmPassword = string.Empty;
 
                 // Act
-                Exception ex = Assert.Throws<InvalidRegistrationException>(() => _request.AssertIsValid());
-                ((InvalidRegistrationException)ex).Errors.Should().HaveCount(1);
+                Action action = () => _request.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1);
             }
 
             [Fact]
@@ -78,8 +87,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.RequestModels
                 _request.ConfirmPassword = "blah2";
 
                 // Act
-                Exception ex = Assert.Throws<InvalidRegistrationException>(() => _request.AssertIsValid());
-                ((InvalidRegistrationException)ex).Errors.Should().HaveCount(1);
+                Action action = () => _request.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidRegistrationException>()
+                    .Which.Errors.Should().HaveCount(1);
             }
         }
     }

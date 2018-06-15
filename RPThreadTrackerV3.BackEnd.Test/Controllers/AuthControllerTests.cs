@@ -18,6 +18,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using BackEnd.Models.ViewModels;
     using BackEnd.Models.ViewModels.Auth;
     using FluentAssertions;
+    using FluentAssertions.Primitives;
     using Interfaces.Data;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
@@ -116,8 +117,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.CreateToken(model);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -254,8 +254,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = Controller.RevokeToken(model);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -381,8 +380,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Register(_validRequest);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]
@@ -398,8 +396,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.Register(_validRequest);
 
                 // Assert
-                _mockAuthService.Verify(r => r.InitProfileSettings("12345", _mockProfileSettingsRepository.Object), Times.Once);
                 result.Should().BeOfType<OkResult>();
+                _mockAuthService.Verify(r => r.InitProfileSettings("12345", _mockProfileSettingsRepository.Object), Times.Once);
             }
         }
 
@@ -436,8 +434,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.ForgotPassword(request);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
                 _mockEmailClient.Verify(c => c.SendEmail(It.IsAny<EmailDto>(), _mockConfig), Times.Never);
             }
 
@@ -519,8 +516,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 var result = await Controller.ResetPassword(request);
 
                 // Assert
-                result.Should().BeOfType<ObjectResult>();
-                ((ObjectResult)result).StatusCode.Should().Be(500);
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
 
             [Fact]

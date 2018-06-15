@@ -5,9 +5,11 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
 {
+    using System;
     using BackEnd.Infrastructure.Enums;
     using BackEnd.Infrastructure.Exceptions.Characters;
     using BackEnd.Models.ViewModels;
+    using FluentAssertions;
     using Xunit;
 
     [Trait("Class", "CharacterDto")]
@@ -45,7 +47,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 _dto.PlatformId = (Platform)12345;
 
                 // Act
-                Assert.Throws<InvalidCharacterException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidCharacterException>();
             }
 
             [Fact]
@@ -55,7 +60,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 _dto.UrlIdentifier = string.Empty;
 
                 // Act
-                Assert.Throws<InvalidCharacterException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidCharacterException>();
             }
 
             [Fact]
@@ -65,7 +73,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 _dto.UrlIdentifier = "My Character";
 
                 // Act
-                Assert.Throws<InvalidCharacterException>(() => _dto.AssertIsValid());
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidCharacterException>();
             }
         }
     }
