@@ -29,7 +29,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// <param name="config">The configuration.</param>
         public SendGridEmailClient(IOptions<AppSettings> config)
         {
-            var apiKey = config.Value.Secure.SendGridAPIKey;
+            var apiKey = config.Value.Secure.SendGridApiKey;
             _client = new SendGridClient(apiKey);
 	    }
 

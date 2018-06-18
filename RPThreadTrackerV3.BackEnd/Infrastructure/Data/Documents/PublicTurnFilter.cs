@@ -6,7 +6,6 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
 {
     using Interfaces.Data;
-    using Microsoft.Azure.Documents;
 
     /// <summary>
     /// Data-layer representation of a public view's turn-based filter settings.

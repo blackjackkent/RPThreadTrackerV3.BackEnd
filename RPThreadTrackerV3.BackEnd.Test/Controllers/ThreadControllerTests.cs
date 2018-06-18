@@ -135,7 +135,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.Threads.Should().HaveCount(2)
+                body?.Threads.Should().HaveCount(2)
                     .And.Contain(t => t.ThreadId == 12345)
                     .And.Contain(t => t.ThreadId == 54321);
             }
@@ -213,7 +213,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.UserTitle.Should().Be("My Thread");
+                body?.UserTitle.Should().Be("My Thread");
             }
         }
 
@@ -321,9 +321,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.ThreadId.Should().Be(13579);
-                body.CharacterId.Should().Be(54321);
-                body.UserTitle.Should().Be("My Thread");
+                body?.ThreadId.Should().Be(13579);
+                body?.CharacterId.Should().Be(54321);
+                body?.UserTitle.Should().Be("My Thread");
             }
         }
 

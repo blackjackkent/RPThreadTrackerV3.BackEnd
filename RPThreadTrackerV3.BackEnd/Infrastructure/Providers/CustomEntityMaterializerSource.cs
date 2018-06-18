@@ -33,7 +33,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// <param name="index">The index.</param>
         /// <param name="property">The property.</param>
         /// <returns>The expression.</returns>
-        public override Expression CreateReadValueExpression(Expression valueBuffer, Type type, int index, IProperty property = null)
+        public override Expression CreateReadValueExpression(Expression valueBuffer, Type type, int index, IProperty property)
 	    {
 		    if (type == typeof(DateTime))
 		    {

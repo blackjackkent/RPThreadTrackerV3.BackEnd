@@ -28,11 +28,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void ProducesEmptyWorkbookWhenNoCharactersProvided()
             {
                 // Arrange
-                var characters = new List<Character>();
                 var threads = new Dictionary<int, List<Thread>>();
 
                 // Act
-                var result = _exporterService.GetExcelPackage(characters, threads);
+                var result = _exporterService.GetExcelPackage(new List<Character>(), threads);
 
                 // Assert
                 result.Workbook.Worksheets.Should().HaveCount(0);
@@ -144,23 +143,23 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var worksheet = result.Workbook.Worksheets.FirstOrDefault();
 
                 // Assert
-                worksheet.Cells["A1"].Text.Should().Be("Url Identifier");
-                worksheet.Cells["B1"].Text.Should().Be("Post ID");
-                worksheet.Cells["C1"].Text.Should().Be("User Title");
-                worksheet.Cells["D1"].Text.Should().Be("Partner Url Identifier");
-                worksheet.Cells["E1"].Text.Should().Be("Is Archived");
+                worksheet?.Cells["A1"].Text.Should().Be("Url Identifier");
+                worksheet?.Cells["B1"].Text.Should().Be("Post ID");
+                worksheet?.Cells["C1"].Text.Should().Be("User Title");
+                worksheet?.Cells["D1"].Text.Should().Be("Partner Url Identifier");
+                worksheet?.Cells["E1"].Text.Should().Be("Is Archived");
 
-                worksheet.Cells["A2"].Text.Should().Be("character1");
-                worksheet.Cells["B2"].Text.Should().Be("98765");
-                worksheet.Cells["C2"].Text.Should().Be("My Title");
-                worksheet.Cells["D2"].Text.Should().Be("my-partner");
-                worksheet.Cells["E2"].Text.Should().Be("False");
+                worksheet?.Cells["A2"].Text.Should().Be("character1");
+                worksheet?.Cells["B2"].Text.Should().Be("98765");
+                worksheet?.Cells["C2"].Text.Should().Be("My Title");
+                worksheet?.Cells["D2"].Text.Should().Be("my-partner");
+                worksheet?.Cells["E2"].Text.Should().Be("False");
 
-                worksheet.Cells["A3"].Text.Should().Be("character1");
-                worksheet.Cells["B3"].Text.Should().Be("87654");
-                worksheet.Cells["C3"].Text.Should().Be("My Title 2");
-                worksheet.Cells["D3"].Text.Should().Be("my-other-partner");
-                worksheet.Cells["E3"].Text.Should().Be("True");
+                worksheet?.Cells["A3"].Text.Should().Be("character1");
+                worksheet?.Cells["B3"].Text.Should().Be("87654");
+                worksheet?.Cells["C3"].Text.Should().Be("My Title 2");
+                worksheet?.Cells["D3"].Text.Should().Be("my-other-partner");
+                worksheet?.Cells["E3"].Text.Should().Be("True");
             }
         }
     }

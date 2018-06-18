@@ -7,13 +7,11 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Exceptions;
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.Linq;
     using Newtonsoft.Json;
     using IDocumentClient = Interfaces.Data.IDocumentClient;
 

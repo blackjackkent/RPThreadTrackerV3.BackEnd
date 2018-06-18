@@ -102,7 +102,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.Email.Should().Be("me@me.com");
+                body?.Email.Should().Be("me@me.com");
             }
         }
 

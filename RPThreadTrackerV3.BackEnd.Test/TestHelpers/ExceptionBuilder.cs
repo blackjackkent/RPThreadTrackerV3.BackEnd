@@ -21,7 +21,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
                 false,
                 BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
-                new object[] { error, (HttpResponseHeaders)null, httpStatusCode },
+                new object[] { error, null, httpStatusCode },
                 null,
                 null);
 

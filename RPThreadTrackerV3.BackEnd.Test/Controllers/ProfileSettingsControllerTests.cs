@@ -116,8 +116,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.UserId.Should().Be("12345");
-                body.SettingsId.Should().Be(54321);
+                body?.UserId.Should().Be("12345");
+                body?.SettingsId.Should().Be(54321);
             }
         }
 

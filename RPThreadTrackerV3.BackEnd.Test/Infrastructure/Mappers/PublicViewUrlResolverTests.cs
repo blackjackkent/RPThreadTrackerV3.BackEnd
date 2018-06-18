@@ -15,7 +15,7 @@
     {
         private readonly PublicViewUrlResolver _resolver;
         private readonly ResolutionContext _mockContext;
-        private AppSettings _mockConfig;
+        private readonly AppSettings _mockConfig;
 
         public PublicViewUrlResolverTests()
         {

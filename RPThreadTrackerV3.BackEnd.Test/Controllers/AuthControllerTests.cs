@@ -18,7 +18,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using BackEnd.Models.ViewModels;
     using BackEnd.Models.ViewModels.Auth;
     using FluentAssertions;
-    using FluentAssertions.Primitives;
     using Interfaces.Data;
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
@@ -152,8 +151,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 tokenCollection.Should().NotBeNull();
-                tokenCollection.Token.Should().Be(token);
-                tokenCollection.RefreshToken.Should().Be(refreshToken);
+                tokenCollection?.Token.Should().Be(token);
+                tokenCollection?.RefreshToken.Should().Be(refreshToken);
             }
         }
 
@@ -232,8 +231,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 tokenCollection.Should().NotBeNull();
-                tokenCollection.Token.Should().Be(token);
-                tokenCollection.RefreshToken.Should().Be(refreshToken);
+                tokenCollection?.Token.Should().Be(token);
+                tokenCollection?.RefreshToken.Should().Be(refreshToken);
             }
         }
 

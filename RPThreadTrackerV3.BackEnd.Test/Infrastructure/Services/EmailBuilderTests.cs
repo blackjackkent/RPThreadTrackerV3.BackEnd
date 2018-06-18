@@ -44,7 +44,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 	                    Endpoint = "endpoint",
 	                    Key = "key"
 	                },
-                    SendGridAPIKey = "apikey"
+                    SendGridApiKey = "apikey"
 	            };
 
 				// Act
@@ -77,7 +77,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                         Endpoint = "endpoint",
                         Key = "key"
 	                },
-	                SendGridAPIKey = "apikey"
+	                SendGridApiKey = "apikey"
                 };
 
 				// Act

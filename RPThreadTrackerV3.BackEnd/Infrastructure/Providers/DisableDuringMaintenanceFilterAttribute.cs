@@ -37,11 +37,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
         /// <inheritdoc />
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (_config.Maintenance.MaintenanceMode)
+            if (!_config.Maintenance.MaintenanceMode)
             {
-                _logger.LogInformation($"Returning 503 result for maintenance mode: {DateTime.UtcNow}");
-                context.Result = new StatusCodeResult(503);
+                return;
             }
+            _logger.LogInformation($"Returning 503 result for maintenance mode: {DateTime.UtcNow}");
+            context.Result = new StatusCodeResult(503);
         }
     }
 }

@@ -71,7 +71,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 			return ByteArraysEqual(storedSubkey, generatedSubkey);
 		}
 
-		private static string BinaryToHex(byte[] data)
+        /* private static string BinaryToHex(byte[] data)
 		{
 			var hex = new char[data.Length * 2];
 			for (var iter = 0; iter < data.Length; iter++)
@@ -82,7 +82,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Providers
 				hex[(iter * 2) + 1] = (char)(hexChar > 9 ? hexChar + 0x37 : hexChar + 0x30);
 			}
 			return new string(hex);
-		}
+		} */
 
 		[MethodImpl(MethodImplOptions.NoOptimization)]
 		private static bool ByteArraysEqual(byte[] a, byte[] b)

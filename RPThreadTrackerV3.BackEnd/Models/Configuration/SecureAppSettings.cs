@@ -16,7 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.Configuration
         /// <value>
         /// The SendGrid API key.
         /// </value>
-        public string SendGridAPIKey { get; set; }
+        public string SendGridApiKey { get; set; }
 
         /// <summary>
         /// Gets or sets the email address which should be displayed in the "From" field of Forgot Password emails.

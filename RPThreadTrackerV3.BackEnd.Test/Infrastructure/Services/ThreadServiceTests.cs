@@ -46,7 +46,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     }).ToList(),
                     Character = new DomainModels.Character
                     {
-                        CharacterId = entity?.Character.CharacterId ?? 0,
+                        CharacterId = entity.Character.CharacterId,
                         CharacterName = entity.Character?.CharacterName
                     },
                     DateMarkedQueued = entity.DateMarkedQueued,
@@ -538,11 +538,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 
         public class GetThreadsForView : ThreadServiceTests
         {
-            private List<Thread> _filterableThreads;
-
             public GetThreadsForView()
             {
-                _filterableThreads = new List<Thread>();
+                var filterableThreads = new List<Thread>();
                 var character1 = new Character
                 {
                     CharacterId = 1,
@@ -553,7 +551,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 2,
                     CharacterName = "Character 2"
                 };
-                _filterableThreads.Add(new Thread
+                filterableThreads.Add(new Thread
                 {
                     ThreadId = 1,
                     Character = character1,
@@ -565,7 +563,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     PostId = "1",
                     UserTitle = "Active Thread 1 Character 1"
                 });
-                _filterableThreads.Add(new Thread
+                filterableThreads.Add(new Thread
                 {
                     ThreadId = 2,
                     Character = character1,
@@ -577,7 +575,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     PostId = "3",
                     UserTitle = "Active Thread 2 Character 1"
                 });
-                _filterableThreads.Add(new Thread
+                filterableThreads.Add(new Thread
                 {
                     ThreadId = 3,
                     Character = character2,
@@ -589,7 +587,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     PostId = "3",
                     UserTitle = "Active Thread 3 Character 2"
                 });
-                _filterableThreads.Add(new Thread
+                filterableThreads.Add(new Thread
                 {
                     ThreadId = 4,
                     Character = character2,
@@ -601,7 +599,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     PostId = "4",
                     UserTitle = "Active Thread 4 Character 2"
                 });
-                _filterableThreads.Add(new Thread
+                filterableThreads.Add(new Thread
                 {
                     ThreadId = 5,
                     Character = character1,
@@ -613,7 +611,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     PostId = "5",
                     UserTitle = "Archived Thread Character 1"
                 });
-                _filterableThreads.Add(new Thread
+                filterableThreads.Add(new Thread
                 {
                     ThreadId = 6,
                     Character = character2,
@@ -627,7 +625,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 });
                 _mockThreadRepository.Setup(r =>
                         r.GetWhere(It.IsAny<Expression<Func<Thread, bool>>>(), It.IsAny<List<string>>()))
-                    .Returns(_filterableThreads);
+                    .Returns(filterableThreads);
             }
 
             [Fact]

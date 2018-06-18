@@ -170,7 +170,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.CharacterId.Should().Be(54321);
+                body?.CharacterId.Should().Be(54321);
             }
         }
 
@@ -248,7 +248,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.CharacterId.Should().Be(54321);
+                body?.CharacterId.Should().Be(54321);
             }
         }
 

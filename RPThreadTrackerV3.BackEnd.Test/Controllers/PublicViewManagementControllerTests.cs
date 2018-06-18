@@ -200,7 +200,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.Name.Should().Be("My View");
+                body?.Name.Should().Be("My View");
             }
 
             [Fact]
@@ -309,7 +309,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
-                body.Name.Should().Be("My View");
+                body?.Name.Should().Be("My View");
             }
 
             [Fact]

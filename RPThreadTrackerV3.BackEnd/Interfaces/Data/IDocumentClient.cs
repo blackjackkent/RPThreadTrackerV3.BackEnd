@@ -6,12 +6,10 @@
 namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
 {
     using System;
-    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.Linq;
-    using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 
     /// <summary>
     /// Wrapper for document database client functionality.
