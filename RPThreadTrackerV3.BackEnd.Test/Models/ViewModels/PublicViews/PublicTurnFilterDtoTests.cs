@@ -17,12 +17,51 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
         public class AssertIsValid : LegacyPublicViewDtoTests
         {
             [Fact]
-            public void ThrowsNoErrorWhenValid()
+            public void ThrowsNoErrorWhenValidWithIncludeMyTurn()
             {
                 // Arrange
                 var dto = new PublicTurnFilterDto
                 {
                     IncludeMyTurn = true
+                };
+
+                // Act
+                dto.AssertIsValid();
+            }
+
+            [Fact]
+            public void ThrowsNoErrorWhenValidWithIncludeTheirTurn()
+            {
+                // Arrange
+                var dto = new PublicTurnFilterDto
+                {
+                    IncludeTheirTurn = true
+                };
+
+                // Act
+                dto.AssertIsValid();
+            }
+
+            [Fact]
+            public void ThrowsNoErrorWhenValidWithIncludeQueued()
+            {
+                // Arrange
+                var dto = new PublicTurnFilterDto
+                {
+                    IncludeQueued = true
+                };
+
+                // Act
+                dto.AssertIsValid();
+            }
+
+            [Fact]
+            public void ThrowsNoErrorWhenValidWithIncludeArchived()
+            {
+                // Arrange
+                var dto = new PublicTurnFilterDto
+                {
+                    IncludeArchived = true
                 };
 
                 // Act
