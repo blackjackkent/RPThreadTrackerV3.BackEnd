@@ -53,7 +53,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     UserId = entity.UserId,
                     SettingsId = entity.ProfileSettingsCollectionId,
-                    ShowDashboardThreadDistribution = entity.ShowDashboardThreadDistribution
+                    ShowDashboardThreadDistribution = entity.ShowDashboardThreadDistribution,
+                    LastNewsReadDate = entity.LastNewsReadDate,
+                    #pragma warning disable 618
+                    AllowMarkQueued = entity.AllowMarkQueued,
+                    UseInvertedTheme = entity.UseInvertedTheme
+                    #pragma warning restore 618
                 });
             _authService = new AuthService();
         }

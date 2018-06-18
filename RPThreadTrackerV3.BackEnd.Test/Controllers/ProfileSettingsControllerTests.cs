@@ -41,7 +41,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = model.UserId,
                     ShowDashboardThreadDistribution = model.ShowDashboardThreadDistribution,
                     LastNewsReadDate = model.LastNewsReadDate,
-                    SettingsId = model.SettingsId
+                    SettingsId = model.SettingsId,
+                    #pragma warning disable 618
+                    AllowMarkQueued = model.AllowMarkQueued,
+                    UseInvertedTheme = model.UseInvertedTheme
+                    #pragma warning restore 618
                 });
             _mockMapper.Setup(m => m.Map<ProfileSettings>(It.IsAny<ProfileSettingsDto>()))
                 .Returns((ProfileSettingsDto dto) => new ProfileSettings
@@ -49,7 +53,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = dto.UserId,
                     ShowDashboardThreadDistribution = dto.ShowDashboardThreadDistribution,
                     LastNewsReadDate = dto.LastNewsReadDate,
-                    SettingsId = dto.SettingsId
+                    SettingsId = dto.SettingsId,
+                    #pragma warning disable 618
+                    AllowMarkQueued = dto.AllowMarkQueued,
+                    UseInvertedTheme = dto.UseInvertedTheme
+                    #pragma warning restore 618
                 });
             _mockAuthService = new Mock<IAuthService>();
             _mockProfileSettingsRepository = new Mock<IRepository<ProfileSettingsCollection>>();

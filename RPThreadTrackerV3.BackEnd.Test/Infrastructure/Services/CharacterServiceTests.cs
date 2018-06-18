@@ -10,10 +10,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using System.Linq.Expressions;
     using AutoMapper;
     using BackEnd.Infrastructure.Data.Entities;
+    using BackEnd.Infrastructure.Enums;
     using BackEnd.Infrastructure.Exceptions.Characters;
     using BackEnd.Infrastructure.Services;
     using FluentAssertions;
     using Interfaces.Data;
+    using Microsoft.AspNetCore.Identity;
     using Moq;
     using Xunit;
     using DomainModels = BackEnd.Models.DomainModels;
@@ -35,7 +37,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     UserId = entity.UserId,
                     CharacterId = entity.CharacterId,
                     CharacterName = entity.CharacterName,
-                    IsOnHiatus = entity.IsOnHiatus
+                    IsOnHiatus = entity.IsOnHiatus,
+                    PlatformId = entity.PlatformId,
+                    UrlIdentifier = entity.UrlIdentifier
                 });
             _mockMapper.Setup(m => m.Map<Character>(It.IsAny<DomainModels.Character>()))
                 .Returns((DomainModels.Character model) => new Character
@@ -43,7 +47,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     UserId = model.UserId,
                     CharacterId = model.CharacterId,
                     CharacterName = model.CharacterName,
-                    IsOnHiatus = model.IsOnHiatus
+                    IsOnHiatus = model.IsOnHiatus,
+                    PlatformId = model.PlatformId,
+                    UrlIdentifier = model.UrlIdentifier,
+                    User = new IdentityUser { Id = model.UserId }
                 });
             _characterService = new CharacterService();
         }
@@ -99,13 +106,21 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 {
                     UserId = "12345",
                     CharacterId = 13579,
-                    IsOnHiatus = true
+                    IsOnHiatus = true,
+                    UrlIdentifier = "my-character",
+                    User = new IdentityUser(),
+                    PlatformId = Platform.Tumblr,
+                    CharacterName = "My Character"
                 };
                 var character2 = new Character
                 {
                     UserId = "12345",
                     CharacterId = 97531,
-                    IsOnHiatus = false
+                    IsOnHiatus = false,
+                    UrlIdentifier = "my-other-character",
+                    User = new IdentityUser(),
+                    PlatformId = Platform.Tumblr,
+                    CharacterName = "My Other Character"
                 };
                 var characterList = new List<Character> { character1, character2 };
                 _mockCharacterRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Character, bool>>>(y => y.Compile()(character1) && y.Compile()(character2)), It.IsAny<List<string>>())).Returns(characterList);

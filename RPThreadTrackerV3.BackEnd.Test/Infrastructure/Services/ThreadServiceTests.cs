@@ -37,7 +37,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = entity.CharacterId,
                     UserTitle = entity.UserTitle,
                     IsArchived = entity.IsArchived,
-                    ThreadTags = entity.ThreadTags?.Select(t => new DomainModels.ThreadTag { TagText = t.TagText }).ToList()
+                    ThreadTags = entity.ThreadTags?.Select(t => new DomainModels.ThreadTag
+                    {
+                        TagText = t.TagText,
+                        ThreadId = t.ThreadId,
+                        ThreadTagId = t.ThreadTagId
+                    }).ToList(),
+                    Character = new DomainModels.Character
+                    {
+                        CharacterId = entity?.Character.CharacterId ?? 0,
+                        CharacterName = entity.Character?.CharacterName
+                    },
+                    DateMarkedQueued = entity.DateMarkedQueued,
+                    PartnerUrlIdentifier = entity.PartnerUrlIdentifier,
+                    PostId = entity.PostId
                 });
             _mockMapper.Setup(m => m.Map<Thread>(It.IsAny<DomainModels.Thread>()))
                 .Returns((DomainModels.Thread model) => new Thread
@@ -46,7 +59,21 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = model.CharacterId,
                     UserTitle = model.UserTitle,
                     IsArchived = model.IsArchived,
-                    ThreadTags = model.ThreadTags?.Select(t => new ThreadTag { TagText = t.TagText }).ToList()
+                    ThreadTags = model.ThreadTags?.Select(t => new ThreadTag
+                    {
+                        TagText = t.TagText,
+                        ThreadId = t.ThreadId,
+                        ThreadTagId = t.ThreadTagId,
+                        Thread = new Thread()
+                    }).ToList(),
+                    Character = new Character
+                        {
+                        CharacterId = model.Character?.CharacterId ?? 0,
+                        CharacterName = model.Character?.CharacterName
+                    },
+                    DateMarkedQueued = model.DateMarkedQueued,
+                    PartnerUrlIdentifier = model.PartnerUrlIdentifier,
+                    PostId = model.PostId
                 });
 
             var threadList = BuildThreadList();
@@ -58,19 +85,31 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         {
             var tag1 = new ThreadTag
             {
-                TagText = "Tag1"
+                TagText = "Tag1",
+                ThreadTagId = "ThreadTag1",
+                ThreadId = 1,
+                Thread = new Thread()
             };
             var tag2 = new ThreadTag
             {
                 TagText = "Tag2",
+                ThreadTagId = "ThreadTag2",
+                ThreadId = 2,
+                Thread = new Thread()
             };
             var tag3 = new ThreadTag
             {
-                TagText = "Tag3"
+                TagText = "Tag3",
+                ThreadTagId = "ThreadTag3",
+                ThreadId = 3,
+                Thread = new Thread()
             };
             var tag4 = new ThreadTag
             {
-                TagText = "Tag4"
+                TagText = "Tag4",
+                ThreadTagId = "ThreadTag4",
+                ThreadId = 4,
+                Thread = new Thread()
             };
             var thread1 = new Thread
             {

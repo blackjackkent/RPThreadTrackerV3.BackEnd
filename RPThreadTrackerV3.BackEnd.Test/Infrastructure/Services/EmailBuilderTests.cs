@@ -35,7 +35,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 };
 	            _mockConfig.Secure = new SecureAppSettings
 	            {
-		            ForgotPasswordEmailFromAddress = "forgotpassword@email.com"
+		            ForgotPasswordEmailFromAddress = "forgotpassword@email.com",
+                    ContactFormEmailToAddress = "me@me.com",
+	                Documents = new DocumentsAppSettings
+	                {
+	                    CollectionId = "collection",
+	                    DatabaseId = "database",
+	                    Endpoint = "endpoint",
+	                    Key = "key"
+	                },
+                    SendGridAPIKey = "apikey"
 	            };
 
 				// Act
@@ -59,8 +68,17 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
 	            _mockConfig.Secure = new SecureAppSettings
 	            {
-		            ContactFormEmailToAddress = "contact@email.com"
-	            };
+	                ForgotPasswordEmailFromAddress = "forgotpassword@email.com",
+	                ContactFormEmailToAddress = "contact@email.com",
+	                Documents = new DocumentsAppSettings
+	                {
+                        CollectionId = "collection",
+                        DatabaseId = "database",
+                        Endpoint = "endpoint",
+                        Key = "key"
+	                },
+	                SendGridAPIKey = "apikey"
+                };
 
 				// Act
                 var dto = _emailBuilder.BuildContactEmail("user@email.com", "my-username", "This is my message.\r\nThis is the second line.", _mockConfig);

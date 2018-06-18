@@ -41,7 +41,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     Id = model.Id,
                     UserId = model.UserId,
                     Name = model.Name,
-                    Slug = model.Slug
+                    Slug = model.Slug,
+                    TurnFilter = new PublicTurnFilterDto
+                    {
+                        IncludeMyTurn = model.TurnFilter?.IncludeMyTurn ?? false,
+                        IncludeArchived = model.TurnFilter?.IncludeArchived ?? false,
+                        IncludeQueued = model.TurnFilter?.IncludeQueued ?? false,
+                        IncludeTheirTurn = model.TurnFilter?.IncludeTheirTurn ?? false
+                    },
+                    Columns = model.Columns,
+                    CharacterIds = model.CharacterIds,
+                    SortKey = model.SortKey,
+                    Tags = model.Tags,
+                    SortDescending = model.SortDescending
                 });
             _mockMapper.Setup(m => m.Map<PublicView>(It.IsAny<PublicViewDto>()))
                 .Returns((PublicViewDto dto) => new PublicView
@@ -49,7 +61,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     Id = dto.Id,
                     UserId = dto.UserId,
                     Name = dto.Name,
-                    Slug = dto.Slug
+                    Slug = dto.Slug,
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeMyTurn = dto.TurnFilter?.IncludeMyTurn ?? false,
+                        IncludeArchived = dto.TurnFilter?.IncludeArchived ?? false,
+                        IncludeQueued = dto.TurnFilter?.IncludeQueued ?? false,
+                        IncludeTheirTurn = dto.TurnFilter?.IncludeTheirTurn ?? false
+                    },
+                    Columns = dto.Columns,
+                    CharacterIds = dto.CharacterIds,
+                    SortKey = dto.SortKey,
+                    Tags = dto.Tags,
+                    SortDescending = dto.SortDescending
                 });
             _mockPublicViewService = new Mock<IPublicViewService>();
             _mockPublicViewRepository = new Mock<IDocumentRepository<Documents.PublicView>>();

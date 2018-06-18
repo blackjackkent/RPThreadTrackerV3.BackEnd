@@ -46,7 +46,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = model.UserId,
                     Name = model.Name,
                     Id = model.Id,
-                    Slug = model.Slug
+                    Slug = model.Slug,
+                    CharacterIds = model.CharacterIds,
+                    Columns = model.Columns,
+                    SortDescending = model.SortDescending,
+                    SortKey = model.SortKey,
+                    Tags = model.Tags,
+                    TurnFilter = new PublicTurnFilterDto
+                    {
+                        IncludeMyTurn = model.TurnFilter?.IncludeMyTurn ?? false,
+                        IncludeArchived = model.TurnFilter?.IncludeArchived ?? false,
+                        IncludeQueued = model.TurnFilter?.IncludeQueued ?? false,
+                        IncludeTheirTurn = model.TurnFilter?.IncludeTheirTurn ?? false
+                    }
                 });
             _mockMapper.Setup(m => m.Map<PublicView>(It.IsAny<PublicViewDto>()))
                 .Returns((PublicViewDto dto) => new PublicView
@@ -54,7 +66,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = dto.UserId,
                     Name = dto.Name,
                     Id = dto.Id,
-                    Slug = dto.Slug
+                    Slug = dto.Slug,
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeMyTurn = dto.TurnFilter?.IncludeMyTurn ?? false,
+                        IncludeArchived = dto.TurnFilter?.IncludeArchived ?? false,
+                        IncludeQueued = dto.TurnFilter?.IncludeQueued ?? false,
+                        IncludeTheirTurn = dto.TurnFilter?.IncludeTheirTurn ?? false
+                    }
                 });
             _mockMapper.Setup(m => m.Map<ThreadDto>(It.IsAny<Thread>()))
                 .Returns((Thread model) => new ThreadDto
@@ -62,7 +81,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     ThreadId = model.ThreadId,
                     CharacterId = model.CharacterId,
                     PartnerUrlIdentifier = model.PartnerUrlIdentifier,
-                    PostId = model.PostId
+                    PostId = model.PostId,
+                    Character = new CharacterDto
+                    {
+                        CharacterId = model.Character?.CharacterId ?? 0,
+                        CharacterName = model.Character?.CharacterName
+                    },
+                    DateMarkedQueued = model.DateMarkedQueued,
+                    IsArchived = model.IsArchived,
+                    ThreadTags = model.ThreadTags?.Select(t => new ThreadTagDto { TagText = t.TagText }).ToList(),
+                    UserTitle = model.UserTitle
                 });
             _mockMapper.Setup(m => m.Map<Thread>(It.IsAny<ThreadDto>()))
                 .Returns((ThreadDto dto) => new Thread
@@ -70,7 +98,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     ThreadId = dto.ThreadId.GetValueOrDefault(),
                     CharacterId = dto.CharacterId,
                     PartnerUrlIdentifier = dto.PartnerUrlIdentifier,
-                    PostId = dto.PostId
+                    PostId = dto.PostId,
+                    Character = new Character
+                    {
+                        CharacterId = dto.Character?.CharacterId ?? 0,
+                        CharacterName = dto.Character?.CharacterName
+                    },
+                    DateMarkedQueued = dto.DateMarkedQueued,
+                    IsArchived = dto.IsArchived,
+                    ThreadTags = dto.ThreadTags?.Select(t => new ThreadTag { TagText = t.TagText }).ToList(),
+                    UserTitle = dto.UserTitle
                 });
             _mockMapper.Setup(m => m.Map<List<ThreadDto>>(It.IsAny<List<Thread>>()))
                 .Returns((List<Thread> models) => models.Select(m => _mockMapper.Object.Map<ThreadDto>(m)).ToList());

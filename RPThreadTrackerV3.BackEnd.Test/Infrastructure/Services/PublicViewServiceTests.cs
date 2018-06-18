@@ -39,7 +39,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     UserId = entity.UserId,
                     Id = entity.Id,
                     Slug = entity.Slug,
-                    Name = entity.Name
+                    Name = entity.Name,
+                    TurnFilter = new DomainModels.PublicTurnFilter
+                    {
+                        IncludeMyTurn = entity.TurnFilter?.IncludeMyTurn ?? false,
+                        IncludeArchived = entity.TurnFilter?.IncludeArchived ?? false,
+                        IncludeQueued = entity.TurnFilter?.IncludeQueued ?? false,
+                        IncludeTheirTurn = entity.TurnFilter?.IncludeTheirTurn ?? false
+                    },
+                    Columns = entity.Columns,
+                    CharacterIds = entity.CharacterIds,
+                    SortKey = entity.SortKey,
+                    Tags = entity.Tags,
+                    SortDescending = entity.SortDescending
                 });
             _mockMapper.Setup(m => m.Map<PublicView>(It.IsAny<DomainModels.PublicView>()))
                 .Returns((DomainModels.PublicView model) => new PublicView
@@ -47,7 +59,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     UserId = model.UserId,
                     Id = model.Id,
                     Slug = model.Slug,
-                    Name = model.Name
+                    Name = model.Name,
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeMyTurn = model.TurnFilter?.IncludeMyTurn ?? false,
+                        IncludeArchived = model.TurnFilter?.IncludeArchived ?? false,
+                        IncludeQueued = model.TurnFilter?.IncludeQueued ?? false,
+                        IncludeTheirTurn = model.TurnFilter?.IncludeTheirTurn ?? false
+                    },
+                    Columns = model.Columns,
+                    CharacterIds = model.CharacterIds,
+                    SortKey = model.SortKey,
+                    Tags = model.Tags,
+                    SortDescending = model.SortDescending
                 });
             _publicViewService = new PublicViewService();
         }
@@ -61,12 +85,40 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var view1 = new PublicView
                 {
                     UserId = "12345",
-                    Id = "13579"
+                    Id = "13579",
+                    Name = "View 1",
+                    Slug = "view-1",
+                    CharacterIds = new List<int> { 13579 },
+                    Columns = new List<string> { "column1" },
+                    SortDescending = false,
+                    SortKey = "column1",
+                    Tags = new List<string> { "tag 1", "tag 2" },
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeMyTurn = true,
+                        IncludeTheirTurn = false,
+                        IncludeArchived = true,
+                        IncludeQueued = false
+                    }
                 };
                 var view2 = new PublicView
                 {
                     UserId = "12345",
-                    Id = "24680"
+                    Id = "24680",
+                    Name = "View 2",
+                    Slug = "view-2",
+                    CharacterIds = new List<int> { 13579 },
+                    Columns = new List<string> { "column1" },
+                    SortDescending = false,
+                    SortKey = "column1",
+                    Tags = new List<string> { "tag 1", "tag 2" },
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeMyTurn = true,
+                        IncludeTheirTurn = false,
+                        IncludeArchived = true,
+                        IncludeQueued = false
+                    }
                 };
                 var viewList = new List<PublicView> { view1, view2 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(view1) && y.Compile()(view2)))).Returns(Task.FromResult(viewList.AsEnumerable()));

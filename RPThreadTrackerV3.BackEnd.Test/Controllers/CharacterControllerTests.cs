@@ -44,7 +44,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = model.UserId,
                     CharacterId = model.CharacterId,
                     CharacterName = model.CharacterName,
-                    IsOnHiatus = model.IsOnHiatus
+                    IsOnHiatus = model.IsOnHiatus,
+                    PlatformId = model.PlatformId,
+                    UrlIdentifier = model.UrlIdentifier
                 });
             _mockMapper.Setup(m => m.Map<Character>(It.IsAny<CharacterDto>()))
                 .Returns((CharacterDto dto) => new Character
@@ -52,7 +54,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = dto.UserId,
                     CharacterId = dto.CharacterId,
                     CharacterName = dto.CharacterName,
-                    IsOnHiatus = dto.IsOnHiatus
+                    IsOnHiatus = dto.IsOnHiatus,
+                    PlatformId = dto.PlatformId,
+                    UrlIdentifier = dto.UrlIdentifier
                 });
             var mockConfig = new AppSettings();
             var configWrapper = new Mock<IOptions<AppSettings>>();
