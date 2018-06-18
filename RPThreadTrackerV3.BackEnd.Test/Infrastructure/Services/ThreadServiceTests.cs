@@ -13,6 +13,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using BackEnd.Infrastructure.Data.Entities;
     using BackEnd.Infrastructure.Exceptions.Thread;
     using BackEnd.Infrastructure.Services;
+    using BackEnd.Models.DomainModels.PublicViews;
     using FluentAssertions;
     using Interfaces.Data;
     using Moq;
@@ -75,7 +76,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     PartnerUrlIdentifier = model.PartnerUrlIdentifier,
                     PostId = model.PostId
                 });
-
+            _mockMapper.Setup(m => m.Map<List<DomainModels.Thread>>(It.IsAny<List<Thread>>()))
+                .Returns((List<Thread> models) => models.Select(m => _mockMapper.Object.Map<DomainModels.Thread>(m)).ToList());
             var threadList = BuildThreadList();
             _mockThreadRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Thread, bool>>>(y => threadList.Any(y.Compile())), It.IsAny<List<string>>())).Returns((Expression<Func<Thread, bool>> predicate, List<string> navigationProperties) => threadList.Where(predicate.Compile()));
             _threadService = new ThreadService();
@@ -531,6 +533,251 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 
                 // Assert
                 tags.Should().HaveCount(0);
+            }
+        }
+
+        public class GetThreadsForView : ThreadServiceTests
+        {
+            private List<Thread> _filterableThreads;
+
+            public GetThreadsForView()
+            {
+                _filterableThreads = new List<Thread>();
+                var character1 = new Character
+                {
+                    CharacterId = 1,
+                    CharacterName = "Character 1"
+                };
+                var character2 = new Character
+                {
+                    CharacterId = 2,
+                    CharacterName = "Character 2"
+                };
+                _filterableThreads.Add(new Thread
+                {
+                    ThreadId = 1,
+                    Character = character1,
+                    CharacterId = 1,
+                    IsArchived = false,
+                    DateMarkedQueued = null,
+                    ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag1" } },
+                    PartnerUrlIdentifier = "my-partner",
+                    PostId = "1",
+                    UserTitle = "Active Thread 1 Character 1"
+                });
+                _filterableThreads.Add(new Thread
+                {
+                    ThreadId = 2,
+                    Character = character1,
+                    CharacterId = 1,
+                    IsArchived = false,
+                    DateMarkedQueued = null,
+                    ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag2" } },
+                    PartnerUrlIdentifier = "my-other-partner",
+                    PostId = "3",
+                    UserTitle = "Active Thread 2 Character 1"
+                });
+                _filterableThreads.Add(new Thread
+                {
+                    ThreadId = 3,
+                    Character = character2,
+                    CharacterId = 2,
+                    IsArchived = false,
+                    DateMarkedQueued = null,
+                    ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag1" } },
+                    PartnerUrlIdentifier = "my-other-partner",
+                    PostId = "3",
+                    UserTitle = "Active Thread 3 Character 2"
+                });
+                _filterableThreads.Add(new Thread
+                {
+                    ThreadId = 4,
+                    Character = character2,
+                    CharacterId = 2,
+                    IsArchived = false,
+                    DateMarkedQueued = null,
+                    ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag2" } },
+                    PartnerUrlIdentifier = "my-other-partner",
+                    PostId = "4",
+                    UserTitle = "Active Thread 4 Character 2"
+                });
+                _filterableThreads.Add(new Thread
+                {
+                    ThreadId = 5,
+                    Character = character1,
+                    CharacterId = 1,
+                    IsArchived = true,
+                    DateMarkedQueued = null,
+                    ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag3" } },
+                    PartnerUrlIdentifier = "my-partner",
+                    PostId = "5",
+                    UserTitle = "Archived Thread Character 1"
+                });
+                _filterableThreads.Add(new Thread
+                {
+                    ThreadId = 6,
+                    Character = character2,
+                    CharacterId = 2,
+                    IsArchived = true,
+                    DateMarkedQueued = null,
+                    ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag3" } },
+                    PartnerUrlIdentifier = "my-partner",
+                    PostId = "6",
+                    UserTitle = "Archived Thread Character 2"
+                });
+                _mockThreadRepository.Setup(r =>
+                        r.GetWhere(It.IsAny<Expression<Func<Thread, bool>>>(), It.IsAny<List<string>>()))
+                    .Returns(_filterableThreads);
+            }
+
+            [Fact]
+            public void IncludesArchivedThreadsWhenTurnFilterIncludesArchived()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeArchived = true
+                    },
+                    CharacterIds = new List<int>(),
+                    Tags = new List<string>()
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(2);
+            }
+
+            [Fact]
+            public void IncludesAllActiveThreadsWhenTurnFilterIncludesMyTurn()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeMyTurn = true
+                    },
+                    CharacterIds = new List<int>(),
+                    Tags = new List<string>()
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(4);
+            }
+
+            [Fact]
+            public void IncludesAllActiveThreadsWhenTurnFilterIncludesTheirTurn()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeTheirTurn = true
+                    },
+                    CharacterIds = new List<int>(),
+                    Tags = new List<string>()
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(4);
+            }
+
+            [Fact]
+            public void IncludesAllActiveThreadsWhenTurnFilterIncludesQueued()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeQueued = true
+                    },
+                    CharacterIds = new List<int>(),
+                    Tags = new List<string>()
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(4);
+            }
+
+            [Fact]
+            public void IncludesAllThreadsWhenTurnFilterIncludesArchivedAndActive()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeQueued = true,
+                        IncludeArchived = true
+                    },
+                    CharacterIds = new List<int>(),
+                    Tags = new List<string>()
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(6);
+            }
+
+            [Fact]
+            public void FiltersByCharacterWhenCharacterIdProvided()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeQueued = true,
+                        IncludeArchived = true
+                    },
+                    CharacterIds = new List<int> { 1 },
+                    Tags = new List<string>()
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(3);
+            }
+
+            [Fact]
+            public void FiltersByTagWhenTagsProvided()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    TurnFilter = new PublicTurnFilter
+                    {
+                        IncludeQueued = true,
+                        IncludeArchived = true
+                    },
+                    CharacterIds = new List<int>(),
+                    Tags = new List<string> { "Tag2", "Tag3" }
+                };
+
+                // Act
+                var result = _threadService.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                result.Should().HaveCount(4);
             }
         }
     }
