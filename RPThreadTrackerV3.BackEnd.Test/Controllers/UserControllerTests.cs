@@ -212,7 +212,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<BadRequestObjectResult>();
-                body.Should().HaveCount(2);
+                body.Should().HaveCount(1);
             }
 
             [Fact]

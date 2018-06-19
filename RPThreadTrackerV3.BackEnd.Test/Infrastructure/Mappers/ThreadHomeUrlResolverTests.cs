@@ -75,6 +75,27 @@
                 // Assert
                 result.Should().BeNull();
             }
+
+
+
+            [Fact]
+            public void ReturnsNullWhenCharacterIsNull()
+            {
+
+                // Arrange
+                var thread = new Thread
+                {
+                    CharacterId = 1,
+                    Character = null,
+                    PostId = "13579"
+                };
+
+                // Act
+                var result = _resolver.Resolve(thread, new ThreadDto(), "HomeUrl", _mockContext);
+
+                // Assert
+                result.Should().BeNull();
+            }
         }
     }
 }

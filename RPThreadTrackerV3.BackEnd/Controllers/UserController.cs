@@ -136,7 +136,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    catch (InvalidAccountInfoUpdateException e)
 		    {
 			    _logger.LogWarning(e, $"Error updating account info for {User.Identity.Name}: {e.Errors}");
-			    return BadRequest(e.Errors);
+			    return BadRequest(new List<string> { "Error updating account. An account with some or all of this information may already exist." });
 		    }
 		    catch (Exception e)
 		    {
