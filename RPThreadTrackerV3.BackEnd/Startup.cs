@@ -121,7 +121,7 @@ namespace RPThreadTrackerV3.BackEnd
 			app.AddNLogWeb();
 			app.UseAuthentication();
 			app.UseCors(builder =>
-				builder.WithOrigins(Configuration["Cors:CorsUrl"]).AllowAnyHeader().AllowAnyMethod());
+				builder.WithOrigins(Configuration["Cors:CorsUrl"].Split(',')).AllowAnyHeader().AllowAnyMethod());
 			app.UseMvc();
 			LogManager.Configuration.Variables["connectionString"] = Configuration.GetConnectionString("Database");
 		}
