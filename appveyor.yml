@@ -34,13 +34,13 @@
               Add-Content "$env:USERPROFILE\.git-credentials" "https://$($env:access_token):x-oauth-basic@github.com`n"
               git config --global user.email $env:op_build_user_email
               git config --global user.name $env:op_build_user
-              git checkout -b gh-pages
+              (git checkout -b gh-pages) | out-null
               
               & docfx docfx.json
               if ($lastexitcode -ne 0){
                 throw [System.Exception] "docfx build failed with exit code $lastexitcode."
               }
-              git add -A
+              (git add docs) | out-null
               git commit -m "Generating docs" -q
               git push origin gh-pages -q -f
           }

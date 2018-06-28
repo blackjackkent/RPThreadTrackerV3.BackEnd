@@ -1,6 +1,6 @@
 - name: Getting Started
   href: gettingstarted/
-  homepage: /gettingstarted/index.html
+  homepage: gettingstarted/index.html
 - name: Api Documentation
   href: api/
-  homepage: /api/index.html
+  homepage: api/index.html

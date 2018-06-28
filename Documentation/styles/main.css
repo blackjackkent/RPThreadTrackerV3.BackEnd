@@ -14,3 +14,4 @@ article h4 { border-bottom: none; }
 .table-striped>tbody>tr:nth-of-type(odd) { background-color: rgb(68, 68, 68); }
 .table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {border-color: #666; }
 pre { background-color: #ccc; }
+article { padding: 0 30px 15px 50px; border: 1px solid #666; }

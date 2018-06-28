@@ -7,3 +7,7 @@ apiRules:
       type: Type
 - exclude:
       uidRegex: ^Microsoft\.AspNetCore
+- exclude:
+      uidRegex: ^Microsoft\.Azure
+- exclude:
+      uidRegex: ^Microsoft\.EntityFrameworkCore
