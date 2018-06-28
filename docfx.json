@@ -1,0 +1,56 @@
+{
+	"metadata": [
+		{
+			"src": [
+				{
+					"files": [
+						"RPThreadTrackerV3.BackEnd/**.csproj"
+					]
+				}
+			],
+			"dest": "Documentation/api",
+			"disableGitFeatures": false,
+			"filter": "Documentation/filterConfig.yml"
+		}
+	],
+	"build": {
+		"content": [
+			{
+				"files": [
+					"api/**.yml",
+					"api/index.md"
+				],
+				"src": "Documentation",
+				"dest": ""
+			},
+			{
+				"files": [
+					"articles/**.md",
+					"articles/**/toc.yml"
+				],
+				"src": "Documentation",
+				"dest": ""
+			},
+			{
+				"files": [
+					"toc.yml",
+					"*.md"
+				],
+				"src": "Documentation",
+				"dest": ""
+			}
+		],
+		"dest": "docs",
+		"globalMetadataFiles": [],
+		"fileMetadataFiles": [],
+		"template": [
+			"default"
+		],
+		"postProcessors": [],
+		"markdownEngineName": "markdig",
+		"noLangKeyword": false,
+		"keepFileLink": false,
+		"cleanupCacheHistory": false,
+		"disableGitFeatures": false
+	}
+}

@@ -21,7 +21,6 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     /// <summary>
     /// Controller class for behavior related the Contact Us form.
     /// </summary>
-    /// <seealso cref="BaseController" />
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     public class ContactController : BaseController

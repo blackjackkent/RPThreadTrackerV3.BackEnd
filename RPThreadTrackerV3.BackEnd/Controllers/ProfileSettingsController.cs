@@ -19,9 +19,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Models.ViewModels;
 
     /// <summary>
-    /// Controller class for behavior relating to user profile settings.
+    /// Controller class for behavior related to user profile settings.
     /// </summary>
-    /// <seealso cref="BaseController" />
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
 	public class ProfileSettingsController : BaseController

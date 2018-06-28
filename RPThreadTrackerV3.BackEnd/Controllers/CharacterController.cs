@@ -21,7 +21,6 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     /// <summary>
     /// Controller class for behavior related to a user's characters.
     /// </summary>
-    /// <seealso cref="BaseController" />
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
 	public class CharacterController : BaseController

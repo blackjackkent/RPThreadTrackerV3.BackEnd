@@ -22,7 +22,6 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     /// <summary>
     /// Controller class for behavior related to a user.
     /// </summary>
-    /// <seealso cref="BaseController" />
 	[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 	[Route("api/[controller]")]
 	public class UserController : BaseController

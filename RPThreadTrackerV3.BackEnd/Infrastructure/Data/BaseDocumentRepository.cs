@@ -15,7 +15,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using Newtonsoft.Json;
     using IDocumentClient = Interfaces.Data.IDocumentClient;
 
-    /// <inheritdoc cref="IDocumentRepository{T}" />
+    /// <inheritdoc />
     public class BaseDocumentRepository<T> : IDocumentRepository<T>
         where T : Resource, IDocument
     {

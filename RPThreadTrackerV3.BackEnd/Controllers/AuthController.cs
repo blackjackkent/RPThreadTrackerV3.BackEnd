@@ -25,7 +25,6 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     /// <summary>
     /// Controller class for authentication-related behavior.
     /// </summary>
-    /// <seealso cref="BaseController" />
     public class AuthController : BaseController
 	{
 		private readonly ILogger<AuthController> _logger;

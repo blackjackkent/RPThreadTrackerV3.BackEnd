@@ -22,7 +22,6 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     /// <summary>
     /// Controller class for behavior related to public thread collections.
     /// </summary>
-    /// <seealso cref="BaseController" />
     [Route("api/[controller]")]
 	public class PublicThreadController : BaseController
     {

@@ -321,3 +321,4 @@ RPThreadTrackerV3.BackEnd/appSettings.secure.json
 reports/
 coverage.xml
 codecov.sh
+Documentation/api/RPThreadTrackerV3.BackEnd*.yml

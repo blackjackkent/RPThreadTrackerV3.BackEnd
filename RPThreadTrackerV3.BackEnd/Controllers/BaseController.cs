@@ -13,15 +13,14 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     /// <summary>
     /// Base controller class from which all API controllers inherit.
     /// Provides hook for <see cref="GlobalExceptionHandlerAttribute"/>
-    /// and <see cref="DisableDuringMaintenanceFilterAttribute"/>
+    /// and <see cref="DisableDuringMaintenanceFilterAttribute"/>.
     /// </summary>
-    /// <seealso cref="Controller" />
     [ServiceFilter(typeof(GlobalExceptionHandlerAttribute))]
     [ServiceFilter(typeof(DisableDuringMaintenanceFilterAttribute))]
 	public class BaseController : Controller
 	{
         /// <summary>
-        /// Gets the ID of the currently logged in user, if applicable
+        /// Gets the ID of the currently logged in user, if applicable.
         /// </summary>
         /// <value>
         /// The ID of the currently logged in user, or <c>null</c> if no user is logged in.
