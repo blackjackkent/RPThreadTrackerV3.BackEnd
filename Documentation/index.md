@@ -4,7 +4,7 @@ RPThreadTracker is a web application designed to help members of the collaborati
 
 ### How to Contribute
 
-If you are interested in submitting a bugfix or otherwise contributing to RPThreadTracker's codebase, please see the [Getting Started](gettingstarted/index.html) page.
+If you are interested in submitting a bugfix or otherwise contributing to RPThreadTracker's codebase, please see the [Getting Started](gettingstarted/index.md) page.
 
 ### API Documentation
 

@@ -25,8 +25,8 @@
 			},
 			{
 				"files": [
-					"articles/**.md",
-					"articles/**/toc.yml"
+					"gettingstarted/**.md",
+					"gettingstarted/**/toc.yml"
 				],
 				"src": "Documentation",
 				"dest": ""
@@ -51,6 +51,7 @@
 		"noLangKeyword": false,
 		"keepFileLink": false,
 		"cleanupCacheHistory": false,
-		"disableGitFeatures": false
+		"disableGitFeatures": false,
+		"theme": "Documentation"
 	}
 }

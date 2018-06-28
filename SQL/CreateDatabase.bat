@@ -1,3 +1,4 @@
+sqlcmd /S "(localdb)\mssqllocaldb" -E -i"000 - Initialize Database.sql"
 sqlcmd /S "(localdb)\mssqllocaldb" /d "RPThreadTracker" -E -i"__Rollback.sql"
 sqlcmd /S "(localdb)\mssqllocaldb" /d "RPThreadTracker" -E -i"010 - Add AspNetUsers.sql"
 sqlcmd /S "(localdb)\mssqllocaldb" /d "RPThreadTracker" -E -i"020 - Migrate Into AspNetUsers.sql"

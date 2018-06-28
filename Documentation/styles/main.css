@@ -1,0 +1,16 @@
+body { background-color: #333; color: #ddd; }
+.navbar-inverse { background-color: #418ce4; color: #fff; }
+.navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text { color: #fff; }
+.subnav.navbar-default { background-color: #111; border-color: rgb(85, 85, 85); }
+.footer { background-color: #111; border-color: rgb(85, 85, 85); }
+a { color: #418ce4; }
+.sidefilter, .sidetoc, body .toc { background: #111; border-color: rgb(85, 85, 85); }
+code { background-color: transparent; }
+.affix ul > li > a { color: #999; }
+article h4 { border-bottom: none; }
+.toc .nav > li > a:hover, .toc .nav > li > a:focus { color: #ccc; }
+.toc .level1 > li {font-size: 14px; }
+.sidetoc.shiftup { bottom: 50px; }
+.table-striped>tbody>tr:nth-of-type(odd) { background-color: rgb(68, 68, 68); }
+.table-bordered, .table-bordered>tbody>tr>td, .table-bordered>tbody>tr>th, .table-bordered>tfoot>tr>td, .table-bordered>tfoot>tr>th, .table-bordered>thead>tr>td, .table-bordered>thead>tr>th {border-color: #666; }
+pre { background-color: #ccc; }
