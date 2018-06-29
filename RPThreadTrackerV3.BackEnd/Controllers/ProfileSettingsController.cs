@@ -91,6 +91,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    try
 		    {
 			    var settingsModel = _mapper.Map<ProfileSettings>(settings);
+			    settingsModel.UserId = UserId;
 			    _authService.UpdateProfileSettings(settingsModel, _profileSettingsRepository, _mapper);
 			    return Ok();
 		    }

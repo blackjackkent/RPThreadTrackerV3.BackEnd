@@ -95,7 +95,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 
         private static class EmailSnapshotHolder
         {
-            public const string FORGOT_PASSWORD_HTML_BODY_SNAPSHOT = "<p>Hello,</p><p>You are receiving this message because you requested to reset your password for <a href=\"http://www.rpthreadtracker.com\">rpthreadtracker.com</a>.</p><p>Please use the link below to perform a password reset.</p><p>http://www.rpthreadtracker.com/resetpassword?email=test%40test.com&code=12345</p><p>Thanks, and have a great day!</p><p>~Tracker-mun</p>";
+            public const string FORGOT_PASSWORD_HTML_BODY_SNAPSHOT = "<p>Hello,</p><p>You are receiving this message because you requested to reset your password for <a href=\"http://www.rpthreadtracker.com\">rpthreadtracker.com</a>.</p><p>Please use the link below to perform a password reset.</p><p><a href=\"http://www.rpthreadtracker.com/resetpassword?email=test%40test.com&code=12345\">http://www.rpthreadtracker.com/resetpassword?email=test%40test.com&code=12345</a></p><p>Thanks, and have a great day!</p><p>~Tracker-mun</p>";
 
             public const string FORGOT_PASSWORD_TEXT_BODY_SNAPSHOT = "Hello,\n\nYou are receiving this message because you requested to reset your password for rpthreadtracker.com.\n\nPlease use the link below to perform a password reset.\n\nhttp://www.rpthreadtracker.com/resetpassword?email=test%40test.com&code=12345\n\nThanks, and have a great day!\n\n~Tracker-mun";
 

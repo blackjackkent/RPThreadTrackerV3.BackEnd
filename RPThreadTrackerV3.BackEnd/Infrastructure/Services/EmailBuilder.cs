@@ -65,7 +65,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    bodyBuilder.Append("<p>Hello,</p>");
 		    bodyBuilder.Append("<p>You are receiving this message because you requested to reset your password for <a href=\"http://www.rpthreadtracker.com\">rpthreadtracker.com</a>.</p>");
 		    bodyBuilder.Append("<p>Please use the link below to perform a password reset.</p>");
-		    bodyBuilder.Append($"<p>{resetPasswordUrl}</p>");
+		    bodyBuilder.Append($"<p><a href=\"{resetPasswordUrl}\">{resetPasswordUrl}</a></p>");
 			bodyBuilder.Append("<p>Thanks, and have a great day!</p>");
 		    bodyBuilder.Append("<p>~Tracker-mun</p>");
 		    return bodyBuilder.ToString();
@@ -73,6 +73,11 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 
 	    private static string GetResetPasswordLink(string urlRoot, string userEmail, string code)
 	    {
+		    if (urlRoot.Contains(","))
+		    {
+			    var roots = urlRoot.Split(',');
+			    urlRoot = roots[0];
+		    }
 		    return $"{urlRoot}/resetpassword?email={WebUtility.UrlEncode(userEmail)}&code={WebUtility.UrlEncode(code)}";
 	    }
     }
