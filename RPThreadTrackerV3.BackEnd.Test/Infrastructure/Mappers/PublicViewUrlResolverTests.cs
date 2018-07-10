@@ -34,7 +34,7 @@
             public void ReturnsUrlUsingSlugAndBaseUrl()
             {
                 // Arrange
-                _mockConfig.Cors = new CorsAppSettings { CorsUrl = "http://www.test.com" };
+                _mockConfig.Cors = new CorsAppSettings { CorsUrl = "http://www.test.com,http://www.test2.com" };
                 var view = new PublicView
                 {
                     Slug = "my-public-view"

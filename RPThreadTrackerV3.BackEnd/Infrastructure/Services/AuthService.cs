@@ -145,7 +145,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    var settings = new ProfileSettingsCollection
 		    {
 			    UserId = userId,
-			    ShowDashboardThreadDistribution = true
+			    ShowDashboardThreadDistribution = true,
+				LastNewsReadDate = DateTime.UtcNow
 		    };
 		    profileSettingsRepository.Create(settings);
 	    }

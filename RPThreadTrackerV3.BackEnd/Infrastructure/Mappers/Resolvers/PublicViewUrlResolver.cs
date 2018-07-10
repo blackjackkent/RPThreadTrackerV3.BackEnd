@@ -5,7 +5,8 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers.Resolvers
 {
-    using AutoMapper;
+	using System.Linq;
+	using AutoMapper;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
     using Models.DomainModels.PublicViews;
@@ -40,7 +41,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers.Resolvers
         /// </returns>
         public string Resolve(PublicView source, PublicViewDto destination, string destMember, ResolutionContext context)
         {
-            var baseUrl = _config.Cors.CorsUrl;
+            var baseUrl = _config.Cors.CorsUrl.Split(',').FirstOrDefault();
             return baseUrl + "/public/" + source.Slug;
         }
     }

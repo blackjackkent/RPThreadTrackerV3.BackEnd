@@ -373,12 +373,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockProfileSettingsRepository.Setup(r =>
                         r.GetWhere(It.IsAny<Expression<Func<ProfileSettingsCollection, bool>>>(), It.IsAny<List<string>>()))
                     .Returns(new List<ProfileSettingsCollection>());
+	            var comparisonDateTicks = DateTime.UtcNow.Ticks;
 
                 // Act
                 _authService.InitProfileSettings("12345", _mockProfileSettingsRepository.Object);
 
                 // Assert
-                _mockProfileSettingsRepository.Verify(r => r.Create(It.Is<ProfileSettingsCollection>(c => c.UserId == "12345" && c.ShowDashboardThreadDistribution)), Times.Once);
+                _mockProfileSettingsRepository.Verify(r => r.Create(It.Is<ProfileSettingsCollection>(c => c.UserId == "12345" && c.ShowDashboardThreadDistribution && c.LastNewsReadDate.GetValueOrDefault().Ticks > comparisonDateTicks)), Times.Once);
             }
         }
 
