@@ -61,7 +61,7 @@ namespace RPThreadTrackerV3.BackEnd
 				options.UseSqlServer(connection);
 				options.ReplaceService<IEntityMaterializerSource, CustomEntityMaterializerSource>();
 			});
-			services.AddIdentity<IdentityUser, IdentityRole>()
+			services.AddIdentity<IdentityUser, IdentityRole>(options => { options.User.AllowedUserNameCharacters = string.Empty; })
 				.AddEntityFrameworkStores<TrackerContext>()
 				.AddDefaultTokenProviders();
 			services.AddTransient<RoleInitializer>();
