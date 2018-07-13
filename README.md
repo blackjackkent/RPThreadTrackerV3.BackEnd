@@ -9,7 +9,7 @@
 [![codecov](https://codecov.io/gh/blackjackkent/RPThreadTrackerV3.BackEnd/branch/development/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
 
 
-This is a microservice called by [RPThreadTrackerV3.FrontEnd](https://github.com/blackjackkent/RPThreadTrackerV3.FrontEnd) to retrieve the current status of tracked threads on the Tumblr platform. It also provides an endpoint for retrieving recent news posts from the Tracker's news blog.
+This is a web service API called by [RPThreadTrackerV3.FrontEnd](https://github.com/blackjackkent/RPThreadTrackerV3.FrontEnd) to retrieve information about a user's account, tracked characters, tracked threads, and other account tools.
 
 ## Documentation
 
@@ -17,7 +17,7 @@ Documentation for this API can be found at [https://blackjackkent.github.io/RPTh
 
 ## Meta
 
-Your Name – [@blackjackkent](https://twitter.com/blackjackkent) – rosalind@blackjack-software.com
+Rosalind Wills - [@blackjackkent](https://twitter.com/blackjackkent) – rosalind@blackjack-software.com
 
 [https://github.com/blackjackkent/RPThreadTrackerV3.BackEnd](https://github.com/blackjackkent/RPThreadTrackerV3.BackEnd/)
 
