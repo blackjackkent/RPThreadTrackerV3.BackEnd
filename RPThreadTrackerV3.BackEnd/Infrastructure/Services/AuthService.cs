@@ -28,6 +28,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     /// <inheritdoc />
     public class AuthService : IAuthService
     {
+        private const string INVALID_TOKEN = "InvalidToken";
+
         /// <inheritdoc />
         /// <exception cref="UserNotFoundException">Thrown if
         /// no user exists with the given username or email.</exception>
@@ -153,17 +155,17 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 
         /// <inheritdoc />
         /// <exception cref="UserNotFoundException">Thrown if a user could not be found for the given email</exception>
-        /// <exception cref="InvalidPasswordResetException">Thrown if the password reset request could not be completed.</exception>
+        /// <exception cref="InvalidPasswordResetTokenException">Thrown if the password reset request could not be completed.</exception>
         public async Task ResetPassword(string email, string passwordResetToken, string newPassword, string confirmNewPassword, UserManager<IdentityUser> userManager)
 	    {
 	        if (!newPassword.Equals(confirmNewPassword, StringComparison.CurrentCulture))
 	        {
-	            throw new InvalidPasswordResetException(new List<string> { "Passwords do not match." });
+	            throw new InvalidChangePasswordException(new List<string> { "Passwords do not match." });
 	        }
             if (string.IsNullOrEmpty(email))
-		    {
-			    throw new UserNotFoundException();
-		    }
+            {
+                throw new UserNotFoundException();
+            }
 		    var user = await userManager.FindByEmailAsync(email);
 		    if (user == null)
 		    {
@@ -172,7 +174,11 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    var result = await userManager.ResetPasswordAsync(user, passwordResetToken, newPassword);
 		    if (!result.Succeeded)
 		    {
-			    throw new InvalidPasswordResetException(result.Errors.Select(e => e.Description).ToList());
+		        if (result.Errors.Any(e => e.Code == INVALID_TOKEN))
+		        {
+                    throw new InvalidPasswordResetTokenException(result.Errors.Select(e => e.Description).ToList());
+		        }
+			    throw new InvalidChangePasswordException(result.Errors.Select(e => e.Description).ToList());
 		    }
         }
 

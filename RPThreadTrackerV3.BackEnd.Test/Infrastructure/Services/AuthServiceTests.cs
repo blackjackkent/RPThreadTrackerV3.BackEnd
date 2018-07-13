@@ -392,7 +392,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 Func<Task> action = async () => await _authService.ResetPassword(null, "12345", "mypassword", "my-password", _mockUserManager.Object);
 
                 // Assert
-                action.Should().Throw<InvalidPasswordResetException>();
+                action.Should().Throw<InvalidPasswordResetTokenException>();
             }
 
             [Fact]
@@ -439,7 +439,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 Func<Task> action = async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object);
 
                 // Assert
-                action.Should().Throw<InvalidPasswordResetException>()
+                action.Should().Throw<InvalidPasswordResetTokenException>()
                     .Which.Errors.Should().HaveCount(2)
                     .And.Contain("Test Error 1")
                     .And.Contain("Test Error 2");

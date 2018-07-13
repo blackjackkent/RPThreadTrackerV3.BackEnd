@@ -468,7 +468,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     NewPassword = "my-password",
                     ConfirmNewPassword = "my-password"
                 };
-                var exception = new InvalidPasswordResetException(new List<string> { "error1", "error2" });
+                var exception = new InvalidPasswordResetTokenException(new List<string> { "error1", "error2" });
                 _mockAuthService.Setup(s => s.ResetPassword(request.Email, request.Code, request.NewPassword, request.ConfirmNewPassword, _mockUserManager.Object)).ThrowsAsync(exception);
 
                 // Act

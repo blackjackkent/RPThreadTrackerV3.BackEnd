@@ -3,6 +3,9 @@
 // Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
 // </copyright>
 
+using System.Linq;
+using Microsoft.EntityFrameworkCore.Internal;
+
 namespace RPThreadTrackerV3.BackEnd.Controllers
 {
     using System;
@@ -278,14 +281,20 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		[HttpPost("api/auth/resetpassword")]
 		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestModel model)
 		{
-			try
+		    try
+		    {
+		        await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, model.ConfirmNewPassword,
+		            _userManager);
+		        return Ok();
+		    }
+		    catch (InvalidChangePasswordException e)
+		    {
+                _logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors.Join()}");
+		        return BadRequest(e.Errors.Join(" "));
+		    }
+			catch (InvalidPasswordResetTokenException e)
 			{
-				await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, model.ConfirmNewPassword, _userManager);
-				return Ok();
-			}
-			catch (InvalidPasswordResetException e)
-			{
-				_logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors}");
+				_logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors.Join(",")}");
 				return BadRequest("This reset token is invalid. Please request a new password reset link.");
 			}
 			catch (UserNotFoundException e)
