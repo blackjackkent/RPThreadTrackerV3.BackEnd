@@ -1,7 +1,7 @@
 # RPThreadTracker.BackEnd.TumblrClient
 > Tumblr thread status microservice for RPThreadTracker
 
-[![Build status](https://ci.appveyor.com/api/projects/status/t7nenj8hldlywjjt?svg=true)](https://ci.appveyor.com/project/blackjackkent/rpthreadtracker-backend-tumblrclient)
+[![Build status](https://ci.appveyor.com/api/projects/status/8w7bl77131e87x4c?svg=true)](https://ci.appveyor.com/project/blackjackkent/rpthreadtrackerv3-backend)
 [![codecov](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient/branch/production/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
 
 
