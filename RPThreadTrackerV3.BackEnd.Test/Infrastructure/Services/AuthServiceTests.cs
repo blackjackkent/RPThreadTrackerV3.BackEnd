@@ -392,7 +392,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 Func<Task> action = async () => await _authService.ResetPassword(null, "12345", "mypassword", "my-password", _mockUserManager.Object);
 
                 // Assert
-                action.Should().Throw<InvalidPasswordResetTokenException>();
+                action.Should().Throw<InvalidChangePasswordException>();
             }
 
             [Fact]
@@ -419,7 +419,34 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public void ThrowsExceptionIfResetUnsuccessful()
+            public void ThrowsExceptionIfTokenInvalid()
+            {
+                // Arrange
+                var user = new IdentityUser
+                {
+                    Id = "12345"
+                };
+                var failureResult = IdentityResult.Failed(new List<IdentityError>
+                {
+                    new IdentityError { Code = "InvalidToken", Description = "Test Error 1" },
+                    new IdentityError { Description = "Test Error 2" }
+                }.ToArray());
+                _mockUserManager.Setup(m => m.FindByEmailAsync("me@me.com")).Returns(Task.FromResult(user));
+                _mockUserManager.Setup(m => m.ResetPasswordAsync(user, "12345", "mypassword"))
+                    .Returns(Task.FromResult(failureResult));
+
+                // Act
+                Func<Task> action = async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPasswordResetTokenException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
+            }
+
+            [Fact]
+            public void ThrowsExceptionIfTokenValidAndPasswordInsecure()
             {
                 // Arrange
                 var user = new IdentityUser
@@ -439,7 +466,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 Func<Task> action = async () => await _authService.ResetPassword("me@me.com", "12345", "mypassword", "mypassword", _mockUserManager.Object);
 
                 // Assert
-                action.Should().Throw<InvalidPasswordResetTokenException>()
+                action.Should().Throw<InvalidChangePasswordException>()
                     .Which.Errors.Should().HaveCount(2)
                     .And.Contain("Test Error 1")
                     .And.Contain("Test Error 2");

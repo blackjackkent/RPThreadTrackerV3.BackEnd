@@ -3,9 +3,6 @@
 // Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
 // </copyright>
 
-using System.Linq;
-using Microsoft.EntityFrameworkCore.Internal;
-
 namespace RPThreadTrackerV3.BackEnd.Controllers
 {
     using System;
@@ -19,6 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Interfaces.Services;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore.Internal;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
@@ -283,8 +281,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 		    try
 		    {
-		        await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, model.ConfirmNewPassword,
-		            _userManager);
+		        await _authService.ResetPassword(model.Email, model.Code, model.NewPassword, model.ConfirmNewPassword, _userManager);
 		        return Ok();
 		    }
 		    catch (InvalidChangePasswordException e)

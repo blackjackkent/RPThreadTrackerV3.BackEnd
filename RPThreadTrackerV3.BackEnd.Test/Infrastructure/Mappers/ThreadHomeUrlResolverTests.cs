@@ -1,4 +1,9 @@
-﻿namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Mappers
+﻿// <copyright file="ThreadHomeUrlResolverTests.cs" company="Rosalind Wills">
+// Copyright (c) Rosalind Wills. All rights reserved.
+// Licensed under the GPL v3 license. See LICENSE file in the project root for full license information.
+// </copyright>
+
+namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Mappers
 {
     using AutoMapper;
     using BackEnd.Infrastructure.Enums;
@@ -53,7 +58,6 @@
             [Fact]
             public void ReturnsNullWhenPlatformIdDoesNotExist()
             {
-
                 // Arrange
                 var character = new Character
                 {
@@ -76,12 +80,9 @@
                 result.Should().BeNull();
             }
 
-
-
             [Fact]
             public void ReturnsNullWhenCharacterIsNull()
             {
-
                 // Arrange
                 var thread = new Thread
                 {

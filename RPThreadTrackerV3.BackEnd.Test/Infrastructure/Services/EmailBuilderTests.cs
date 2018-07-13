@@ -26,7 +26,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class BuildForgotPasswordEmail : EmailBuilderTests
         {
             [Fact]
-            public void BuildsEmailWithCode()
+            public void BuildsEmailWithCodeWhenCorsEmailIsSingle()
             {
                 // Arrange
                 var user = new IdentityUser
@@ -58,9 +58,43 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 dto.Body.Should().Be(EmailSnapshotHolder.FORGOT_PASSWORD_HTML_BODY_SNAPSHOT);
                 dto.PlainTextBody.Should().Be(EmailSnapshotHolder.FORGOT_PASSWORD_TEXT_BODY_SNAPSHOT);
             }
+
+            [Fact]
+            public void BuildsEmailWithCodeWhenCorsEmailIsMultiple()
+            {
+                // Arrange
+                var user = new IdentityUser
+                {
+                    Email = "test@test.com"
+                };
+                _mockConfig.Secure = new SecureAppSettings
+                {
+                    ForgotPasswordEmailFromAddress = "forgotpassword@email.com",
+                    ContactFormEmailToAddress = "me@me.com",
+                    Documents = new DocumentsAppSettings
+                    {
+                        CollectionId = "collection",
+                        DatabaseId = "database",
+                        Endpoint = "endpoint",
+                        Key = "key"
+                    },
+                    SendGridApiKey = "apikey"
+                };
+
+                // Act
+                var dto = _emailBuilder.BuildForgotPasswordEmail(user, "http://www.rpthreadtracker.com,http://localhost:8080", "12345", _mockConfig);
+
+                // Assert
+                dto.Subject.Should().Be("RPThreadTracker Password Reset");
+                dto.RecipientEmail.Should().Be("test@test.com");
+                dto.SenderEmail.Should().Be("forgotpassword@email.com");
+                dto.SenderName.Should().Be("RPThreadTracker");
+                dto.Body.Should().Be(EmailSnapshotHolder.FORGOT_PASSWORD_HTML_BODY_SNAPSHOT);
+                dto.PlainTextBody.Should().Be(EmailSnapshotHolder.FORGOT_PASSWORD_TEXT_BODY_SNAPSHOT);
+            }
         }
 
-        public class BuildContactEmail : EmailBuilderTests
+            public class BuildContactEmail : EmailBuilderTests
         {
             [Fact]
             public void BuildsEmailWithMessage()

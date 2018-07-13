@@ -458,7 +458,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
         public class ResetPassword : AuthControllerTests
         {
             [Fact]
-            public async Task ReturnsBadRequestWhenPasswordResetInvalid()
+            public async Task ReturnsBadRequestWhenPasswordResetTokenIsInvalid()
             {
                 // Arrange
                 var request = new ResetPasswordRequestModel
@@ -469,6 +469,27 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     ConfirmNewPassword = "my-password"
                 };
                 var exception = new InvalidPasswordResetTokenException(new List<string> { "error1", "error2" });
+                _mockAuthService.Setup(s => s.ResetPassword(request.Email, request.Code, request.NewPassword, request.ConfirmNewPassword, _mockUserManager.Object)).ThrowsAsync(exception);
+
+                // Act
+                var result = await Controller.ResetPassword(request);
+
+                // Assert
+                result.Should().BeOfType<BadRequestObjectResult>();
+            }
+
+            [Fact]
+            public async Task ReturnsBadRequestWhenChangedPasswordIsInvalid()
+            {
+                // Arrange
+                var request = new ResetPasswordRequestModel
+                {
+                    Code = "code",
+                    Email = "me@me.com",
+                    NewPassword = "my-password",
+                    ConfirmNewPassword = "my-password"
+                };
+                var exception = new InvalidChangePasswordException(new List<string> { "error1", "error2" });
                 _mockAuthService.Setup(s => s.ResetPassword(request.Email, request.Code, request.NewPassword, request.ConfirmNewPassword, _mockUserManager.Object)).ThrowsAsync(exception);
 
                 // Act
