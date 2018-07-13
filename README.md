@@ -2,7 +2,7 @@
 > Tumblr thread status microservice for RPThreadTracker
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8w7bl77131e87x4c?svg=true)](https://ci.appveyor.com/project/blackjackkent/rpthreadtrackerv3-backend)
-[![codecov](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient/branch/production/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
+[![codecov](https://codecov.io/gh/blackjackkent/RPThreadTrackerV3.BackEnd/branch/development/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
 
 
 This is a microservice called by [RPThreadTrackerV3.FrontEnd](https://github.com/blackjackkent/RPThreadTrackerV3.FrontEnd) to retrieve the current status of tracked threads on the Tumblr platform. It also provides an endpoint for retrieving recent news posts from the Tracker's news blog.
