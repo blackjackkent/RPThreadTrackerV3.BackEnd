@@ -55,6 +55,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     SettingsId = entity.ProfileSettingsCollectionId,
                     ShowDashboardThreadDistribution = entity.ShowDashboardThreadDistribution,
                     LastNewsReadDate = entity.LastNewsReadDate,
+					ThreadTablePageSize = entity.ThreadTablePageSize,
                     #pragma warning disable 618
                     AllowMarkQueued = entity.AllowMarkQueued,
                     UseInvertedTheme = entity.UseInvertedTheme
