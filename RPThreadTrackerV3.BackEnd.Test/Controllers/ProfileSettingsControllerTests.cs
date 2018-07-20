@@ -42,6 +42,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     ShowDashboardThreadDistribution = model.ShowDashboardThreadDistribution,
                     LastNewsReadDate = model.LastNewsReadDate,
                     SettingsId = model.SettingsId,
+					ThreadTablePageSize = model.ThreadTablePageSize,
                     #pragma warning disable 618
                     AllowMarkQueued = model.AllowMarkQueued,
                     UseInvertedTheme = model.UseInvertedTheme
@@ -53,6 +54,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     UserId = dto.UserId,
                     ShowDashboardThreadDistribution = dto.ShowDashboardThreadDistribution,
                     LastNewsReadDate = dto.LastNewsReadDate,
+					ThreadTablePageSize = dto.ThreadTablePageSize,
                     SettingsId = dto.SettingsId,
                     #pragma warning disable 618
                     AllowMarkQueued = dto.AllowMarkQueued,

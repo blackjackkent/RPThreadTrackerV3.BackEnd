@@ -61,5 +61,13 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
         /// The last datetime at which the user viewed the news widget.
         /// </value>
         public DateTime? LastNewsReadDate { get; set; }
+
+		/// <summary>
+		/// Gets or sets the number of records that should be displayed on a page of the thread table.
+		/// </summary>
+		/// <value>
+		/// The number of records that should be displayed on a page of the thread table.
+		/// </value>
+		public int ThreadTablePageSize { get; set; }
 	}
 }
