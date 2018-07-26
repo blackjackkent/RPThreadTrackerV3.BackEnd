@@ -117,7 +117,6 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
                 || string.IsNullOrEmpty(Slug)
                 || !slugRegex.IsMatch(Slug)
                 || !Columns.Any()
-                || !CharacterIds.Any()
                 || reservedSlugs.Contains(Slug);
             if (invalid)
             {

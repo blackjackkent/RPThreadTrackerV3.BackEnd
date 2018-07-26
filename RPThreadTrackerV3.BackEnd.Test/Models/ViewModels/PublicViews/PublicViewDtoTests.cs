@@ -99,19 +99,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
             }
 
             [Fact]
-            public void ThrowsErrorWhenNoCharacters()
-            {
-                // Arrange
-                _dto.CharacterIds = new List<int>();
-
-                // Act
-                Action action = () => _dto.AssertIsValid();
-
-                // Assert
-                action.Should().Throw<InvalidPublicViewException>();
-            }
-
-            [Fact]
             public void ThrowsErrorWhenSlugReserved()
             {
                 // Arrange
