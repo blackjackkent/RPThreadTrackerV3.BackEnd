@@ -81,6 +81,14 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Entities
         /// </value>
         public DateTime? DateMarkedQueued { get; set; }
 
+		/// <summary>
+		/// Gets or sets a text-block description of the content of the thread.
+		/// </summary>
+		/// <value>
+		/// A summary of the content of the thread.
+		/// </value>
+		public string Description { get; set; }
+
         /// <summary>
         /// Gets or sets the thread tags associated with this thread.
         /// </summary>

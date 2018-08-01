@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[Threads](
 	[PartnerUrlIdentifier] [varchar](50) NULL,
 	[IsArchived] [bit] NOT NULL,
 	[DateMarkedQueued] [datetime] NULL,
+	[Description] [nvarchar](250) NULL,
  CONSTRAINT [PK_dbo.Threads] PRIMARY KEY CLUSTERED 
 (
 	[ThreadId] ASC
