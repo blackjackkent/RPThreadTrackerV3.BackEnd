@@ -50,6 +50,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                         CharacterName = entity.Character?.CharacterName
                     },
                     DateMarkedQueued = entity.DateMarkedQueued,
+                    Description = entity.Description,
                     PartnerUrlIdentifier = entity.PartnerUrlIdentifier,
                     PostId = entity.PostId
                 });
@@ -73,6 +74,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                         CharacterName = model.Character?.CharacterName
                     },
                     DateMarkedQueued = model.DateMarkedQueued,
+                    Description = model.Description,
                     PartnerUrlIdentifier = model.PartnerUrlIdentifier,
                     PostId = model.PostId
                 });
@@ -558,6 +560,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 1,
                     IsArchived = false,
                     DateMarkedQueued = null,
+                    Description = null,
                     ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag1" } },
                     PartnerUrlIdentifier = "my-partner",
                     PostId = "1",
@@ -570,6 +573,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 1,
                     IsArchived = false,
                     DateMarkedQueued = null,
+                    Description = "Test Description Thread 2",
                     ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag2" } },
                     PartnerUrlIdentifier = "my-other-partner",
                     PostId = "3",
@@ -582,6 +586,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 2,
                     IsArchived = false,
                     DateMarkedQueued = null,
+                    Description = "Test Description Thread 3",
                     ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag1" } },
                     PartnerUrlIdentifier = "my-other-partner",
                     PostId = "3",
@@ -594,6 +599,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 2,
                     IsArchived = false,
                     DateMarkedQueued = null,
+                    Description = "Test Description Thread 4",
                     ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag2" } },
                     PartnerUrlIdentifier = "my-other-partner",
                     PostId = "4",
@@ -606,6 +612,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 1,
                     IsArchived = true,
                     DateMarkedQueued = null,
+                    Description = "Test Description Thread 5",
                     ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag3" } },
                     PartnerUrlIdentifier = "my-partner",
                     PostId = "5",
@@ -618,6 +625,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     CharacterId = 2,
                     IsArchived = true,
                     DateMarkedQueued = null,
+                    Description = "Test Description Thread 6",
                     ThreadTags = new List<ThreadTag> { new ThreadTag { TagText = "Tag3" } },
                     PartnerUrlIdentifier = "my-partner",
                     PostId = "6",
