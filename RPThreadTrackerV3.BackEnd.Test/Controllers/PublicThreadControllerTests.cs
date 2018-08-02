@@ -88,6 +88,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                         CharacterName = model.Character?.CharacterName
                     },
                     DateMarkedQueued = model.DateMarkedQueued,
+                    Description = model.Description,
                     IsArchived = model.IsArchived,
                     ThreadTags = model.ThreadTags?.Select(t => new ThreadTagDto { TagText = t.TagText }).ToList(),
                     UserTitle = model.UserTitle
@@ -105,6 +106,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                         CharacterName = dto.Character?.CharacterName
                     },
                     DateMarkedQueued = dto.DateMarkedQueued,
+                    Description = dto.Description,
                     IsArchived = dto.IsArchived,
                     ThreadTags = dto.ThreadTags?.Select(t => new ThreadTag { TagText = t.TagText }).ToList(),
                     UserTitle = dto.UserTitle

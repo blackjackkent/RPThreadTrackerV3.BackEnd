@@ -51,7 +51,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
 			    PostId = t.PostId,
 				PartnerUrlIdentifier = t.PartnerUrlIdentifier,
 				CharacterUrlIdentifier = t.Character.UrlIdentifier,
-				DateMarkedQueued = t.DateMarkedQueued
+				DateMarkedQueued = t.DateMarkedQueued,
 		    });
 		    return JsonConvert.SerializeObject(objects);
 	    }

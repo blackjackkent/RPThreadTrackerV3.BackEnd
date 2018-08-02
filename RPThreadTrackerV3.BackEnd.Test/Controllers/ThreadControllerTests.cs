@@ -60,7 +60,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                         ThreadTagId = t.ThreadTagId
                     }).ToList(),
                     IsArchived = model.IsArchived,
-                    DateMarkedQueued = model.DateMarkedQueued
+                    DateMarkedQueued = model.DateMarkedQueued,
+                    Description = model.Description
                 });
             _mockMapper.Setup(m => m.Map<Thread>(It.IsAny<ThreadDto>()))
                 .Returns((ThreadDto dto) => new Thread
@@ -82,7 +83,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                         TagText = t.TagText
                     }).ToList(),
                     IsArchived = dto.IsArchived,
-                    DateMarkedQueued = dto.DateMarkedQueued
+                    DateMarkedQueued = dto.DateMarkedQueued,
+                    Description = dto.Description
                 });
             _mockMapper.Setup(m => m.Map<List<ThreadDto>>(It.IsAny<List<Thread>>()))
                 .Returns((List<Thread> models) => models.Select(m => _mockMapper.Object.Map<ThreadDto>(m)).ToList());
@@ -239,6 +241,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                         }
                     },
                     DateMarkedQueued = DateTime.UtcNow,
+                    Description = "Test Description",
                     IsArchived = false,
                     PartnerUrlIdentifier = "test-partner",
                     PostId = "12345",

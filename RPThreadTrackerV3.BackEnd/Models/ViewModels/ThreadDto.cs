@@ -90,13 +90,21 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
         /// </value>
         public string ThreadHomeUrl { get; set; }
 
-        /// <summary>
-        /// Gets or sets the thread tags associated with this thread.
-        /// </summary>
-        /// <value>
-        /// The thread tags associated with this thread.
-        /// </value>
-        public List<ThreadTagDto> ThreadTags { get; set; }
+	    /// <summary>
+	    /// Gets or sets a text-block description of the content of the thread.
+	    /// </summary>
+	    /// <value>
+	    /// A summary of the content of the thread.
+	    /// </value>
+	    public string Description { get; set; }
+
+		/// <summary>
+		/// Gets or sets the thread tags associated with this thread.
+		/// </summary>
+		/// <value>
+		/// The thread tags associated with this thread.
+		/// </value>
+		public List<ThreadTagDto> ThreadTags { get; set; }
 
         /// <summary>
         /// Throws an exception if the thread model is not valid.
@@ -105,6 +113,11 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
         public virtual void AssertIsValid()
 		{
 			if (string.IsNullOrEmpty(UserTitle))
+			{
+				throw new InvalidThreadException();
+			}
+
+			if (Description != null && Description.Length > 250)
 			{
 				throw new InvalidThreadException();
 			}

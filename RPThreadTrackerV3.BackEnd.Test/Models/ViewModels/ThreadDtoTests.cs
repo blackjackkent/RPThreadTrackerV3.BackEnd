@@ -25,6 +25,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 ThreadId = 1357,
                 PostId = "98765",
                 DateMarkedQueued = DateTime.UtcNow,
+                Description = null,
                 IsArchived = false,
                 PartnerUrlIdentifier = "my-partner",
                 ThreadHomeUrl = "http://www.test.com",
@@ -69,6 +70,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
             {
                 // Arrange
                 _dto.PostId = "blahblah1234";
+
+                // Act
+                Action action = () => _dto.AssertIsValid();
+
+                // Assert
+                action.Should().Throw<InvalidThreadException>();
+            }
+
+            [Fact]
+            public void ThrowsErrorWhenDescriptionTooLong()
+            {
+                // Arrange
+                _dto.Description = "7fcZ5JGesziIOYshyElc6jnHPv4Ld6eCajXxzl0pJ3Cahajyvxgyu8i9Iblay5F81vlO8dO7QeSYCfiZ7gdDDfpj1aJ2TBtVNWfZBcYugB1KC2hrIEGd423X7ICWXFYE1E2q7vYHV6KL3AC8w03BKAJTGTIXgLnjG3yPHzmIre1OkgiNeoGrocOQSjTEikpczGY1Qtii7eFMyf5McTG7RalGSG6Fu0yJDi4VLCQ5H6UqWE2sfGSDXi8l5Vv";
 
                 // Act
                 Action action = () => _dto.AssertIsValid();
