@@ -55,6 +55,9 @@
     - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0\publish'
       name: WebSite
       type: WebDeployPackage
+    - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0\publish'
+      name: WebSiteZip
+      type: Zip
   deploy:
     - provider: Environment
       name: RPThreadTrackerV3-BackEnd-Dev
