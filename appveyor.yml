@@ -21,6 +21,9 @@
             choco install docfx -y
             # choco install nuget.commandline -y
         }
+  build:
+    publish_wap: true
+    publish_wap_xcopy: true
   build_script:
     - cmd: dotnet publish RPThreadTrackerV3.BackEnd.sln -c Release
   after_build:
@@ -55,9 +58,6 @@
     - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0\publish'
       name: WebSite
       type: WebDeployPackage
-    - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0\publish'
-      name: WebSiteZip
-      type: Zip
   deploy:
     - provider: Environment
       name: RPThreadTrackerV3-BackEnd-Dev
