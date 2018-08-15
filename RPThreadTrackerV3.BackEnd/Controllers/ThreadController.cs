@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Controllers
 {
     using System;
+    using System.IO;
     using System.Linq;
     using AutoMapper;
     using Infrastructure.Data.Entities;
@@ -227,19 +228,24 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 		    try
 		    {
-		        var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
+                var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
 		        var threads =
 		            _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
 		        var excelPackage = _exporterService.GetExcelPackage(characters, threads);
-		        var byteArray = excelPackage.GetAsByteArray();
-		        var cd = new System.Net.Mime.ContentDisposition
+
+		        using (var exportData = new MemoryStream())
 		        {
-		            FileName = "Export.xlsx",
-		            Inline = false
-		        };
-		        Response.Headers.Add("Content-Disposition", cd.ToString());
-		        Response.Headers.Add("X-Content-Type-Options", "nosniff");
-		        return File(byteArray, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		            excelPackage.Write(exportData);
+		            var bytes = exportData.ToArray();
+		            var cd = new System.Net.Mime.ContentDisposition
+		            {
+		                FileName = "Export.xlsx",
+		                Inline = false
+		            };
+		            Response.Headers.Add("Content-Disposition", cd.ToString());
+		            Response.Headers.Add("X-Content-Type-Options", "nosniff");
+		            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                }
 		    }
 		    catch (Exception e)
 		    {

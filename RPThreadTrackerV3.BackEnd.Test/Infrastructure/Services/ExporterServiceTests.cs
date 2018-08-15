@@ -10,6 +10,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
     using BackEnd.Infrastructure.Services;
     using BackEnd.Models.DomainModels;
     using FluentAssertions;
+    using NPOI.SS.Formula.Functions;
+    using NPOI.SS.UserModel;
+    using NPOI.SS.Util;
     using Xunit;
 
     [Trait("Class", "ExporterService")]
@@ -34,7 +37,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var result = _exporterService.GetExcelPackage(new List<Character>(), threads);
 
                 // Assert
-                result.Workbook.Worksheets.Should().HaveCount(0);
+                result.NumberOfSheets.Should().Be(0);
             }
 
             [Fact]
@@ -54,7 +57,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var result = _exporterService.GetExcelPackage(characters, threads);
 
                 // Assert
-                result.Workbook.Worksheets.Should().HaveCount(0);
+                result.NumberOfSheets.Should().Be(0);
             }
 
             [Fact]
@@ -95,7 +98,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var result = _exporterService.GetExcelPackage(characters, threads);
 
                 // Assert
-                result.Workbook.Worksheets.Should().HaveCount(2);
+                result.NumberOfSheets.Should().Be(2);
             }
 
             [Fact]
@@ -140,26 +143,34 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 
                 // Act
                 var result = _exporterService.GetExcelPackage(characters, threads);
-                var worksheet = result.Workbook.Worksheets.FirstOrDefault();
+                var worksheet = result.GetSheetAt(0);
 
                 // Assert
-                worksheet?.Cells["A1"].Text.Should().Be("Url Identifier");
-                worksheet?.Cells["B1"].Text.Should().Be("Post ID");
-                worksheet?.Cells["C1"].Text.Should().Be("User Title");
-                worksheet?.Cells["D1"].Text.Should().Be("Partner Url Identifier");
-                worksheet?.Cells["E1"].Text.Should().Be("Is Archived");
+                AssertCellIsValid(worksheet, "A1", "Url Identifier");
+                AssertCellIsValid(worksheet, "B1", "Post ID");
+                AssertCellIsValid(worksheet, "C1", "User Title");
+                AssertCellIsValid(worksheet, "D1", "Partner Url Identifier");
+                AssertCellIsValid(worksheet, "E1", "Is Archived");
 
-                worksheet?.Cells["A2"].Text.Should().Be("character1");
-                worksheet?.Cells["B2"].Text.Should().Be("98765");
-                worksheet?.Cells["C2"].Text.Should().Be("My Title");
-                worksheet?.Cells["D2"].Text.Should().Be("my-partner");
-                worksheet?.Cells["E2"].Text.Should().Be("False");
+                AssertCellIsValid(worksheet, "A2", "character1");
+                AssertCellIsValid(worksheet, "B2", "98765");
+                AssertCellIsValid(worksheet, "C2", "My Title");
+                AssertCellIsValid(worksheet, "D2", "my-partner");
+                AssertCellIsValid(worksheet, "E2", "False");
 
-                worksheet?.Cells["A3"].Text.Should().Be("character1");
-                worksheet?.Cells["B3"].Text.Should().Be("87654");
-                worksheet?.Cells["C3"].Text.Should().Be("My Title 2");
-                worksheet?.Cells["D3"].Text.Should().Be("my-other-partner");
-                worksheet?.Cells["E3"].Text.Should().Be("True");
+                AssertCellIsValid(worksheet, "A3", "character1");
+                AssertCellIsValid(worksheet, "B3", "87654");
+                AssertCellIsValid(worksheet, "C3", "My Title 2");
+                AssertCellIsValid(worksheet, "D3", "my-other-partner");
+                AssertCellIsValid(worksheet, "E3", "True");
+            }
+
+            private static void AssertCellIsValid(ISheet worksheet, string reference, string value)
+            {
+                var cellReference = new CellReference(reference);
+                var row = worksheet.GetRow(cellReference.Row);
+                var cell = row.GetCell(cellReference.Col);
+                cell.StringCellValue.Should().Be(value);
             }
         }
     }

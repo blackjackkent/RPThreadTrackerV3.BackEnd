@@ -11,52 +11,94 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     using System.Linq;
     using Interfaces.Services;
     using Models.DomainModels;
-    using OfficeOpenXml;
+    using NPOI.SS.UserModel;
+    using NPOI.XSSF.UserModel;
 
     /// <inheritdoc />
     public class ExporterService : IExporterService
     {
         /// <inheritdoc />
-        public ExcelPackage GetExcelPackage(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads)
+        public XSSFWorkbook GetExcelPackage(IEnumerable<Character> characters, Dictionary<int, List<Thread>> threads)
 	    {
-		    var package = new ExcelPackage();
+		    var workbook = new XSSFWorkbook();
+            var headerStyle = GetHeaderStyle(workbook);
+	        var bodyFieldStyle = GetBodyFieldStyle(workbook);
+	        var archivedFieldStyle = GetArchivedFieldStyle(workbook);
 		    foreach (var character in characters)
 		    {
 			    if (!threads.ContainsKey(character.CharacterId) || !threads[character.CharacterId].Any())
 			    {
 				    continue;
 			    }
-			    var worksheet = package.Workbook.Worksheets.Add(character.UrlIdentifier);
-			    worksheet.Cells[1, 1].Value = "Url Identifier";
-			    worksheet.Cells[1, 2].Value = "Post ID";
-			    worksheet.Cells[1, 3].Value = "User Title";
-			    worksheet.Cells[1, 4].Value = "Partner Url Identifier";
-			    worksheet.Cells[1, 5].Value = "Is Archived";
+			    var worksheet = workbook.CreateSheet(character.UrlIdentifier);
+		        var headerRow = worksheet.CreateRow(0);
+		        GenerateCell(headerRow, 0, "Url Identifier", headerStyle);
+		        GenerateCell(headerRow, 1, "Post ID", headerStyle);
+		        GenerateCell(headerRow, 2, "User Title", headerStyle);
+		        GenerateCell(headerRow, 3, "Partner Url Identifier", headerStyle);
+		        GenerateCell(headerRow, 4, "Is Archived", headerStyle);
 
-			    var i = 2;
+			    var i = 1;
 				var threadsForCharacter = threads[character.CharacterId].OrderBy(t => t.IsArchived);
 			    foreach (var thread in threadsForCharacter)
 			    {
-					worksheet.Cells["A" + i].Value = character.UrlIdentifier;
-				    worksheet.Cells["B" + i].Value = thread.PostId;
-				    worksheet.Cells["C" + i].Value = thread.UserTitle;
-				    worksheet.Cells["D" + i].Value = thread.PartnerUrlIdentifier;
-				    worksheet.Cells["E" + i].Value = thread.IsArchived.ToString(CultureInfo.CurrentCulture);
-				    if (thread.IsArchived)
-				    {
-						worksheet.Cells["A" + i + ":E" + i].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-					    worksheet.Cells["A" + i + ":E" + i].Style.Fill.BackgroundColor.SetColor(Color.LightGray);
-					    worksheet.Cells["A" + i + ":E" + i].Style.Font.Color.SetColor(ColorTranslator.FromHtml("#595959"));
-					}
+			        var row = worksheet.CreateRow(i);
+			        var style = thread.IsArchived ? archivedFieldStyle : bodyFieldStyle;
+                    GenerateCell(row, 0, character.UrlIdentifier, style);
+                    GenerateCell(row, 1, thread.PostId, style);
+			        GenerateCell(row, 2, thread.UserTitle, style);
+                    GenerateCell(row, 3, thread.PartnerUrlIdentifier, style);
+                    GenerateCell(row, 4, thread.IsArchived.ToString(CultureInfo.CurrentCulture), style);
 				    i++;
 				}
-			    worksheet.Cells["A1:E1"].Style.Font.Bold = true;
-			    worksheet.Cells["A1:E1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-			    worksheet.Cells["A1:E1"].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
-			    worksheet.Cells["A1:E" + i].AutoFitColumns();
-			    worksheet.Cells["B2:B" + i].Style.Numberformat.Format = "0";
-			}
-	        return package;
+
+		        int lastColumNum = worksheet.GetRow(0).LastCellNum;
+		        for (var col = 0; col <= lastColumNum; col++)
+		        {
+		            worksheet.AutoSizeColumn(col);
+		        }
+            }
+	        return workbook;
 	    }
+
+        private static ICellStyle GetArchivedFieldStyle(XSSFWorkbook workbook)
+        {
+            var style = workbook.CreateCellStyle();
+            style.FillForegroundColor = IndexedColors.Grey25Percent.Index;
+            style.FillPattern = FillPattern.SolidForeground;
+            var font = workbook.CreateFont();
+            var color = new XSSFColor(new byte[] { 89, 89, 89 });
+            font.Color = color.Indexed;
+            style.SetFont(font);
+            var format = workbook.CreateDataFormat().GetFormat("0");
+            style.DataFormat = format;
+            return style;
+        }
+
+        private static ICellStyle GetBodyFieldStyle(XSSFWorkbook workbook)
+        {
+            var style = workbook.CreateCellStyle();
+            var format = workbook.CreateDataFormat().GetFormat("0");
+            style.DataFormat = format;
+            return style;
+        }
+
+        private static ICellStyle GetHeaderStyle(XSSFWorkbook workbook)
+        {
+            var style = workbook.CreateCellStyle();
+            style.FillForegroundColor = IndexedColors.LightBlue.Index;
+            style.FillPattern = FillPattern.SolidForeground;
+            var font = workbook.CreateFont();
+            font.Boldweight = (short)FontBoldWeight.Bold;
+            style.SetFont(font);
+            return style;
+        }
+
+        private static void GenerateCell(IRow row, int index, string text, ICellStyle style)
+        {
+            var cell = row.CreateCell(index);
+            cell.SetCellValue(text);
+            cell.CellStyle = style;
+        }
     }
 }

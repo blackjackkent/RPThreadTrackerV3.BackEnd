@@ -21,6 +21,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
+    using NPOI.XSSF.UserModel;
     using OfficeOpenXml;
     using TestHelpers;
     using Xunit;
@@ -437,14 +438,24 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<FileContentResult>()
-                    .Which.FileContents.Length.Should().Be(GetMockPackage().GetAsByteArray().Length);
+                    .Which.FileContents.Length.Should().Be(GetMockPackageBytes().Length);
             }
 
-            private ExcelPackage GetMockPackage()
+            private static XSSFWorkbook GetMockPackage()
             {
-                var mockPackage = new ExcelPackage { File = new FileInfo("test file") };
-                mockPackage.Workbook.Worksheets.Add("My Character");
-                return mockPackage;
+                var workbook = new XSSFWorkbook();
+                workbook.CreateSheet("My Character");
+                return workbook;
+            }
+
+            private static byte[] GetMockPackageBytes()
+            {
+                var package = GetMockPackage();
+                using (var exportData = new MemoryStream())
+                {
+                    package.Write(exportData);
+                    return exportData.ToArray();
+                }
             }
         }
 
