@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPThreadTrackerV3.BackEnd", "RPThreadTrackerV3.BackEnd\RPThreadTrackerV3.BackEnd.csproj", "{01AA5F13-D3DD-49D3-9A8E-44ED625AF9AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RPThreadTrackerV3.BackEnd.Test", "RPThreadTrackerV3.BackEnd.Test\RPThreadTrackerV3.BackEnd.Test.csproj", "{F0F9500E-423B-49A2-9170-E1E928FD730A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RPThreadTrackerV3.BackEnd.Test", "RPThreadTrackerV3.BackEnd.Test\RPThreadTrackerV3.BackEnd.Test.csproj", "{F0F9500E-423B-49A2-9170-E1E928FD730A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -116,9 +116,6 @@ namespace RPThreadTrackerV3.BackEnd
         /// <param name="loggerFactory">The logger factory.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddNLog();
-
-			app.AddNLogWeb();
 			app.UseAuthentication();
 			app.UseCors(builder =>
 				builder.WithOrigins(Configuration["Cors:CorsUrl"].Split(',')).AllowAnyHeader().AllowAnyMethod());
