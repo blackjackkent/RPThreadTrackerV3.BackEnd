@@ -319,6 +319,9 @@ RPThreadTrackerV3.BackEnd/appSettings.secure.json
 *.bak
 *.orig
 reports/
-coverage.xml
+*coverage.xml
+*coverage.info
+*coverage.json
+*coverage.opencover.xml
 codecov.sh
 Documentation/api/RPThreadTrackerV3.BackEnd*.yml
