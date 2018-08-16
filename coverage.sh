@@ -1,3 +1,5 @@
+#!/bin/bash
+set -ev
 "$HOME/.nuget/packages/opencover/4.6.519/tools/OpenCover.Console.exe" \
   -register:user \
   -output:coverage.xml \
