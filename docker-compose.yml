@@ -2,5 +2,6 @@ version: '3'
 services:
   web:
     build: .
+    image: blackjacksoftware/rpthreadtrackerv3.backend
     ports:
      - "8080:80"
