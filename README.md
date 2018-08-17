@@ -5,7 +5,7 @@
 >
 > If you are looking for the Tumblr thread status microservice API, please see [http://www.github.com/blackjackkent/RPThreadTracker.BackEnd.TumblrClient](http://www.github.com/blackjackkent/RPThreadTracker.BackEnd.TumblrClient).
 
-[![Build status](https://ci.appveyor.com/api/projects/status/8w7bl77131e87x4c?svg=true)](https://ci.appveyor.com/project/blackjackkent/rpthreadtrackerv3-backend)
+[![Build status](https://travis-ci.org/blackjackkent/RPThreadTrackerV3.BackEnd.svg?branch=development)](https://ci.appveyor.com/project/blackjackkent/rpthreadtrackerv3-backend)
 [![codecov](https://codecov.io/gh/blackjackkent/RPThreadTrackerV3.BackEnd/branch/development/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
 
 
