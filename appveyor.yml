@@ -28,10 +28,10 @@
     publish_wap: true
     publish_wap_xcopy: true
   build_script:
-    - ps: docker-compose build
+    - ps: docker build -t blackjacksoftware/rpthreadtrackerv3.backend .
   after_build:
     - ps: |
-          cd $env:APPVEYOR_BUILD_FOLDER\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0
+          cd $env:APPVEYOR_BUILD_FOLDER\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.1
           7z a $env:APPVEYOR_BUILD_FOLDER\WebSiteZip.zip ./publish/*
           cd $env:APPVEYOR_BUILD_FOLDER
     - ps: |
@@ -63,10 +63,4 @@
       bash codecov.sh -f "coverage.xml"
       docker login --username=$env:docker_username --password=$env:docker_password
       docker push $env:docker_username/rpthreadtrackerv3.backend
-  artifacts:
-    - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0\publish'
-      name: WebSite
-      type: WebDeployPackage
-    - path: WebSiteZip.zip
-      name: WebSiteZip
 
