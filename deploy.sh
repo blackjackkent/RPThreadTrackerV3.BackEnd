@@ -7,5 +7,4 @@ DOCKER_PASSWORD=$3
 
 docker-compose build
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-docker push $DOCKER_USERNAME/rpthreadtrackerv3.backend:$TAG
 docker push $DOCKER_USERNAME/rpthreadtrackerv3.backend:latest
