@@ -37,9 +37,6 @@
     </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
     <PackageReference Include="coverlet.msbuild" Version="2.2.1" />
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.0" />

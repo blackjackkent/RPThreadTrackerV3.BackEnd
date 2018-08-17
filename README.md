@@ -13,7 +13,7 @@ This is a web service API called by [RPThreadTrackerV3.FrontEnd](https://github.
 
 ## Documentation
 
-Documentation for this API can be found at [https://blackjackkent.github.io/RPThreadTrackerV3.BackEnd/docs/](https://blackjackkent.github.io/RPThreadTrackerV3.BackEnd/docs/)
+Documentation for this API can be found at [https://rpthreadtrackerv3-backend-docker/docs](https://rpthreadtrackerv3-backend-docker/docs)
 
 ## Meta
 

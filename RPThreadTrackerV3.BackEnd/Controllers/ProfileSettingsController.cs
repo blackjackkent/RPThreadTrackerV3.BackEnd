@@ -58,6 +58,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </list>
         /// </returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ProfileSettingsDto))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
 	    public IActionResult Get()
 	    {
 		    try
@@ -86,6 +89,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// HTTP response containing the results of the request.<para /><list type="table"><item><term>200 OK</term><description>Response code for successful retrieval of profile settings information</description></item><item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
 		[HttpPut]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
 	    public IActionResult Put([FromBody]ProfileSettingsDto settings)
 	    {
 		    try

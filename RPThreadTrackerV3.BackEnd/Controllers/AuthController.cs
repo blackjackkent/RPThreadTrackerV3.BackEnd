@@ -84,6 +84,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </list>
         /// </returns>
         [HttpPost("api/auth/token")]
+        [ProducesResponseType(200, Type = typeof(AuthTokenCollection))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public async Task<IActionResult> CreateToken([FromBody] LoginRequest model)
 		{
 		    try
@@ -130,6 +133,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </list>
         /// </returns>
         [HttpPost("api/auth/refresh")]
+        [ProducesResponseType(200, Type = typeof(AuthTokenCollection))]
+        [ProducesResponseType(498)]
+        [ProducesResponseType(500)]
 	    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest model)
 	    {
 	        try
@@ -166,6 +172,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    /// </list>
 	    /// </returns>
 	    [HttpPost("api/auth/revoke")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
 	    public IActionResult RevokeToken([FromBody] RefreshTokenRequest model)
 	    {
 	        try
@@ -193,6 +201,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    /// </list>
 	    /// </returns>
         [HttpPost("api/auth/register")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(List<string>))]
+        [ProducesResponseType(500)]
 		public async Task<IActionResult> Register([FromBody] RegisterRequest model)
 		{
 		    try
@@ -240,6 +251,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    /// </list>
 	    /// </returns>
 		[HttpPost("api/auth/forgotpassword")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
 		public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestModel model)
 		{
 		    try
@@ -277,6 +290,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    /// </list>
 	    /// </returns>
 		[HttpPost("api/auth/resetpassword")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestModel model)
 		{
 		    try

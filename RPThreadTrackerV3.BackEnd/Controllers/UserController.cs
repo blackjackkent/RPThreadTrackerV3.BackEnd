@@ -63,6 +63,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </list>
         /// </returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(UserDto))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
 	    public async Task<IActionResult> Get()
 	    {
 	        try
@@ -94,6 +97,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpPut]
 		[Route("password")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(List<string>))]
+        [ProducesResponseType(500)]
 	    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestModel request)
 	    {
 		    try
@@ -125,7 +131,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpPut]
 	    [Route("accountinfo")]
-	    public async Task<IActionResult> ChangeAccountInformation([FromBody] ChangeAccountInfoRequestModel request)
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(List<string>))]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> ChangeAccountInformation([FromBody] ChangeAccountInfoRequestModel request)
 	    {
 		    try
 		    {
@@ -140,7 +149,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    catch (Exception e)
 		    {
 				_logger.LogError(e, $"Error requesting account information change for {User.Identity.Name}");
-			    return StatusCode(500, new List<string> { "An unknown error occurred." });
+			    return StatusCode(500, "An unknown error occurred.");
 			}
 	    }
 	}

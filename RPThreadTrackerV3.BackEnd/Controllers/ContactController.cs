@@ -65,6 +65,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Post([FromBody] ContactFormRequestModel model)
         {
             try

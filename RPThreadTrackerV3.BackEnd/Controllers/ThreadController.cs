@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using AutoMapper;
@@ -76,6 +77,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </list>
         /// </returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(ThreadDtoCollection))]
+        [ProducesResponseType(500)]
 		public IActionResult Get([FromQuery]bool isArchived = false)
 		{
 			try
@@ -106,6 +109,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(ThreadDto))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public IActionResult Post([FromBody] ThreadDto thread)
 		{
 			try
@@ -148,6 +154,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpPut]
 		[Route("{threadId}")]
+        [ProducesResponseType(200, Type = typeof(ThreadDto))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public IActionResult Put(int threadId, [FromBody]ThreadDto thread)
 		{
 			try
@@ -194,6 +203,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpDelete]
 		[Route("{threadId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public IActionResult Delete(int threadId)
 		{
 			try
@@ -224,6 +236,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpGet]
 		[Route("export")]
+        [ProducesResponseType(200, Type = typeof(byte[]))]
+        [ProducesResponseType(500)]
 		public IActionResult Export([FromQuery] bool includeHiatused = false, [FromQuery] bool includeArchive = false)
 		{
 		    try
@@ -266,6 +280,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpGet]
 	    [Route("tags")]
+        [ProducesResponseType(200, Type = typeof(List<string>))]
+        [ProducesResponseType(500)]
 	    public IActionResult Tags()
 	    {
 	        try

@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AutoMapper;
@@ -62,6 +63,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </list>
         /// </returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<PublicViewDto>))]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Get()
         {
             try
@@ -91,6 +94,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(PublicViewDto))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Post([FromBody] PublicViewDto model)
         {
             try
@@ -134,6 +140,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpPut]
         [Route("{publicViewId}")]
+        [ProducesResponseType(200, Type = typeof(PublicViewDto))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Put(string publicViewId, [FromBody]PublicViewDto viewModel)
         {
             try
@@ -180,6 +189,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpDelete]
         [Route("{publicViewId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404, Type = typeof(string))]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Delete(string publicViewId)
         {
             try

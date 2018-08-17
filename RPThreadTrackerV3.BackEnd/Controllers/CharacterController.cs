@@ -6,6 +6,7 @@
 namespace RPThreadTrackerV3.BackEnd.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using AutoMapper;
     using Infrastructure.Data.Entities;
@@ -61,6 +62,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    /// </list>
 	    /// </returns>
         [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<CharacterDto>))]
+        [ProducesResponseType(500)]
 		public IActionResult Get()
 		{
 			try
@@ -88,6 +91,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
         [HttpPost]
+        [ProducesResponseType(200, Type = typeof(CharacterDto))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public IActionResult Post([FromBody] CharacterDto character)
 		{
 			try
@@ -125,6 +131,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpPut]
 		[Route("{characterId}")]
+        [ProducesResponseType(200, Type = typeof(CharacterDto))]
+        [ProducesResponseType(400, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public IActionResult Put(int characterId, [FromBody]CharacterDto character)
 		{
 			try
@@ -165,6 +174,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
         [HttpDelete]
 		[Route("{characterId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404, Type = typeof(string))]
+        [ProducesResponseType(500)]
 		public IActionResult Delete(int characterId)
 		{
 			try

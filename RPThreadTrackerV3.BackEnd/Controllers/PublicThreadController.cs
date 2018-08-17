@@ -79,6 +79,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// </returns>
 	    [HttpGet]
 	    [Route("{slug}")]
+        [ProducesResponseType(200, Type = typeof(PublicThreadDtoCollection))]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
 	    public async Task<IActionResult> Get(string slug)
 	    {
 		    try
@@ -116,6 +119,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         [Obsolete("No longer relevant after legacy public views are disabled.")]
         [HttpPost]
         [Route("")]
+        [ProducesResponseType(200, Type = typeof(PublicThreadDtoCollection))]
+        [ProducesResponseType(500)]
         public IActionResult Post([FromBody] LegacyPublicViewDto model)
         {
             try
