@@ -35,7 +35,7 @@ namespace RPThreadTrackerV3.BackEnd
 	            SeedDatabase(host);
 	            host.Run();
 	        }
-	        catch (Exception ex)
+	        catch (Exception ex) 
 	        {
 	            logger.Error(ex, "Stopped RPThreadTrackerV3.BackEnd");
 	            throw;
@@ -54,7 +54,8 @@ namespace RPThreadTrackerV3.BackEnd
 	    public static IWebHost BuildWebHost(string[] args) =>
 	        WebHost.CreateDefaultBuilder(args)
 	            .UseStartup<Startup>()
-	            .ConfigureAppConfiguration((builderContext, config) =>
+	            .UseUrls("http://*:80")
+                .ConfigureAppConfiguration((builderContext, config) =>
 	            {
 	                var env = builderContext.HostingEnvironment;
 	                config.Sources.Clear();

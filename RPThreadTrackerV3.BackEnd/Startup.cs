@@ -5,57 +5,58 @@
 
 namespace RPThreadTrackerV3.BackEnd
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Text;
-    using AutoMapper;
-    using Infrastructure.Data;
-    using Infrastructure.Data.Entities;
-    using Infrastructure.Data.Seeders;
-    using Infrastructure.Providers;
-    using Infrastructure.Services;
-    using Interfaces.Data;
-    using Interfaces.Services;
-    using Microsoft.AspNetCore.Authentication.JwtBearer;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.IdentityModel.Tokens;
-    using Models.Configuration;
-    using NLog;
-    using NLog.Extensions.Logging;
-    using NLog.Web;
+	using System;
+	using System.Diagnostics.CodeAnalysis;
+	using System.Text;
+	using AutoMapper;
+	using Infrastructure.Data;
+	using Infrastructure.Data.Entities;
+	using Infrastructure.Data.Seeders;
+	using Infrastructure.Providers;
+	using Infrastructure.Services;
+	using Interfaces.Data;
+	using Interfaces.Services;
+	using Microsoft.AspNetCore.Authentication.JwtBearer;
+	using Microsoft.AspNetCore.Builder;
+	using Microsoft.AspNetCore.Hosting;
+	using Microsoft.AspNetCore.Http;
+	using Microsoft.AspNetCore.Identity;
+	using Microsoft.EntityFrameworkCore;
+	using Microsoft.EntityFrameworkCore.Metadata.Internal;
+	using Microsoft.Extensions.Configuration;
+	using Microsoft.Extensions.DependencyInjection;
+	using Microsoft.Extensions.Logging;
+	using Microsoft.IdentityModel.Tokens;
+	using Models.Configuration;
+	using NLog;
+	using NLog.Extensions.Logging;
+	using NLog.Web;
+	using Swashbuckle.AspNetCore.Swagger;
 
-    /// <summary>
-    /// .NET Core application startup class.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class Startup
+	/// <summary>
+	/// .NET Core application startup class.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
+	public class Startup
 	{
 		private IConfiguration Configuration { get; set; }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Startup"/> class.
-        /// </summary>
-        /// <param name="configuration">The application configuration.</param>
-        public Startup(IConfiguration configuration)
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Startup"/> class.
+		/// </summary>
+		/// <param name="configuration">The application configuration.</param>
+		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
 		}
 
-        /// <summary>
-        /// Configures services and dependency injection for the application container.
-        /// </summary>
-        /// <param name="services">The application service collection.</param>
-        public void ConfigureServices(IServiceCollection services)
+		/// <summary>
+		/// Configures services and dependency injection for the application container.
+		/// </summary>
+		/// <param name="services">The application service collection.</param>
+		public void ConfigureServices(IServiceCollection services)
 		{
-		    var connection = Configuration.GetConnectionString("Database");
+			var connection = Configuration.GetConnectionString("Database");
 			services.AddDbContext<TrackerContext>(options =>
 			{
 				options.UseSqlServer(connection);
@@ -76,13 +77,17 @@ namespace RPThreadTrackerV3.BackEnd
 						ValidIssuer = Configuration["Tokens:Issuer"],
 						ValidAudience = Configuration["Tokens:Issuer"],
 						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokens:Key"])),
-					    ClockSkew = TimeSpan.Zero
-                    };
+						ClockSkew = TimeSpan.Zero
+					};
 				})
 				.AddCookie(options =>
 				{
 					options.SlidingExpiration = true;
 				});
+			services.AddSwaggerGen(c =>
+	{
+		c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+	});
 
 			services.AddOptions();
 			services.Configure<AppSettings>(Configuration);
@@ -91,31 +96,37 @@ namespace RPThreadTrackerV3.BackEnd
 			services.AddScoped<IThreadService, ThreadService>();
 			services.AddScoped<ICharacterService, CharacterService>();
 			services.AddScoped<IExporterService, ExporterService>();
-		    services.AddScoped<IPublicViewService, PublicViewService>();
-            services.AddScoped<IEmailClient, SendGridEmailClient>();
+			services.AddScoped<IPublicViewService, PublicViewService>();
+			services.AddScoped<IEmailClient, SendGridEmailClient>();
 			services.AddScoped<IRepository<Thread>, ThreadRepository>();
-		    services.AddScoped<IRepository<Thread>, ThreadRepository>();
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-		    services.AddSingleton(typeof(IDocumentRepository<>), typeof(BaseDocumentRepository<>));
-		    services.AddSingleton(typeof(IDocumentClient), typeof(DocumentDbClient));
+			services.AddScoped<IRepository<Thread>, ThreadRepository>();
+			services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+			services.AddSingleton(typeof(IDocumentRepository<>), typeof(BaseDocumentRepository<>));
+			services.AddSingleton(typeof(IDocumentClient), typeof(DocumentDbClient));
 			services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddSingleton<IEmailBuilder, EmailBuilder>();
 			services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
 			services.AddScoped<GlobalExceptionHandlerAttribute>();
-		    services.AddScoped<DisableDuringMaintenanceFilterAttribute>();
+			services.AddScoped<DisableDuringMaintenanceFilterAttribute>();
 			services.AddCors();
 			services.AddMvc();
 			services.AddAutoMapper();
 		}
 
-        /// <summary>
-        /// Configures the application's HTTP request pipeline.
-        /// </summary>
-        /// <param name="app">The application builder.</param>
-        /// <param name="env">The hosting environment.</param>
-        /// <param name="loggerFactory">The logger factory.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		/// <summary>
+		/// Configures the application's HTTP request pipeline.
+		/// </summary>
+		/// <param name="app">The application builder.</param>
+		/// <param name="env">The hosting environment.</param>
+		/// <param name="loggerFactory">The logger factory.</param>
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
+			app.UseSwagger();
+			app.UseDeveloperExceptionPage();
+			app.UseSwaggerUI(c =>
+	{
+		c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+	});
 			app.UseAuthentication();
 			app.UseCors(builder =>
 				builder.WithOrigins(Configuration["Cors:CorsUrl"].Split(',')).AllowAnyHeader().AllowAnyMethod());

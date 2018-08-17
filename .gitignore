@@ -325,3 +325,4 @@ reports/
 *coverage.opencover.xml
 codecov.sh
 Documentation/api/RPThreadTrackerV3.BackEnd*.yml
+.vscode/

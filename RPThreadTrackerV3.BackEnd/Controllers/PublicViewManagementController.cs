@@ -61,6 +61,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item>
         /// </list>
         /// </returns>
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
             try

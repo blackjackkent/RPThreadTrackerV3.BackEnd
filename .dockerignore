@@ -4,6 +4,7 @@ RPThreadTrackerV3.BackEnd.Test/bin/
 RPThreadTrackerV3.BackEnd.Test/obj/
 .git/
 .vs/
+.vscode/
 SQL/
 reports/
 Documentation/
