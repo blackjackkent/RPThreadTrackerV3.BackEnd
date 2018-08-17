@@ -7,7 +7,6 @@ RUN dotnet --version
 COPY RPThreadTrackerV3.BackEnd/ ./
 RUN dotnet publish -c Release -o out -r debian-x64
 
-# Build runtime image
 FROM microsoft/dotnet:2.1-runtime
 WORKDIR /app
 COPY --from=build-env /app/out .
