@@ -8,6 +8,8 @@ namespace RPThreadTrackerV3.BackEnd
 	using System;
 	using System.Diagnostics.CodeAnalysis;
 	using System.Globalization;
+	using System.IO;
+	using System.Reflection;
 	using System.Text;
 	using AutoMapper;
 	using Infrastructure.Data;
@@ -88,7 +90,7 @@ namespace RPThreadTrackerV3.BackEnd
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v3", new Info { Title = "RPThreadTracker", Version = "v3" });
-				c.IncludeXmlComments(string.Format(CultureInfo.CurrentCulture, @"{0}\RPThreadTrackerV3.xml", AppDomain.CurrentDomain.BaseDirectory));
+				c.IncludeXmlComments(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/RPThreadTrackerV3.xml");
 			});
 
 			services.AddOptions();
