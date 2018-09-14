@@ -155,7 +155,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 Func<Task> action = async () => await _publicViewService.CreatePublicView(newDocument, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                action.Should().Throw<PublicViewSlugExistsException>();
+                action.Should().Throw<InvalidPublicViewSlugException>();
             }
 
             [Fact]
@@ -252,7 +252,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 Func<Task> action = async () => await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                action.Should().Throw<PublicViewSlugExistsException>();
+                action.Should().Throw<InvalidPublicViewSlugException>();
             }
 
             [Fact]
@@ -458,6 +458,121 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 result.CharacterIds.Should().HaveCount(2);
                 result.CharacterIds.Should().Contain(13579);
                 result.CharacterIds.Should().Contain(97531);
+            }
+        }
+
+        public class AssertSlugIsValid : PublicViewServiceTests
+        {
+            [Fact]
+            public void ThrowsExceptionIfSlugIsReservedAndViewIsNull()
+            {
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("myturn", "12345", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsExceptionIfSlugIsReservedAndIsCaseSensitive()
+            {
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("MyTurn", "12345", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsExceptionIfSlugContainsInvalidCharacters()
+            {
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my turn", "12345", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsExceptionIfSlugExistsAndViewIdIsNull()
+            {
+                // Arrange
+                var existingView = new PublicView
+                {
+                    Id = "12345",
+                    Slug = "my-view",
+                    Name = "My View"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView))))
+                    .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
+
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", null, _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsExceptionIfSlugExistsAndViewIdDoesNotMatch()
+            {
+                // Arrange
+                var existingView = new PublicView
+                {
+                    Id = "12345",
+                    Slug = "my-view",
+                    Name = "My View"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView))))
+                    .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
+
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "23456", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().Throw<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsNoExceptionIfSlugExistsAndViewIdMatches()
+            {
+                // Arrange
+                var existingView = new PublicView
+                {
+                    Id = "12345",
+                    Slug = "my-view",
+                    Name = "My View"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView))))
+                    .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
+
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "12345", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().NotThrow<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsNoExceptionIfSlugDoesNotExist()
+            {
+                // Arrange
+                var existingView = new PublicView
+                {
+                    Id = "12345",
+                    Slug = "my-view",
+                    Name = "My View"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView))))
+                    .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.IsAny<Expression<Func<PublicView, bool>>>()))
+                    .Returns(Task.FromResult(new List<PublicView>().AsEnumerable()));
+
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view2", "12345", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().NotThrow<InvalidPublicViewSlugException>();
             }
         }
     }

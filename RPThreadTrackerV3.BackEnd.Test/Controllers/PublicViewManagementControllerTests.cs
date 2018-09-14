@@ -163,7 +163,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             {
                 // Arrange
                 _mockPublicViewService.Setup(s => s.CreatePublicView(It.IsAny<PublicView>(), _mockPublicViewRepository.Object, _mockMapper.Object))
-                    .Throws<PublicViewSlugExistsException>();
+                    .Throws<InvalidPublicViewSlugException>();
 
                 // Act
                 var result = await Controller.Post(_validRequest);
@@ -256,7 +256,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             {
                 // Arrange
                 _mockPublicViewService.Setup(s => s.UpdatePublicView(It.IsAny<PublicView>(), _mockPublicViewRepository.Object, _mockMapper.Object))
-                    .Throws<PublicViewSlugExistsException>();
+                    .Throws<InvalidPublicViewSlugException>();
 
                 // Act
                 var result = await Controller.Put("13579", _validRequest);
@@ -368,6 +368,47 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
 
                 // Assert
                 result.Should().BeOfType<OkResult>();
+            }
+        }
+
+        public class CheckIsValidSlug : PublicViewManagementControllerTests
+        {
+            [Fact]
+            public async Task ReturnsBadRequestWhenSlugIsInvalid()
+            {
+                // Arrange
+                _mockPublicViewService.Setup(s => s.AssertSlugIsValid("my-slug", "12345", _mockPublicViewRepository.Object))
+                    .Throws<InvalidPublicViewSlugException>();
+
+                // Act
+                var result = await Controller.CheckIsValidSlug("my-slug", "12345");
+
+                // Assert
+                result.Should().BeOfType<BadRequestResult>();
+            }
+
+            [Fact]
+            public async Task ReturnsOkWhenSlugIsValid()
+            {
+                // Act
+                var result = await Controller.CheckIsValidSlug("my-slug", "12345");
+
+                // Assert
+                result.Should().BeOfType<OkResult>();
+            }
+
+            [Fact]
+            public async Task ReturnsServerErrorWhenUnexpectedException()
+            {
+                // Arrange
+                _mockPublicViewService.Setup(s => s.AssertSlugIsValid("my-slug", "12345", _mockPublicViewRepository.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = await Controller.CheckIsValidSlug("my-slug", "12345");
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
             }
         }
     }

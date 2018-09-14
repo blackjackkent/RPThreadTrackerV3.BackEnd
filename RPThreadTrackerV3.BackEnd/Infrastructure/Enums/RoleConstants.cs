@@ -8,7 +8,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Enums
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
-    /// Static class containing constants relating to user role managment.
+    /// Static class containing constants relating to user role management.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public static class RoleConstants

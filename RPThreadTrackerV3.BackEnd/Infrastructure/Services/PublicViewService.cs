@@ -6,9 +6,12 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using AutoMapper;
+    using Enums;
     using Exceptions.PublicViews;
     using Interfaces.Data;
     using Interfaces.Services;
@@ -28,7 +31,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         }
 
         /// <inheritdoc />
-        /// <exception cref="PublicViewSlugExistsException">Thrown if the user attempts to create a view
+        /// <exception cref="InvalidPublicViewSlugException">Thrown if the user attempts to create a view
         /// with a slug that is already in use.</exception>
         public async Task<PublicView> CreatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
@@ -36,7 +39,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug);
             if (existingDocuments.Any())
             {
-                throw new PublicViewSlugExistsException();
+                throw new InvalidPublicViewSlugException();
             }
             var createdDocument = await publicViewRepository.CreateItemAsync(document);
             return mapper.Map<PublicView>(createdDocument);
@@ -55,7 +58,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         }
 
         /// <inheritdoc />
-        /// <exception cref="PublicViewSlugExistsException">Thrown if the user is attempting to update
+        /// <exception cref="InvalidPublicViewSlugException">Thrown if the user is attempting to update
         /// the public view to a slug already in use by another public view.</exception>
         public async Task<PublicView> UpdatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
@@ -64,7 +67,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             var existingDocument = existingDocuments.FirstOrDefault();
             if (existingDocument != null && existingDocument.Id != model.Id)
             {
-                throw new PublicViewSlugExistsException();
+                throw new InvalidPublicViewSlugException();
             }
             var result = await publicViewRepository.UpdateItemAsync(model.Id, entity);
             return mapper.Map<PublicView>(result);
@@ -120,6 +123,27 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
                     .Select(c => c.CharacterId).ToList();
             }
             return view;
+        }
+
+        /// <inheritdoc />
+        /// <exception cref="InvalidPublicViewSlugException">Thrown if slug is invalid</exception>
+        public async Task AssertSlugIsValid(string slug, string viewId, IDocumentRepository<Documents.PublicView> publicViewRepository)
+        {
+            var reservedSlugs = PublicViewConstants.RESERVED_SLUGS;
+            if (reservedSlugs.Contains(slug.ToUpperInvariant()))
+            {
+                throw new InvalidPublicViewSlugException();
+            }
+            var slugRegex = new Regex(@"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$");
+            if (!slugRegex.IsMatch(slug))
+            {
+                throw new InvalidPublicViewSlugException();
+            }
+            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == slug && v.Id != viewId);
+            if (existingDocuments.Any())
+            {
+                throw new InvalidPublicViewSlugException();
+            }
         }
     }
 }

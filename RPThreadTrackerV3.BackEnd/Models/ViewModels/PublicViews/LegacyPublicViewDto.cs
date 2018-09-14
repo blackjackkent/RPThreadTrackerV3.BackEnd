@@ -8,6 +8,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Infrastructure.Enums;
     using Infrastructure.Exceptions.PublicViews;
 
     /// <summary>
@@ -95,14 +96,14 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
         {
             TurnFilter.AssertIsValid();
             var slugRegex = new Regex(@"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$");
-            var reservedSlugs = new List<string> { "myturn", "yourturn", "theirturn", "archived", "queued", "legacy" };
+            var reservedSlugs = PublicViewConstants.RESERVED_SLUGS;
             var invalid =
                 string.IsNullOrEmpty(Name)
                 || string.IsNullOrEmpty(Slug)
                 || !slugRegex.IsMatch(Slug)
                 || !Columns.Any()
                 || string.IsNullOrEmpty(CharacterUrlIdentifier)
-                || reservedSlugs.Contains(Slug);
+                || reservedSlugs.Contains(Slug.ToUpperInvariant());
             if (invalid)
             {
                 throw new InvalidPublicViewException();
