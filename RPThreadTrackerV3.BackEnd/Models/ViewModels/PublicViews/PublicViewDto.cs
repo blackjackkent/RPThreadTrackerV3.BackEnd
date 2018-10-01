@@ -40,14 +40,6 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
         public string Slug { get; set; }
 
         /// <summary>
-        /// Gets or sets the full URL at which this public view can be accessed.
-        /// </summary>
-        /// <value>
-        /// The full URL at which this public view can be accessed.
-        /// </value>
-        public string Url { get; set; }
-
-        /// <summary>
         /// Gets or sets the unique identifier of the user who created this public view.
         /// </summary>
         /// <value>

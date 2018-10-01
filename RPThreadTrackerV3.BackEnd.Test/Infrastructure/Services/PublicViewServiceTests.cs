@@ -136,17 +136,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class CreatePublicView : PublicViewServiceTests
         {
             [Fact]
-            public void ThrowsExceptionIfViewWithSlugAlreadyExists()
+            public void ThrowsExceptionIfViewWithSlugAlreadyExistsForUser()
             {
                 // Arrange
                 var existingDocument = new PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-slug"
                 };
                 var newDocument = new DomainModels.PublicView
                 {
                     Id = "23456",
+                    UserId = "12345",
                     Slug = "my-slug"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingDocument)))).Returns(Task.FromResult(new List<PublicView> { existingDocument }.AsEnumerable()));
@@ -159,7 +161,32 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsNoExceptionIfViewCanBeCreated()
+            public async Task ThrowsNoExceptionIfViewWithSlugAlreadyExistsForAnotherUser()
+            {
+                // Arrange
+                var existingDocument = new PublicView
+                {
+                    Id = "13579",
+                    Slug = "my-slug"
+                };
+                var newDocument = new DomainModels.PublicView
+                {
+                    Id = "23456",
+                    UserId = "54321",
+                    Slug = "my-slug"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingDocument)))).Returns(Task.FromResult(new List<PublicView> { existingDocument }.AsEnumerable()));
+                _mockPublicViewRepository.Setup(r => r.CreateItemAsync(It.IsAny<PublicView>())).Returns((PublicView entity) => Task.FromResult(entity));
+
+                // Act
+                await _publicViewService.CreatePublicView(newDocument, _mockPublicViewRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockPublicViewRepository.Verify(r => r.CreateItemAsync(It.Is<PublicView>(v => v.Id == "23456" && v.Slug == "my-slug")));
+            }
+
+            [Fact]
+            public async Task ThrowsNoExceptionIfViewWithSlugDoesNotExist()
             {
                 // Arrange
                 var newDocument = new DomainModels.PublicView
@@ -233,17 +260,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class UpdatePublicView : PublicViewServiceTests
         {
             [Fact]
-            public void ThrowsExceptionIfViewWithSlugAlreadyExistsOnAnotherView()
+            public void ThrowsExceptionIfViewWithSlugAlreadyExistsOnAnotherViewForUser()
             {
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-slug"
                 };
                 var existingView = new PublicView
                 {
                     Id = "98765",
+                    UserId = "12345",
                     Slug = "my-slug"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView)))).Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
@@ -256,29 +285,59 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsNoExceptionIfViewIsNotChangingSlug()
+            public async Task ThrowsNoExceptionIfViewWithSlugAlreadyExistsOnAnotherViewForAnotherUser()
             {
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-slug",
                     Name = "New View Name"
                 };
                 var existingView = new PublicView
                 {
-                    Id = "12345",
+                    Id = "97531",
+                    UserId = "54321",
                     Slug = "my-slug",
                     Name = "Old View Name"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView)))).Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
-                _mockPublicViewRepository.Setup(r => r.UpdateItemAsync("12345", It.IsAny<PublicView>())).Returns((string id, PublicView entity) => Task.FromResult(entity));
+                _mockPublicViewRepository.Setup(r => r.UpdateItemAsync("13579", It.IsAny<PublicView>())).Returns((string id, PublicView entity) => Task.FromResult(entity));
 
                 // Act
                 await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("12345", It.Is<PublicView>(v => v.Id == "12345" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
+                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.Id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
+            }
+
+            [Fact]
+            public async Task ThrowsNoExceptionIfViewIsNotChangingSlug()
+            {
+                // Arrange
+                var model = new DomainModels.PublicView
+                {
+                    Id = "13579",
+                    UserId = "12345",
+                    Slug = "my-slug",
+                    Name = "New View Name"
+                };
+                var existingView = new PublicView
+                {
+                    Id = "13579",
+                    UserId = "12345",
+                    Slug = "my-slug",
+                    Name = "Old View Name"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView)))).Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
+                _mockPublicViewRepository.Setup(r => r.UpdateItemAsync("13579", It.IsAny<PublicView>())).Returns((string id, PublicView entity) => Task.FromResult(entity));
+
+                // Act
+                await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.Id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
             }
 
             [Fact]
@@ -287,24 +346,26 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-slug",
                     Name = "New View Name"
                 };
                 var existingView = new PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-old-slug",
                     Name = "Old View Name"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView)))).Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
-                _mockPublicViewRepository.Setup(r => r.UpdateItemAsync("12345", It.IsAny<PublicView>())).Returns((string id, PublicView entity) => Task.FromResult(entity));
+                _mockPublicViewRepository.Setup(r => r.UpdateItemAsync("13579", It.IsAny<PublicView>())).Returns((string id, PublicView entity) => Task.FromResult(entity));
 
                 // Act
                 await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("12345", It.Is<PublicView>(v => v.Id == "12345" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
+                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.Id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
             }
         }
 
@@ -321,7 +382,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
         }
 
-        public class GetViewBySlug : PublicViewServiceTests
+        public class GetViewBySlugAndUserId : PublicViewServiceTests
         {
             [Fact]
             public void ThrowsExceptionWhenViewDoesNotExist()
@@ -331,18 +392,19 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(new List<PublicView>().AsEnumerable()));
 
                 // Act
-                Func<Task> action = async () => await _publicViewService.GetViewBySlug("my-slug", _mockPublicViewRepository.Object, _mockMapper.Object);
+                Func<Task> action = async () => await _publicViewService.GetViewBySlugAndUserId("my-slug", "12345", _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
                 action.Should().Throw<PublicViewNotFoundException>();
             }
 
             [Fact]
-            public async Task ThrowsNoExceptionWhenViewExist()
+            public async Task ThrowsExceptionWhenViewExistsNotForUser()
             {
                 // Arrange
                 var view = new PublicView
                 {
+                    UserId = "54321",
                     Slug = "my-slug",
                     Name = "My View"
                 };
@@ -350,7 +412,27 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(new List<PublicView> { view }.AsEnumerable()));
 
                 // Act
-                var result = await _publicViewService.GetViewBySlug("my-slug", _mockPublicViewRepository.Object, _mockMapper.Object);
+                Func<Task> action = async () => await _publicViewService.GetViewBySlugAndUserId("my-slug", "12345", _mockPublicViewRepository.Object, _mockMapper.Object);
+
+                // Assert
+                action.Should().Throw<PublicViewNotFoundException>();
+            }
+
+            [Fact]
+            public async Task ThrowsNoExceptionWhenViewExistsForUser()
+            {
+                // Arrange
+                var view = new PublicView
+                {
+                    UserId = "12345",
+                    Slug = "my-slug",
+                    Name = "My View"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(view))))
+                    .Returns(Task.FromResult(new List<PublicView> { view }.AsEnumerable()));
+
+                // Act
+                var result = await _publicViewService.GetViewBySlugAndUserId("my-slug", "12345", _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
                 result.Slug.Should().Be("my-slug");
@@ -467,7 +549,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void ThrowsExceptionIfSlugIsReservedAndViewIsNull()
             {
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("myturn", "12345", _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("myturn", null, "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().Throw<InvalidPublicViewSlugException>();
@@ -477,7 +559,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void ThrowsExceptionIfSlugIsReservedAndIsCaseSensitive()
             {
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("MyTurn", "12345", _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("MyTurn", "13579", "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().Throw<InvalidPublicViewSlugException>();
@@ -487,19 +569,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             public void ThrowsExceptionIfSlugContainsInvalidCharacters()
             {
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my turn", "12345", _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my turn", "13579", "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().Throw<InvalidPublicViewSlugException>();
             }
 
             [Fact]
-            public void ThrowsExceptionIfSlugExistsAndViewIdIsNull()
+            public void ThrowsExceptionIfSlugExistsForUserAndViewIdIsNull()
             {
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-view",
                     Name = "My View"
                 };
@@ -507,19 +590,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
 
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", null, _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", null, "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().Throw<InvalidPublicViewSlugException>();
             }
 
             [Fact]
-            public void ThrowsExceptionIfSlugExistsAndViewIdDoesNotMatch()
+            public void ThrowsExceptionIfSlugExistsForUserAndViewIdDoesNotMatch()
             {
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-view",
                     Name = "My View"
                 };
@@ -527,19 +611,20 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
 
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "23456", _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "23456", "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().Throw<InvalidPublicViewSlugException>();
             }
 
             [Fact]
-            public void ThrowsNoExceptionIfSlugExistsAndViewIdMatches()
+            public void ThrowsNoExceptionIfSlugExistsForUserAndViewIdMatches()
             {
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
+                    UserId = "12345",
                     Slug = "my-view",
                     Name = "My View"
                 };
@@ -547,7 +632,28 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
 
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "12345", _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "13579", "12345", _mockPublicViewRepository.Object);
+
+                // Assert
+                action.Should().NotThrow<InvalidPublicViewSlugException>();
+            }
+
+            [Fact]
+            public void ThrowsNoExceptionIfSlugExistsForAnotherUser()
+            {
+                // Arrange
+                var existingView = new PublicView
+                {
+                    Id = "98765",
+                    UserId = "54321",
+                    Slug = "my-view",
+                    Name = "My View"
+                };
+                _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.Is<Expression<Func<PublicView, bool>>>(y => y.Compile()(existingView))))
+                    .Returns(Task.FromResult(new List<PublicView> { existingView }.AsEnumerable()));
+
+                // Act
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view", "13579", "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().NotThrow<InvalidPublicViewSlugException>();
@@ -559,7 +665,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "12345",
+                    Id = "13579",
                     Slug = "my-view",
                     Name = "My View"
                 };
@@ -569,7 +675,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     .Returns(Task.FromResult(new List<PublicView>().AsEnumerable()));
 
                 // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view2", "12345", _mockPublicViewRepository.Object);
+                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("my-view2", "13579", "12345", _mockPublicViewRepository.Object);
 
                 // Assert
                 action.Should().NotThrow<InvalidPublicViewSlugException>();

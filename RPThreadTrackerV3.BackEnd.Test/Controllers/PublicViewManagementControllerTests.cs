@@ -377,11 +377,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             public async Task ReturnsBadRequestWhenSlugIsInvalid()
             {
                 // Arrange
-                _mockPublicViewService.Setup(s => s.AssertSlugIsValid("my-slug", "12345", _mockPublicViewRepository.Object))
+                _mockPublicViewService.Setup(s => s.AssertSlugIsValid("my-slug", "13579", "12345", _mockPublicViewRepository.Object))
                     .Throws<InvalidPublicViewSlugException>();
 
                 // Act
-                var result = await Controller.CheckIsValidSlug("my-slug", "12345");
+                var result = await Controller.CheckIsValidSlug("my-slug", "13579");
 
                 // Assert
                 result.Should().BeOfType<BadRequestResult>();
@@ -391,7 +391,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             public async Task ReturnsOkWhenSlugIsValid()
             {
                 // Act
-                var result = await Controller.CheckIsValidSlug("my-slug", "12345");
+                var result = await Controller.CheckIsValidSlug("my-slug", "13579");
 
                 // Assert
                 result.Should().BeOfType<OkResult>();
@@ -401,11 +401,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             public async Task ReturnsServerErrorWhenUnexpectedException()
             {
                 // Arrange
-                _mockPublicViewService.Setup(s => s.AssertSlugIsValid("my-slug", "12345", _mockPublicViewRepository.Object))
+                _mockPublicViewService.Setup(s => s.AssertSlugIsValid("my-slug", "13579", "12345", _mockPublicViewRepository.Object))
                     .Throws<NullReferenceException>();
 
                 // Act
-                var result = await Controller.CheckIsValidSlug("my-slug", "12345");
+                var result = await Controller.CheckIsValidSlug("my-slug", "13579");
 
                 // Assert
                 result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);

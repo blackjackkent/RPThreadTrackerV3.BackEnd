@@ -19,6 +19,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     using FluentAssertions;
     using Interfaces.Data;
     using Interfaces.Services;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Moq;
@@ -31,6 +32,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
     public class PublicThreadControllerTests : ControllerTests<PublicThreadController>
     {
         private readonly Mock<IMapper> _mockMapper;
+        private readonly Mock<IAuthService> _mockAuthService;
+        private readonly Mock<UserManager<IdentityUser>> _mockUserManager;
         private readonly Mock<IThreadService> _mockThreadService;
         private readonly Mock<IRepository<Entities.Thread>> _mockThreadRepository;
         private readonly Mock<IPublicViewService> _mockPublicViewService;
@@ -119,7 +122,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockPublicViewRepository = new Mock<IDocumentRepository<Documents.PublicView>>();
             var mockCharacterService = new Mock<ICharacterService>();
             var mockCharacterRepository = new Mock<IRepository<Entities.Character>>();
-            Controller = new PublicThreadController(mockLogger.Object, _mockMapper.Object, _mockThreadService.Object, _mockThreadRepository.Object, _mockPublicViewService.Object, _mockPublicViewRepository.Object, mockCharacterService.Object, mockCharacterRepository.Object);
+            _mockAuthService = new Mock<IAuthService>();
+            var userStoreMock = new Mock<IUserStore<IdentityUser>>();
+            _mockUserManager = new Mock<UserManager<IdentityUser>>(userStoreMock.Object, null, null, null, null, null, null, null, null);
+            Controller = new PublicThreadController(mockLogger.Object, _mockMapper.Object, _mockThreadService.Object, _mockThreadRepository.Object, _mockPublicViewService.Object, _mockPublicViewRepository.Object, mockCharacterService.Object, mockCharacterRepository.Object, _mockAuthService.Object, _mockUserManager.Object);
             InitControllerContext();
         }
 
@@ -129,10 +135,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             public async Task ReturnsNotFoundWhenPublicViewCannotBeFound()
             {
                 // Arrange
-                _mockPublicViewService.Setup(s => s.GetViewBySlug("my-view", _mockPublicViewRepository.Object, _mockMapper.Object)).Throws<PublicViewNotFoundException>();
+                var user = new IdentityUser
+                {
+                    Id = "12345",
+                    UserName = "my-user"
+                };
+                _mockAuthService.Setup(s => s.GetUserByUsernameOrEmail("my-user", _mockUserManager.Object)).ReturnsAsync(user);
+                _mockPublicViewService.Setup(s => s.GetViewBySlugAndUserId("my-view", "12345", _mockPublicViewRepository.Object, _mockMapper.Object)).Throws<PublicViewNotFoundException>();
 
                 // Act
-                var result = await Controller.Get("my-view");
+                var result = await Controller.Get("my-user", "my-view");
 
                 // Assert
                 result.Should().BeOfType<NotFoundResult>();
@@ -142,10 +154,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             public async Task ReturnsServerErrorWhenUnexpectedErrorOccurs()
             {
                 // Arrange
-                _mockPublicViewService.Setup(s => s.GetViewBySlug("my-view", _mockPublicViewRepository.Object, _mockMapper.Object)).Throws<NullReferenceException>();
+                var user = new IdentityUser
+                {
+                    Id = "12345",
+                    UserName = "my-user"
+                };
+                _mockAuthService.Setup(s => s.GetUserByUsernameOrEmail("my-user", _mockUserManager.Object)).ReturnsAsync(user);
+                _mockPublicViewService.Setup(s => s.GetViewBySlugAndUserId("my-view", "12345", _mockPublicViewRepository.Object, _mockMapper.Object)).Throws<NullReferenceException>();
 
                 // Act
-                var result = await Controller.Get("my-view");
+                var result = await Controller.Get("my-user", "my-view");
 
                 // Assert
                 result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
@@ -171,15 +189,21 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                         ThreadId = 54321
                     }
                 };
+                var user = new IdentityUser
+                {
+                    Id = "12345",
+                    UserName = "my-user"
+                };
+                _mockAuthService.Setup(s => s.GetUserByUsernameOrEmail("my-user", _mockUserManager.Object)).ReturnsAsync(user);
                 _mockPublicViewService.Setup(s =>
-                        s.GetViewBySlug("my-view", _mockPublicViewRepository.Object, _mockMapper.Object))
+                        s.GetViewBySlugAndUserId("my-view", "12345", _mockPublicViewRepository.Object, _mockMapper.Object))
                     .Returns(Task.FromResult(view));
                 _mockThreadService.Setup(s =>
                         s.GetThreadsForView(view, _mockThreadRepository.Object, _mockMapper.Object))
                     .Returns(threads);
 
                 // Act
-                var result = await Controller.Get("my-view");
+                var result = await Controller.Get("my-user", "my-view");
                 var body = ((OkObjectResult)result).Value as PublicThreadDtoCollection;
 
                 // Assert

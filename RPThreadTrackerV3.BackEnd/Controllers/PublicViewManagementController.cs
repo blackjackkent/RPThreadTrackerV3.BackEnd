@@ -232,17 +232,17 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
-                await _publicViewService.AssertSlugIsValid(slug, viewId, _publicViewRepository);
+                await _publicViewService.AssertSlugIsValid(slug, viewId, UserId, _publicViewRepository);
                 return Ok();
             }
             catch (InvalidPublicViewSlugException)
             {
-                _logger.LogInformation($"Slug {slug} was deemed invalid for viewID {viewId}.");
+                _logger.LogInformation($"Slug {slug} was deemed invalid for viewID {viewId} and user {UserId}.");
                 return BadRequest();
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error while verifying validity of slug {slug} for view {viewId}: {e.Message}");
+                _logger.LogError($"Error while verifying validity of slug {slug} for view {viewId} and user {UserId}: {e.Message}");
                 return StatusCode(500, "An unknown error occurred.");
             }
         }

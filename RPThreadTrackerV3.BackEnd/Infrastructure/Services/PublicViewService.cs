@@ -36,7 +36,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         public async Task<PublicView> CreatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var document = mapper.Map<Documents.PublicView>(model);
-            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug);
+            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug && v.UserId == model.UserId);
             if (existingDocuments.Any())
             {
                 throw new InvalidPublicViewSlugException();
@@ -63,7 +63,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         public async Task<PublicView> UpdatePublicView(PublicView model, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
         {
             var entity = mapper.Map<Documents.PublicView>(model);
-            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug);
+            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug && v.UserId == model.UserId);
             var existingDocument = existingDocuments.FirstOrDefault();
             if (existingDocument != null && existingDocument.Id != model.Id)
             {
@@ -82,9 +82,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         /// <inheritdoc />
         /// <exception cref="PublicViewNotFoundException">Thrown if a public view with the given slug
         /// does not exist.</exception>
-        public async Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
+        public async Task<PublicView> GetViewBySlugAndUserId(string slug, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper)
 	    {
-		    var views = await publicViewRepository.GetItemsAsync(v => v.Slug == slug);
+		    var views = await publicViewRepository.GetItemsAsync(v => v.Slug == slug && v.UserId == userId);
 		    var view = views.FirstOrDefault();
 		    if (view == null)
 		    {
@@ -127,7 +127,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 
         /// <inheritdoc />
         /// <exception cref="InvalidPublicViewSlugException">Thrown if slug is invalid</exception>
-        public async Task AssertSlugIsValid(string slug, string viewId, IDocumentRepository<Documents.PublicView> publicViewRepository)
+        public async Task AssertSlugIsValid(string slug, string viewId, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository)
         {
             var reservedSlugs = PublicViewConstants.RESERVED_SLUGS;
             if (reservedSlugs.Contains(slug.ToUpperInvariant()))
@@ -139,7 +139,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             {
                 throw new InvalidPublicViewSlugException();
             }
-            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == slug && v.Id != viewId);
+            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == slug && v.Id != viewId && v.UserId == userId);
             if (existingDocuments.Any())
             {
                 throw new InvalidPublicViewSlugException();
