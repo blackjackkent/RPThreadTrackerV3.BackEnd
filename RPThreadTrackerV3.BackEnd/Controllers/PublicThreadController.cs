@@ -103,12 +103,12 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    }
 		    catch (PublicViewNotFoundException)
 		    {
-				_logger.LogWarning($"User {UserId} attempted to fetch nonexistant public view {slug}.");
+				_logger.LogWarning($"User {UserId} attempted to fetch nonexistant public view {slug} with username {username}.");
 			    return NotFound();
 			}
 		    catch (Exception e)
 		    {
-			    _logger.LogError(e, $"Error retrieving threads for public view with slug {slug}: {e.Message}");
+			    _logger.LogError(e, $"Error retrieving threads for public view with slug {slug} and username {username}: {e.Message}");
 			    return StatusCode(500, "An unknown error occurred.");
 		    }
 	    }
