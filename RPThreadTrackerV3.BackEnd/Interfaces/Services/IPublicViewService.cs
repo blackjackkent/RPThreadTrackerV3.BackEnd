@@ -87,7 +87,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// A task that represents the asynchronous operation.
         /// The task result contains the requested public view.
         /// </returns>
-        Task<PublicView> GetViewBySlug(string slug, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper);
+        Task<PublicView> GetViewBySlugAndUserId(string slug, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository, IMapper mapper);
 
         /// <summary>
         /// Builds a representation of a public view from information about a legacy view.
@@ -97,5 +97,15 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <returns>Representation of a public view equivalent to the passed legacy one.</returns>
         [Obsolete("No longer relevant after removal of legacy views.")]
         PublicView GetViewFromLegacyDto(LegacyPublicViewDto legacyDto, IEnumerable<Character> characters);
+
+        /// <summary>
+        /// Throws an exception if the given slug is invalid for a new or edited public view. A slug
+        /// is invalid if it belongs to an existing view (that does not match <c>viewId</c>),
+        /// if it is a reserved slug, or if it contains invalid characters.
+        /// </summary>
+        /// <param name="slug">The slug to be verified.</param>
+        /// <param name="viewId">The unique identifier of a view being edited, if applicable.</param>
+        /// <param name="publicViewRepository">The public view repository.</param>
+        Task AssertSlugIsValid(string slug, string viewId, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository);
     }
 }

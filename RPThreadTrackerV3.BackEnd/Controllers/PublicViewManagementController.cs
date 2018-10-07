@@ -108,7 +108,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
                     await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
                 return Ok(_mapper.Map<PublicViewDto>(createdView));
             }
-            catch (PublicViewSlugExistsException)
+            catch (InvalidPublicViewSlugException)
             {
                 _logger.LogWarning($"User {UserId} attempted to add public view with existing slug {model.Slug}.");
                 return BadRequest("A public view configuration already exists with this slug.");
@@ -154,7 +154,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
                 var updatedView = await _publicViewService.UpdatePublicView(model, _publicViewRepository, _mapper);
                 return Ok(_mapper.Map<PublicViewDto>(updatedView));
             }
-            catch (PublicViewSlugExistsException)
+            catch (InvalidPublicViewSlugException)
             {
                 _logger.LogWarning($"User {UserId} attempted to add public view with existing slug {viewModel.Slug}.");
                 return BadRequest("A public view configuration already exists with this slug.");
@@ -208,6 +208,41 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             catch (Exception e)
             {
                 _logger.LogError($"Error deleting public view {publicViewId}: {e.Message}", e);
+                return StatusCode(500, "An unknown error occurred.");
+            }
+        }
+
+        /// <summary>
+        /// Processes a request to verify whether a public view slug is valid.
+        /// </summary>
+        /// <param name="slug">The slug to be verified.</param>
+        /// <param name="viewId">The unique identifier of a view being edited, if applicable. Defaults to null.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful deletion of public view</description></item>
+        /// <item><term>404 Not Found</term><description>Response code if public view does not exist or does not belong to logged-in user</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
+        [HttpGet]
+        [Route("isvalidslug/{slug}/{viewId?}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(string))]
+        public async Task<IActionResult> CheckIsValidSlug(string slug, string viewId = null)
+        {
+            try
+            {
+                await _publicViewService.AssertSlugIsValid(slug, viewId, UserId, _publicViewRepository);
+                return Ok();
+            }
+            catch (InvalidPublicViewSlugException)
+            {
+                _logger.LogInformation($"Slug {slug} was deemed invalid for viewID {viewId} and user {UserId}.");
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"Error while verifying validity of slug {slug} for view {viewId} and user {UserId}: {e.Message}");
                 return StatusCode(500, "An unknown error occurred.");
             }
         }

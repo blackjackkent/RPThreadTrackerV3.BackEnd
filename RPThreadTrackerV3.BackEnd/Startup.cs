@@ -8,6 +8,8 @@ namespace RPThreadTrackerV3.BackEnd
 	using System;
 	using System.Diagnostics.CodeAnalysis;
 	using System.Globalization;
+	using System.IO;
+	using System.Reflection;
 	using System.Text;
 	using AutoMapper;
 	using Infrastructure.Data;
@@ -86,10 +88,10 @@ namespace RPThreadTrackerV3.BackEnd
 					options.SlidingExpiration = true;
 				});
 			services.AddSwaggerGen(c =>
-	        {
-		        c.SwaggerDoc("v3", new Info { Title = "RPThreadTracker", Version = "v3" });
-	            c.IncludeXmlComments(string.Format(CultureInfo.CurrentCulture, @"{0}\RPThreadTrackerV3.XML", AppDomain.CurrentDomain.BaseDirectory));
-            });
+			{
+				c.SwaggerDoc("v3", new Info { Title = "RPThreadTracker", Version = "v3" });
+				c.IncludeXmlComments(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "/RPThreadTrackerV3.xml");
+			});
 
 			services.AddOptions();
 			services.Configure<AppSettings>(Configuration);
@@ -126,13 +128,13 @@ namespace RPThreadTrackerV3.BackEnd
 			app.UseSwagger();
 			app.UseDeveloperExceptionPage();
 			app.UseSwaggerUI(c =>
-	        {
-		        c.SwaggerEndpoint("/swagger/v3/swagger.json", "RPThreadTracker V3");
-	            c.RoutePrefix = "docs";
-	            c.DocumentTitle = "RPThreadTracker";
-	            c.InjectStylesheet("/docs/custom.css");
-            });
-		    app.UseStaticFiles();
+			{
+				c.SwaggerEndpoint("/swagger/v3/swagger.json", "RPThreadTracker V3");
+				c.RoutePrefix = "docs";
+				c.DocumentTitle = "RPThreadTracker";
+				c.InjectStylesheet("/docs/custom.css");
+			});
+			app.UseStaticFiles();
 			app.UseAuthentication();
 			app.UseCors(builder =>
 				builder.WithOrigins(Configuration["Cors:CorsUrl"].Split(',')).AllowAnyHeader().AllowAnyMethod());

@@ -14,6 +14,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Infrastructure.Exceptions.PublicViews;
     using Interfaces.Data;
     using Interfaces.Services;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Models.ViewModels;
@@ -33,6 +34,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    private readonly IDocumentRepository<PublicView> _publicViewRepository;
         private readonly ICharacterService _characterService;
         private readonly IRepository<Character> _characterRepository;
+        private readonly IAuthService _authService;
+        private readonly UserManager<IdentityUser> _userManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PublicThreadController"/> class.
@@ -53,7 +56,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    IPublicViewService publicViewService,
 		    IDocumentRepository<PublicView> publicViewRepository,
 		    ICharacterService characterService,
-		    IRepository<Character> characterRepository)
+		    IRepository<Character> characterRepository,
+		    IAuthService authService,
+		    UserManager<IdentityUser> userManager)
 	    {
 		    _logger = logger;
 		    _mapper = mapper;
@@ -63,6 +68,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    _publicViewRepository = publicViewRepository;
 	        _characterService = characterService;
 	        _characterRepository = characterRepository;
+	        _authService = authService;
+	        _userManager = userManager;
 	    }
 
         /// <summary>
@@ -78,15 +85,16 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
 	    [HttpGet]
-	    [Route("{slug}")]
+	    [Route("{username}/{slug}")]
         [ProducesResponseType(200, Type = typeof(PublicThreadDtoCollection))]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-	    public async Task<IActionResult> Get(string slug)
+	    public async Task<IActionResult> Get(string username, string slug)
 	    {
 		    try
 		    {
-			    var view = await _publicViewService.GetViewBySlug(slug, _publicViewRepository, _mapper);
+                var user = await _authService.GetUserByUsernameOrEmail(username, _userManager);
+			    var view = await _publicViewService.GetViewBySlugAndUserId(slug, user.Id, _publicViewRepository, _mapper);
 			    var viewDto = _mapper.Map<PublicViewDto>(view);
 			    var threads = _threadService.GetThreadsForView(view, _threadRepository, _mapper);
 			    var dtos = _mapper.Map<List<ThreadDto>>(threads);

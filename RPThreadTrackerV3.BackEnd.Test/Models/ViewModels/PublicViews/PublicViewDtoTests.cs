@@ -32,8 +32,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 SortKey = "column1",
                 Tags = new List<string>(),
                 TurnFilter = turnFilter.Object,
-                UserId = "12345",
-                Url = "http://www.test.com"
+                UserId = "12345"
             };
         }
 

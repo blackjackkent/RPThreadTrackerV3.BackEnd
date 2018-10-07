@@ -26,7 +26,6 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
             CreateMap<PublicView, Data.Documents.PublicView>()
                 .ReverseMap();
             CreateMap<PublicView, PublicViewDto>()
-                .ForMember(d => d.Url, o => o.ResolveUsing<PublicViewUrlResolver>())
                 .ReverseMap();
             CreateMap<PublicTurnFilter, Data.Documents.PublicTurnFilter>()
                 .ReverseMap();
