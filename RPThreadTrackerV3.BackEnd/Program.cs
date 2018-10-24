@@ -5,75 +5,75 @@
 
 namespace RPThreadTrackerV3.BackEnd
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-    using Infrastructure.Data.Seeders;
-    using Microsoft.AspNetCore;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Logging;
-    using NLog.Web;
+	using System;
+	using System.Diagnostics.CodeAnalysis;
+	using Infrastructure.Data.Seeders;
+	using Microsoft.AspNetCore;
+	using Microsoft.AspNetCore.Hosting;
+	using Microsoft.Extensions.Configuration;
+	using Microsoft.Extensions.DependencyInjection;
+	using Microsoft.Extensions.Logging;
+	using NLog.Web;
 
-    /// <summary>
-    /// Base application bootstrapping file.
-    /// </summary>
-    [ExcludeFromCodeCoverage]
-    public class Program
+	/// <summary>
+	/// Base application bootstrapping file.
+	/// </summary>
+	[ExcludeFromCodeCoverage]
+	public class Program
 	{
-        /// <summary>
-        /// Defines the entry point of the application.
-        /// </summary>
-        /// <param name="args">The application arguments.</param>
-        public static void Main(string[] args)
-	    {
-	        var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-	        try
-	        {
-	            logger.Debug("Initializing RPThreadTrackerV3.BackEnd");
-	            var host = BuildWebHost(args);
-	            SeedDatabase(host);
-	            host.Run();
-	        }
-	        catch (Exception ex) 
-	        {
-	            logger.Error(ex, "Stopped RPThreadTrackerV3.BackEnd");
-	            throw;
-	        }
-	        finally
-	        {
-	            NLog.LogManager.Shutdown();
-	        }
-        }
+		/// <summary>
+		/// Defines the entry point of the application.
+		/// </summary>
+		/// <param name="args">The application arguments.</param>
+		public static void Main(string[] args)
+		{
+			var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+			try
+			{
+				logger.Debug("Initializing RPThreadTrackerV3.BackEnd");
+				var host = BuildWebHost(args);
+				SeedDatabase(host);
+				host.Run();
+			}
+			catch (Exception ex)
+			{
+				logger.Error(ex, "Stopped RPThreadTrackerV3.BackEnd");
+				throw;
+			}
+			finally
+			{
+				NLog.LogManager.Shutdown();
+			}
+		}
 
-        /// <summary>
-        /// Builds the web host.
-        /// </summary>
-        /// <param name="args">The application arguments.</param>
-        /// <returns>Web host instance.</returns>
-	    public static IWebHost BuildWebHost(string[] args) =>
-	        WebHost.CreateDefaultBuilder(args)
-	            .UseStartup<Startup>()
-	            .UseUrls("http://*:80")
-                .ConfigureAppConfiguration((builderContext, config) =>
-	            {
-	                var env = builderContext.HostingEnvironment;
-	                config.Sources.Clear();
-	                config
-	                    .AddJsonFile("appsettings.json", false, true)
-	                    .AddJsonFile("appsettings.secure.json", true, true)
-	                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
-	                    .AddEnvironmentVariables();
-	            })
-	            .ConfigureLogging(logging =>
-	            {
-	                logging.ClearProviders();
-	                logging.SetMinimumLevel(LogLevel.Trace);
-	            })
-	            .UseNLog()
-	            .Build();
+		/// <summary>
+		/// Builds the web host.
+		/// </summary>
+		/// <param name="args">The application arguments.</param>
+		/// <returns>Web host instance.</returns>
+		public static IWebHost BuildWebHost(string[] args) =>
+			WebHost.CreateDefaultBuilder(args)
+				.UseStartup<Startup>()
+				.UseUrls("http://*:80")
+				.ConfigureAppConfiguration((builderContext, config) =>
+				{
+					var env = builderContext.HostingEnvironment;
+					config.Sources.Clear();
+					config
+						.AddJsonFile("appsettings.json", false, true)
+						.AddJsonFile("appsettings.secure.json", true, true)
+						.AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
+						.AddEnvironmentVariables();
+				})
+				.ConfigureLogging(logging =>
+				{
+					logging.ClearProviders();
+					logging.SetMinimumLevel(LogLevel.Debug);
+				})
+				.UseNLog()
+				.Build();
 
-        private static void SeedDatabase(IWebHost host)
+		private static void SeedDatabase(IWebHost host)
 		{
 			using (var scope = host.Services.CreateScope())
 			{

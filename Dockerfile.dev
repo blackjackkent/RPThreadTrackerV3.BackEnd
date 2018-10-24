@@ -1,0 +1,11 @@
+FROM microsoft/dotnet:2.1-sdk
+RUN apt-get update
+RUN apt-get install libgdiplus -y
+RUN apt-get install libc6-dev -y
+COPY . /app
+WORKDIR /app
+RUN ["dotnet", "restore"]
+RUN ["dotnet", "build"]
+EXPOSE 80/tcp
+RUN chmod +x ./run.sh
+CMD dotnet watch -p ./RPThreadTrackerV3.BackEnd/ run
