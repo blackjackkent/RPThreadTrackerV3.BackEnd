@@ -81,6 +81,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// Gets the public view with the passed URL slug.
         /// </summary>
         /// <param name="slug">The unique URL slug of the view to be retrieved.</param>
+        /// <param name="userId">The unique identifier of the user to whom the view belongs.</param>
         /// <param name="publicViewRepository">The public view repository.</param>
         /// <param name="mapper">The application object mapper.</param>
         /// <returns>
@@ -105,7 +106,11 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// </summary>
         /// <param name="slug">The slug to be verified.</param>
         /// <param name="viewId">The unique identifier of a view being edited, if applicable.</param>
+        /// <param name="userId">The unique identifier of the user to whom the view belongs.</param>
         /// <param name="publicViewRepository">The public view repository.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// </returns>
         Task AssertSlugIsValid(string slug, string viewId, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository);
     }
 }

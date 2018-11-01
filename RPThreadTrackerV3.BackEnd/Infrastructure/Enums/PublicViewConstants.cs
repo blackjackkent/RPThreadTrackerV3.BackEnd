@@ -12,9 +12,15 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Enums
     /// </summary>
     public static class PublicViewConstants
     {
+        private static readonly List<string> _reservedSlugs = new List<string> { "MYTURN", "YOURTURN", "THEIRTURN", "ARCHIVED", "QUEUED", "LEGACY" };
+
         /// <summary>
-        /// Public view slug values which are reserved because of their use in legacy view URLs.
+        /// Returns a list of public view slug values which are reserved because of their use in legacy view URLs.
         /// </summary>
-        public static List<string> RESERVED_SLUGS = new List<string> { "MYTURN", "YOURTURN", "THEIRTURN", "ARCHIVED", "QUEUED", "LEGACY" };
+        /// <returns>A list of reserved slug strings.</returns>
+        public static List<string> GetReservedSlugs()
+        {
+            return _reservedSlugs;
+        }
     }
 }

@@ -48,6 +48,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <param name="publicViewRepository">The public view repository.</param>
         /// <param name="characterService">The character service.</param>
         /// <param name="characterRepository">The character repository.</param>
+        /// <param name="authService">The auth service.</param>
+        /// <param name="userManager">The user manager.</param>
         public PublicThreadController(
 		    ILogger<PublicThreadController> logger,
 		    IMapper mapper,
@@ -75,6 +77,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <summary>
         /// Processes a request for all threads associated with a particular public view.
         /// </summary>
+        /// <param name="username">Username of the user to whom the slug belongs.</param>
         /// <param name="slug">Unique string identifier for a public view.</param>
         /// <returns>
         /// HTTP response containing the results of the request and, if successful,
@@ -84,7 +87,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         /// <item><term>404 Not Found</term><description>Response code if no public view matches the slug</description></item>
         /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
         /// </returns>
-	    [HttpGet]
+        [HttpGet]
 	    [Route("{username}/{slug}")]
         [ProducesResponseType(200, Type = typeof(PublicThreadDtoCollection))]
         [ProducesResponseType(404)]

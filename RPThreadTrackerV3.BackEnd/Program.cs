@@ -8,11 +8,13 @@ namespace RPThreadTrackerV3.BackEnd
 	using System;
 	using System.Diagnostics.CodeAnalysis;
 	using Infrastructure.Data.Seeders;
+	using Infrastructure.Providers;
 	using Microsoft.AspNetCore;
 	using Microsoft.AspNetCore.Hosting;
 	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.DependencyInjection;
 	using Microsoft.Extensions.Logging;
+	using NLog.Config;
 	using NLog.Web;
 
 	/// <summary>
@@ -27,9 +29,9 @@ namespace RPThreadTrackerV3.BackEnd
 		/// <param name="args">The application arguments.</param>
 		public static void Main(string[] args)
 		{
-			var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
-			try
-			{
+		    var logger = InitLogger();
+            try
+            {
 				logger.Debug("Initializing RPThreadTrackerV3.BackEnd");
 				var host = BuildWebHost(args);
 				SeedDatabase(host);
@@ -46,12 +48,19 @@ namespace RPThreadTrackerV3.BackEnd
 			}
 		}
 
-		/// <summary>
+	    private static NLog.Logger InitLogger()
+	    {
+	        ConfigurationItemFactory.Default.LayoutRenderers.RegisterDefinition("aspnet-user-id", typeof(AspNetUserIdLayoutRenderer));
+            var logger = NLogBuilder.ConfigureNLog("nlog.config").GetCurrentClassLogger();
+	        return logger;
+	    }
+
+	    /// <summary>
 		/// Builds the web host.
 		/// </summary>
 		/// <param name="args">The application arguments.</param>
 		/// <returns>Web host instance.</returns>
-		public static IWebHost BuildWebHost(string[] args) =>
+		private static IWebHost BuildWebHost(string[] args) =>
 			WebHost.CreateDefaultBuilder(args)
 				.UseStartup<Startup>()
 				.UseUrls("http://*:80")
@@ -68,7 +77,7 @@ namespace RPThreadTrackerV3.BackEnd
 				.ConfigureLogging(logging =>
 				{
 					logging.ClearProviders();
-					logging.SetMinimumLevel(LogLevel.Debug);
+					logging.SetMinimumLevel(LogLevel.Information);
 				})
 				.UseNLog()
 				.Build();
