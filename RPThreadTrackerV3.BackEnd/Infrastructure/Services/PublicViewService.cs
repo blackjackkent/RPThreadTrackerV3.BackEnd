@@ -129,7 +129,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         /// <exception cref="InvalidPublicViewSlugException">Thrown if slug is invalid</exception>
         public async Task AssertSlugIsValid(string slug, string viewId, string userId, IDocumentRepository<Documents.PublicView> publicViewRepository)
         {
-            var reservedSlugs = PublicViewConstants.RESERVED_SLUGS;
+            var reservedSlugs = PublicViewConstants.GetReservedSlugs();
             if (reservedSlugs.Contains(slug.ToUpperInvariant()))
             {
                 throw new InvalidPublicViewSlugException();

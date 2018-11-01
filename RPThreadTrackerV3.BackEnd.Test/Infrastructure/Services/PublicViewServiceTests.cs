@@ -399,7 +399,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
 
             [Fact]
-            public async Task ThrowsExceptionWhenViewExistsNotForUser()
+            public void ThrowsExceptionWhenViewExistsNotForUser()
             {
                 // Arrange
                 var view = new PublicView

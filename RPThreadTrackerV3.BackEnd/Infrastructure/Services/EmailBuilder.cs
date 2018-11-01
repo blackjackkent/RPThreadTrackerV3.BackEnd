@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 {
+    using System;
     using System.Net;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -22,10 +23,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    var resetPasswordUrl = GetResetPasswordLink(urlRoot, user.Email, code);
 		    var result = new EmailDto
 		    {
-			    RecipientEmail = user.Email,
-			    Subject = "RPThreadTracker Password Reset",
-				Body = GetForgotPasswordHtmlBody(resetPasswordUrl),
-				PlainTextBody = GetForgotPasswordPlainTextBody(resetPasswordUrl),
+                RecipientEmail = user.Email,
+                Subject = "RPThreadTracker Password Reset",
+                Body = GetForgotPasswordHtmlBody(resetPasswordUrl),
+                PlainTextBody = GetForgotPasswordPlainTextBody(resetPasswordUrl),
                 SenderEmail = config.Secure.ForgotPasswordEmailFromAddress,
                 SenderName = "RPThreadTracker"
             };
@@ -73,7 +74,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 
 	    private static string GetResetPasswordLink(string urlRoot, string userEmail, string code)
 	    {
-		    if (urlRoot.Contains(","))
+		    if (urlRoot.Contains(",", StringComparison.InvariantCulture))
 		    {
 			    var roots = urlRoot.Split(',');
 			    urlRoot = roots[0];
