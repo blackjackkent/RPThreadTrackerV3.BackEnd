@@ -1,9 +1,13 @@
 #!/bin/bash
 set -ev
 
-TAG=$1
-DOCKER_USERNAME=$2
-DOCKER_PASSWORD=$3
+DOCKER_USERNAME=$1
+DOCKER_PASSWORD=$2
+TAG=$3
+if [ $# -eq 2 ]
+  then
+    TAG="latest"
+fi
 
 docker build -t blackjacksoftware/rpthreadtrackerv3.backend .
 docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"

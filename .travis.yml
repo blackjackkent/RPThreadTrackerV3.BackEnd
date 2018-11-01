@@ -13,7 +13,13 @@ script:
   - ./build.sh
 deploy:
   - provider: script
-    script: ./deploy.sh $TRAVIS_TAG $DOCKER_USERNAME $DOCKER_PASSWORD
+    script: ./deploy.sh $DOCKER_USERNAME $DOCKER_PASSWORD $TRAVIS_TAG 
     skip_cleanup: true
     on:
+      branch: production
       tags: true
+  - provider: script
+    script: ./deploy.sh $DOCKER_USERNAME $DOCKER_PASSWORD $TRAVIS_TAG 
+    skip_cleanup: true
+    on:
+      branch: development
