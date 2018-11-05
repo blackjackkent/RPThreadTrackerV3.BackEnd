@@ -68,9 +68,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
+                _logger.LogInformation($"Received request to get all characters for user {UserId}");
 				var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper);
 				var result = characters.Select(_mapper.Map<CharacterDto>).ToList();
-				return Ok(result);
+			    _logger.LogInformation($"Processed request to get all characters for user {UserId}.");
+                return Ok(result);
 			}
 			catch (Exception e)
 			{
@@ -98,11 +100,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
+                _logger.LogInformation($"Received request to create new character for user {UserId}");
 				character.AssertIsValid();
 				character.UserId = UserId;
 				var model = _mapper.Map<Models.DomainModels.Character>(character);
 				var createdCharacter = _characterService.CreateCharacter(model, _characterRepository, _mapper);
-				return Ok(_mapper.Map<CharacterDto>(createdCharacter));
+			    _logger.LogInformation($"Processed request to create new character for user {UserId}");
+                return Ok(_mapper.Map<CharacterDto>(createdCharacter));
 			}
 			catch (InvalidCharacterException)
 			{
@@ -138,11 +142,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-				character.AssertIsValid();
+			    _logger.LogInformation($"Received request to update character {characterId} for user {UserId}");
+                character.AssertIsValid();
 				_characterService.AssertUserOwnsCharacter(characterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Character>(character);
 				var updatedCharacter = _characterService.UpdateCharacter(model, _characterRepository, _mapper);
-				return Ok(_mapper.Map<CharacterDto>(updatedCharacter));
+			    _logger.LogInformation($"Processed request to update character {characterId} for user {UserId}");
+                return Ok(_mapper.Map<CharacterDto>(updatedCharacter));
 			}
 			catch (InvalidCharacterException)
 			{
@@ -181,9 +187,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-				_characterService.AssertUserOwnsCharacter(characterId, UserId, _characterRepository);
+			    _logger.LogInformation($"Received request to delete character {characterId} for user {UserId}");
+                _characterService.AssertUserOwnsCharacter(characterId, UserId, _characterRepository);
 				_characterService.DeleteCharacter(characterId, _characterRepository);
-				return Ok();
+			    _logger.LogInformation($"Processed request to delete character {characterId} for user {UserId}");
+                return Ok();
 			}
 			catch (CharacterNotFoundException)
 			{

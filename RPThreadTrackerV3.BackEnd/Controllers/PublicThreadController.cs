@@ -96,13 +96,15 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 		    try
 		    {
+		        _logger.LogInformation($"Received request to get public threads for view with slug {slug} belonging to user {username}");
                 var user = await _authService.GetUserByUsernameOrEmail(username, _userManager);
 			    var view = await _publicViewService.GetViewBySlugAndUserId(slug, user.Id, _publicViewRepository, _mapper);
 			    var viewDto = _mapper.Map<PublicViewDto>(view);
 			    var threads = _threadService.GetThreadsForView(view, _threadRepository, _mapper);
 			    var dtos = _mapper.Map<List<ThreadDto>>(threads);
 				var collection = new PublicThreadDtoCollection(dtos, viewDto);
-			    return Ok(collection);
+		        _logger.LogInformation($"Processed request to get public threads for view with slug {slug} belonging to user {username}");
+                return Ok(collection);
 		    }
 		    catch (PublicViewNotFoundException)
 		    {
@@ -136,12 +138,14 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to get public threads for legacy view with slug {model.Slug} belonging to user {model.UserId}");
                 var characters = _characterService.GetCharacters(model.UserId, _characterRepository, _mapper, false);
                 var view = _publicViewService.GetViewFromLegacyDto(model, characters);
                 var threads = _threadService.GetThreadsForView(view, _threadRepository, _mapper);
                 var dtos = _mapper.Map<List<ThreadDto>>(threads);
                 var viewDto = _mapper.Map<PublicViewDto>(view);
                 var collection = new PublicThreadDtoCollection(dtos, viewDto);
+                _logger.LogInformation($"Processed request to get public threads for legacy view with slug {model.Slug} belonging to user {model.UserId}");
                 return Ok(collection);
             }
             catch (Exception e)

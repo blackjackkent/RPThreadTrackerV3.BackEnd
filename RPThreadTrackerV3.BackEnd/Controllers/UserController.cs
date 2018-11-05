@@ -70,8 +70,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 	        try
 	        {
-	            var claimsUser = User;
+	            _logger.LogInformation($"Received request to get user data for user {UserId}");
+                var claimsUser = User;
 	            var user = await _authService.GetCurrentUser(claimsUser, _userManager, _mapper);
+	            _logger.LogInformation($"Processed request to get user data for user {UserId}");
 	            return Ok(_mapper.Map<UserDto>(user));
 	        }
 	        catch (UserNotFoundException)
@@ -104,7 +106,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 		    try
 		    {
-			    await _authService.ChangePassword(User, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword, _userManager);
+		        _logger.LogInformation($"Received request to change password for user {UserId}");
+                await _authService.ChangePassword(User, request.CurrentPassword, request.NewPassword, request.ConfirmNewPassword, _userManager);
+		        _logger.LogInformation($"Processed request to change password for user {UserId}");
 			    return Ok();
 		    }
 		    catch (InvalidChangePasswordException e)
@@ -138,7 +142,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 		    try
 		    {
+		        _logger.LogInformation($"Received request to change account information for user {UserId}");
 			    await _authService.ChangeAccountInformation(User, request.Email, request.Username, _userManager);
+		        _logger.LogInformation($"Processed request to get user data for user {UserId}");
 			    return Ok();
 		    }
 		    catch (InvalidAccountInfoUpdateException e)

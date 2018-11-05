@@ -69,8 +69,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to get public views for user {UserId}");
                 var views = await _publicViewService.GetPublicViews(UserId, _publicViewRepository, _mapper);
                 var result = views.Select(_mapper.Map<PublicViewDto>).ToList();
+                _logger.LogInformation($"Processed request to get public views for user {UserId}");
                 return Ok(result);
             }
             catch (Exception e)
@@ -101,11 +103,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to get create public view for user {UserId}");
                 model.AssertIsValid();
                 model.UserId = UserId;
                 var publicView = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(model);
                 var createdView =
                     await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
+                _logger.LogInformation($"Processed request to get public views for user {UserId}");
                 return Ok(_mapper.Map<PublicViewDto>(createdView));
             }
             catch (InvalidPublicViewSlugException)
@@ -147,11 +151,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to update public view {publicViewId} for user {UserId}");
                 viewModel.AssertIsValid();
                 viewModel.UserId = UserId;
                 await _publicViewService.AssertUserOwnsPublicView(publicViewId, UserId, _publicViewRepository);
                 var model = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(viewModel);
                 var updatedView = await _publicViewService.UpdatePublicView(model, _publicViewRepository, _mapper);
+                _logger.LogInformation($"Processed request to update public view {publicViewId} for user {UserId}");
                 return Ok(_mapper.Map<PublicViewDto>(updatedView));
             }
             catch (InvalidPublicViewSlugException)
@@ -196,8 +202,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to delete public view {publicViewId} for user {UserId}");
                 await _publicViewService.AssertUserOwnsPublicView(publicViewId, UserId, _publicViewRepository);
                 await _publicViewService.DeletePublicView(publicViewId, _publicViewRepository);
+                _logger.LogInformation($"Processed request to delete public view {publicViewId} for user {UserId}");
                 return Ok();
             }
             catch (PublicViewNotFoundException)
@@ -232,7 +240,9 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to check if {slug} is a valid slug for view {viewId}");
                 await _publicViewService.AssertSlugIsValid(slug, viewId, UserId, _publicViewRepository);
+                _logger.LogInformation($"Slug {slug} was deemed valid for viewID {viewId} and user {UserId}");
                 return Ok();
             }
             catch (InvalidPublicViewSlugException)

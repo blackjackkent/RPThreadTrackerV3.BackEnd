@@ -83,10 +83,12 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-				var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper);
+			    _logger.LogInformation($"Received request to get {(isArchived ? "archived" : "active")} threads for user {UserId}");
+                var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper);
 				var result = threads.Select(_mapper.Map<ThreadDto>).ToList();
 				var response = new ThreadDtoCollection(result);
-				return Ok(response);
+			    _logger.LogInformation($"Processed request to get {(isArchived ? "archived" : "active")} threads for user {UserId}");
+                return Ok(response);
 			}
 			catch (Exception e)
 			{
@@ -116,10 +118,12 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-				thread.AssertIsValid();
+			    _logger.LogInformation($"Received request to create thread for user {UserId}");
+                thread.AssertIsValid();
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var createdThread = _threadService.CreateThread(model, _threadRepository, _mapper);
+			    _logger.LogInformation($"Processed request to create thread for user {UserId}");
 				return Ok(_mapper.Map<ThreadDto>(createdThread));
 			}
 			catch (InvalidThreadException)
@@ -161,11 +165,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
+			    _logger.LogInformation($"Received request to update thread {threadId} for user {UserId}");
 				thread.AssertIsValid();
 				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository);
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var updatedThread = _threadService.UpdateThread(model, _threadRepository, _mapper);
+			    _logger.LogInformation($"Processed request to update thread {threadId} for user {UserId}");
 				return Ok(_mapper.Map<ThreadDto>(updatedThread));
 			}
 			catch (InvalidThreadException)
@@ -210,9 +216,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-				_threadService.AssertUserOwnsThread(threadId, UserId, _threadRepository);
+			    _logger.LogInformation($"Received request to delete thread {threadId} for user {UserId}");
+                _threadService.AssertUserOwnsThread(threadId, UserId, _threadRepository);
 				_threadService.DeleteThread(threadId, _threadRepository);
-				return Ok();
+			    _logger.LogInformation($"Processed request to delete thread {threadId} for user {UserId}");
+                return Ok();
 			}
 			catch (ThreadNotFoundException)
 			{
@@ -242,6 +250,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 		    try
 		    {
+		        _logger.LogInformation($"Received request to export threads for user {UserId}. (IncludeHiatused: {includeHiatused}, IncludeArchived: {includeArchive}");
                 var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
 		        var threads =
 		            _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
@@ -258,7 +267,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		            };
 		            Response.Headers.Add("Content-Disposition", cd.ToString());
 		            Response.Headers.Add("X-Content-Type-Options", "nosniff");
-		            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		            _logger.LogInformation($"Processed request to export threads for user {UserId}. (IncludeHiatused: {includeHiatused}, IncludeArchived: {includeArchive}");
+                    return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 }
 		    }
 		    catch (Exception e)
@@ -286,8 +296,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 	        try
 	        {
-	            var tags = _threadService.GetAllTags(UserId, _threadRepository, _mapper);
-	            return Ok(tags);
+	            _logger.LogInformation($"Received request to get all thread tags for user {UserId}");
+                var tags = _threadService.GetAllTags(UserId, _threadRepository, _mapper);
+	            _logger.LogInformation($"Processed request to get all thread tags for user {UserId}");
+                return Ok(tags);
 	        }
 	        catch (Exception e)
 	        {

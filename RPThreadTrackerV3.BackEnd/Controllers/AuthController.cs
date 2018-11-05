@@ -140,9 +140,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 	        try
 	        {
+                _logger.LogInformation("Received token refresh request.");
 	            var user = _authService.GetUserForRefreshToken(model.RefreshToken, _refreshTokenRepository);
 	            var jwt = await _authService.GenerateJwt(user, _userManager, _config);
 	            var refreshToken = _authService.GenerateRefreshToken(user, _config, _refreshTokenRepository);
+	            _logger.LogInformation("Processed token refresh request.");
 	            return Ok(new AuthTokenCollection
 	            {
 	                Token = jwt,

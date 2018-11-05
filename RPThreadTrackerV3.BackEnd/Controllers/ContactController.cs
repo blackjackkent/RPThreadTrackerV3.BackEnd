@@ -71,9 +71,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
+                _logger.LogInformation($"Received request to send contact form message for user {UserId}");
                 var user = await _authService.GetCurrentUser(User, _userManager, _mapper);
                 var email = _emailBuilder.BuildContactEmail(user.Email, user.UserName, model.Message, _config);
                 await _emailClient.SendEmail(email, _config);
+                _logger.LogInformation($"Processed request to send contact form message for user {UserId}");
                 return Ok();
             }
             catch (Exception e)
