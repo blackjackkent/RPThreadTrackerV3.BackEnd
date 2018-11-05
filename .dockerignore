@@ -1,0 +1,10 @@
+RPThreadTrackerV3.BackEnd/bin/
+RPThreadTrackerV3.BackEnd/obj/
+RPThreadTrackerV3.BackEnd.Test/bin/
+RPThreadTrackerV3.BackEnd.Test/obj/
+.git/
+.vs/
+.vscode/
+SQL/
+reports/
+Documentation/

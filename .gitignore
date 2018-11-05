@@ -315,5 +315,14 @@ OpenCover/
 ASALocalRun/
 
 # Custom files
-RPThreadTrackerV3/appSettings.secure.json
-
+RPThreadTrackerV3.BackEnd/appSettings.secure.json
+*.bak
+*.orig
+reports/
+*coverage.xml
+*coverage.info
+*coverage.json
+*coverage.opencover.xml
+codecov.sh
+Documentation/api/RPThreadTrackerV3.BackEnd*.yml
+.vscode/

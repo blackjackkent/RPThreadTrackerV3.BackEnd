@@ -1,7 +1,7 @@
 USE [RPThreadTracker]
 GO
 
-/****** Object:  Table [dbo].[UserSettings]    Script Date: 6/19/2017 7:24:36 PM ******/
+/****** Object:  Table [dbo].[ProfileSettings]    Script Date: 7/17/2018 9:47:57 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -14,14 +14,17 @@ CREATE TABLE [dbo].[ProfileSettings](
 	[ShowDashboardThreadDistribution] [bit] NOT NULL,
 	[UseInvertedTheme] [bit] NOT NULL,
 	[AllowMarkQueued] [bit] NOT NULL,
-	[LastNewsReadDate] [datetime] NULL
-
+	[LastNewsReadDate] [datetime] NULL,
+	[ThreadTablePageSize] [int] NOT NULL,
  CONSTRAINT [PK_ProfileSettings] PRIMARY KEY CLUSTERED 
 (
 	[SettingsId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+)
 
+GO
+
+ALTER TABLE [dbo].[ProfileSettings] ADD  CONSTRAINT [DF_ProfileSettings_ThreadTablePageSize]  DEFAULT ((10)) FOR [ThreadTablePageSize]
 GO
 
 ALTER TABLE [dbo].[ProfileSettings]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUsers_ProfileSettings] FOREIGN KEY([UserId])
@@ -32,5 +35,3 @@ GO
 
 ALTER TABLE [dbo].[ProfileSettings] CHECK CONSTRAINT [FK_AspNetUsers_ProfileSettings]
 GO
-
-
