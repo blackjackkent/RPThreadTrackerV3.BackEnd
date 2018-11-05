@@ -65,8 +65,10 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 		    try
 		    {
-			    var settings = _authService.GetProfileSettings(UserId, _profileSettingsRepository, _mapper);
+		        _logger.LogInformation($"Received request to get profile settings for user {UserId}");
+                var settings = _authService.GetProfileSettings(UserId, _profileSettingsRepository, _mapper);
 			    var result = _mapper.Map<ProfileSettingsDto>(settings);
+		        _logger.LogInformation($"Processed request to get profile settings for user {UserId}");
 			    return Ok(result);
 		    }
 		    catch (ProfileSettingsNotFoundException e)
@@ -95,9 +97,11 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 		    try
 		    {
+		        _logger.LogInformation($"Received request to update profile settings for user {UserId}");
 			    var settingsModel = _mapper.Map<ProfileSettings>(settings);
 			    settingsModel.UserId = UserId;
 			    _authService.UpdateProfileSettings(settingsModel, _profileSettingsRepository, _mapper);
+		        _logger.LogInformation($"Processed request to update profile settings for user {UserId}");
 			    return Ok();
 		    }
 		    catch (Exception e)
