@@ -1,6 +1,9 @@
+USE [RPThreadTracker]
+GO
+
 SET ANSI_NULLS ON
   SET QUOTED_IDENTIFIER ON
-  CREATE TABLE [dbo].[Log] (
+  CREATE TABLE [dbo].[Logging] (
       [Id] [int] IDENTITY(1,1) NOT NULL,
       [Application] [nvarchar](50) NOT NULL,
       [Logged] [datetime] NOT NULL,
@@ -9,6 +12,7 @@ SET ANSI_NULLS ON
       [Logger] [nvarchar](250) NULL,
       [Callsite] [nvarchar](max) NULL,
       [Exception] [nvarchar](max) NULL,
-    CONSTRAINT [PK_dbo.Log] PRIMARY KEY CLUSTERED ([Id] ASC)
+	  [UserId] [nvarchar](50) NULL,
+    CONSTRAINT [PK_dbo.Logging] PRIMARY KEY CLUSTERED ([Id] ASC)
       WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
   ) ON [PRIMARY]

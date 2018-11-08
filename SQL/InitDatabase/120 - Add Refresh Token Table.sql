@@ -1,3 +1,6 @@
+USE [RPThreadTracker]
+GO
+
 /****** Object:  Table [dbo].[RefreshTokens]    Script Date: 3/27/2018 8:17:12 PM ******/
 SET ANSI_NULLS ON
 GO
