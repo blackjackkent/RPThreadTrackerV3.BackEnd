@@ -9,6 +9,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
     using System.Security.Claims;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Newtonsoft.Json;
 
     public class ControllerTests<T> : IDisposable
         where T : Controller, IDisposable
@@ -35,6 +36,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
 
         protected void InitControllerContext()
         {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
             var user = new ClaimsPrincipal(new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, "12345")

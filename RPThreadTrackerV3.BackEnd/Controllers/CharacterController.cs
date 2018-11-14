@@ -18,6 +18,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Models.ViewModels;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Controller class for behavior related to a user's characters.
@@ -77,7 +78,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			catch (Exception e)
 			{
 				_logger.LogError(e, e.Message);
-				return StatusCode(500, "An unknown error occurred.");
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -100,23 +101,23 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-                _logger.LogInformation($"Received request to create new character for user {UserId}");
+                _logger.LogInformation($"Received request to create new character for user {UserId}. Request body: {JsonConvert.SerializeObject(character)}");
 				character.AssertIsValid();
 				character.UserId = UserId;
 				var model = _mapper.Map<Models.DomainModels.Character>(character);
 				var createdCharacter = _characterService.CreateCharacter(model, _characterRepository, _mapper);
-			    _logger.LogInformation($"Processed request to create new character for user {UserId}");
+			    _logger.LogInformation($"Processed request to create new character for user {UserId}. Result body: {JsonConvert.SerializeObject(createdCharacter)}");
                 return Ok(_mapper.Map<CharacterDto>(createdCharacter));
 			}
 			catch (InvalidCharacterException)
 			{
-				_logger.LogWarning($"User {UserId} attempted to add invalid character {character}.");
+				_logger.LogWarning($"User {UserId} attempted to add invalid character {JsonConvert.SerializeObject(character)}.");
 				return BadRequest("The supplied character is invalid.");
 			}
 			catch (Exception e)
 			{
-				_logger.LogError($"Error creating characted {character}: {e.Message}", e);
-				return StatusCode(500, "An unknown error occurred.");
+				_logger.LogError($"Error creating character {JsonConvert.SerializeObject(character)}: {e.Message}", e);
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -142,17 +143,17 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-			    _logger.LogInformation($"Received request to update character {characterId} for user {UserId}");
+			    _logger.LogInformation($"Received request to update character {characterId} for user {UserId}. Request body: {JsonConvert.SerializeObject(character)}");
                 character.AssertIsValid();
 				_characterService.AssertUserOwnsCharacter(characterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Character>(character);
 				var updatedCharacter = _characterService.UpdateCharacter(model, _characterRepository, _mapper);
-			    _logger.LogInformation($"Processed request to update character {characterId} for user {UserId}");
+			    _logger.LogInformation($"Processed request to update character {characterId} for user {UserId}. Result body: {JsonConvert.SerializeObject(updatedCharacter)}");
                 return Ok(_mapper.Map<CharacterDto>(updatedCharacter));
 			}
 			catch (InvalidCharacterException)
 			{
-				_logger.LogWarning($"User {UserId} attempted to update invalid character {character}.");
+				_logger.LogWarning($"User {UserId} attempted to update invalid character {JsonConvert.SerializeObject(character)}.");
 				return BadRequest("The supplied character is invalid.");
 			}
 			catch (CharacterNotFoundException)
@@ -162,8 +163,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			}
 			catch (Exception e)
 			{
-				_logger.LogError($"Error updating character {character}: {e.Message}", e);
-				return StatusCode(500, "An unknown error occurred.");
+				_logger.LogError($"Error updating character {JsonConvert.SerializeObject(character)}: {e.Message}", e);
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -201,7 +202,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			catch (Exception e)
 			{
 				_logger.LogError($"Error deleting character {characterId}: {e.Message}", e);
-				return StatusCode(500, "An unknown error occurred.");
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 	}

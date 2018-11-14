@@ -17,6 +17,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.Extensions.Logging;
     using Models.DomainModels;
     using Models.ViewModels;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Controller class for behavior related to user profile settings.
@@ -79,7 +80,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			catch (Exception e)
 			{
 				_logger.LogError(e, e.Message);
-				return StatusCode(500, "An unknown error occurred.");
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -97,7 +98,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	    {
 		    try
 		    {
-		        _logger.LogInformation($"Received request to update profile settings for user {UserId}");
+		        _logger.LogInformation($"Received request to update profile settings for user {UserId}. Request body: {JsonConvert.SerializeObject(settings)}");
 			    var settingsModel = _mapper.Map<ProfileSettings>(settings);
 			    settingsModel.UserId = UserId;
 			    _authService.UpdateProfileSettings(settingsModel, _profileSettingsRepository, _mapper);
@@ -107,7 +108,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    catch (Exception e)
 		    {
 				_logger.LogError(e, e.Message);
-			    return StatusCode(500, "An unknown error occurred.");
+			    return StatusCode(500, "An unexpected error occurred.");
 			}
 	    }
 	}

@@ -19,6 +19,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.Extensions.Logging;
     using Models.ViewModels;
     using Models.ViewModels.PublicViews;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Controller class for behavior related to public thread collections.
@@ -103,7 +104,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			    var threads = _threadService.GetThreadsForView(view, _threadRepository, _mapper);
 			    var dtos = _mapper.Map<List<ThreadDto>>(threads);
 				var collection = new PublicThreadDtoCollection(dtos, viewDto);
-		        _logger.LogInformation($"Processed request to get public threads for view with slug {slug} belonging to user {username}");
+		        _logger.LogInformation($"Processed request to get public threads for view with slug {slug} belonging to user {username}. Found {collection.Threads.Count} threads.");
                 return Ok(collection);
 		    }
 		    catch (PublicViewNotFoundException)
@@ -114,7 +115,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    catch (Exception e)
 		    {
 			    _logger.LogError(e, $"Error retrieving threads for public view with slug {slug} and username {username}: {e.Message}");
-			    return StatusCode(500, "An unknown error occurred.");
+			    return StatusCode(500, "An unexpected error occurred.");
 		    }
 	    }
 
@@ -138,7 +139,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
-                _logger.LogInformation($"Received request to get public threads for legacy view with slug {model.Slug} belonging to user {model.UserId}");
+                _logger.LogInformation($"Received request to get public threads for legacy view with slug {model.Slug} belonging to user {model.UserId}. Request body: {JsonConvert.SerializeObject(model)}");
                 var characters = _characterService.GetCharacters(model.UserId, _characterRepository, _mapper, false);
                 var view = _publicViewService.GetViewFromLegacyDto(model, characters);
                 var threads = _threadService.GetThreadsForView(view, _threadRepository, _mapper);
@@ -150,8 +151,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Error retrieving threads for legacy public view: {model}: {e.Message}");
-                return StatusCode(500, "An unknown error occurred.");
+                _logger.LogError(e, $"Error retrieving threads for legacy public view: {JsonConvert.SerializeObject(model)}: {e.Message}");
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
     }

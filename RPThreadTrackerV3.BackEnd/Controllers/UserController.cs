@@ -119,7 +119,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    catch (Exception e)
 		    {
 			    _logger.LogError(e, $"Error requesting password reset for {User.Identity.Name}");
-			    return StatusCode(500, new List<string> { "An unknown error occurred." });
+			    return StatusCode(500, new List<string> { "An unexpected error occurred." });
 		    }
 	    }
 
@@ -155,7 +155,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    catch (Exception e)
 		    {
 				_logger.LogError(e, $"Error requesting account information change for {User.Identity.Name}");
-			    return StatusCode(500, "An unknown error occurred.");
+			    return StatusCode(500, "An unexpected error occurred.");
 			}
 	    }
 	}
