@@ -546,26 +546,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class AssertSlugIsValid : PublicViewServiceTests
         {
             [Fact]
-            public void ThrowsExceptionIfSlugIsReservedAndViewIsNull()
-            {
-                // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("myturn", null, "12345", _mockPublicViewRepository.Object);
-
-                // Assert
-                action.Should().Throw<InvalidPublicViewSlugException>();
-            }
-
-            [Fact]
-            public void ThrowsExceptionIfSlugIsReservedAndIsCaseSensitive()
-            {
-                // Act
-                Func<Task> action = async () => await _publicViewService.AssertSlugIsValid("MyTurn", "13579", "12345", _mockPublicViewRepository.Object);
-
-                // Assert
-                action.Should().Throw<InvalidPublicViewSlugException>();
-            }
-
-            [Fact]
             public void ThrowsExceptionIfSlugContainsInvalidCharacters()
             {
                 // Act
