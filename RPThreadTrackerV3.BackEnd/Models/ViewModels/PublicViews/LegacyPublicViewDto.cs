@@ -96,14 +96,12 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
         {
             TurnFilter.AssertIsValid();
             var slugRegex = new Regex(@"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$");
-            var reservedSlugs = PublicViewConstants.GetReservedSlugs();
             var invalid =
                 string.IsNullOrEmpty(Name)
                 || string.IsNullOrEmpty(Slug)
                 || !slugRegex.IsMatch(Slug)
                 || !Columns.Any()
-                || string.IsNullOrEmpty(CharacterUrlIdentifier)
-                || reservedSlugs.Contains(Slug.ToUpperInvariant());
+                || string.IsNullOrEmpty(CharacterUrlIdentifier);
             if (invalid)
             {
                 throw new InvalidPublicViewException();
