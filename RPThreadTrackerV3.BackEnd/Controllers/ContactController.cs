@@ -81,7 +81,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, $"Error sending contact form. Message was: {model.Message}. {e}");
-                return StatusCode(500, "An unknown error occurred.");
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
     }
