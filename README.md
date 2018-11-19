@@ -17,7 +17,7 @@ Documentation for this API's endpoints can be found at [https://rpthreadtrackerv
 
 ## Running the Application Locally
 
-You will need to have the .NET Core 2.1 SDK installed on your local machine to develop this application.
+You will need to have the .NET Core SDK v.2.1.4 or later installed on your local machine to develop this application.
 
 1. Create a fork of this repository to your own GitHub account (<https://github.com/blackjackkent/RPThreadTrackerV3.BackEnd/fork>).
 2. Clone the forked repository to your local machine.
@@ -30,7 +30,7 @@ Once running, the application will be available at `http://localhost:29564`.
 
 The application uses [XUnit](https://xunit.github.io/) and associated libraries for unit testing across all parts of the application. Any changes to the code should be appropriately unit tested to maintain code coverage. Test files should be added to the `RPThreadTrackerV3.BackEnd.Test` project following existing patterns.
 
-You can run all unit tests using your preferred C# test runner. To generate a code coverage report, run `./coverage.sh` from the project root.
+You can run all unit tests using your preferred C# test runner. To generate a code coverage report, run `./coverage.sh` from the project root. The generated coverage information will appear in a folder called `./reports`.
 
 ## External Dependencies
 
