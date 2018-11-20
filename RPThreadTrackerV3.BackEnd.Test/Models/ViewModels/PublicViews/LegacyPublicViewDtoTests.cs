@@ -109,19 +109,6 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels.PublicViews
                 // Assert
                 action.Should().Throw<InvalidPublicViewException>();
             }
-
-            [Fact]
-            public void ThrowsErrorWhenSlugReserved()
-            {
-                // Arrange
-                _dto.Slug = "yourturn";
-
-                // Act
-                Action action = () => _dto.AssertIsValid();
-
-                // Assert
-                action.Should().Throw<InvalidPublicViewException>();
-            }
         }
     }
 }

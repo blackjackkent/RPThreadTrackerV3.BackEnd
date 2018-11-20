@@ -19,6 +19,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Models.ViewModels.PublicViews;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Controller class for behavior related to a user's public views.
@@ -78,7 +79,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return StatusCode(500, "An unknown error occurred.");
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -103,13 +104,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
-                _logger.LogInformation($"Received request to get create public view for user {UserId}");
+                _logger.LogInformation($"Received request to get create public view for user {UserId}. Request body: {JsonConvert.SerializeObject(model)}");
                 model.AssertIsValid();
                 model.UserId = UserId;
                 var publicView = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(model);
                 var createdView =
                     await _publicViewService.CreatePublicView(publicView, _publicViewRepository, _mapper);
-                _logger.LogInformation($"Processed request to get public views for user {UserId}");
+                _logger.LogInformation($"Processed request to get public views for user {UserId}. Result body: {JsonConvert.SerializeObject(createdView)}");
                 return Ok(_mapper.Map<PublicViewDto>(createdView));
             }
             catch (InvalidPublicViewSlugException)
@@ -119,13 +120,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             }
             catch (InvalidPublicViewException)
             {
-                _logger.LogWarning($"User {UserId} attempted to add invalid public view {model}.");
+                _logger.LogWarning($"User {UserId} attempted to add invalid public view {JsonConvert.SerializeObject(model)}.");
                 return BadRequest("The supplied public view configuration is invalid.");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error creating public view {model}: {e.Message}", e);
-                return StatusCode(500, "An unknown error occurred.");
+                _logger.LogError($"Error creating public view {JsonConvert.SerializeObject(model)}: {e.Message}", e);
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -151,13 +152,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
         {
             try
             {
-                _logger.LogInformation($"Received request to update public view {publicViewId} for user {UserId}");
+                _logger.LogInformation($"Received request to update public view {publicViewId} for user {UserId}. Request body: {JsonConvert.SerializeObject(viewModel)}");
                 viewModel.AssertIsValid();
                 viewModel.UserId = UserId;
                 await _publicViewService.AssertUserOwnsPublicView(publicViewId, UserId, _publicViewRepository);
                 var model = _mapper.Map<Models.DomainModels.PublicViews.PublicView>(viewModel);
                 var updatedView = await _publicViewService.UpdatePublicView(model, _publicViewRepository, _mapper);
-                _logger.LogInformation($"Processed request to update public view {publicViewId} for user {UserId}");
+                _logger.LogInformation($"Processed request to update public view {publicViewId} for user {UserId}. Result body: {JsonConvert.SerializeObject(updatedView)}");
                 return Ok(_mapper.Map<PublicViewDto>(updatedView));
             }
             catch (InvalidPublicViewSlugException)
@@ -167,7 +168,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             }
             catch (InvalidPublicViewException)
             {
-                _logger.LogWarning($"User {UserId} attempted to update invalid public view {viewModel}.");
+                _logger.LogWarning($"User {UserId} attempted to update invalid public view {JsonConvert.SerializeObject(viewModel)}.");
                 return BadRequest("The supplied view model configuration is invalid.");
             }
             catch (PublicViewNotFoundException)
@@ -177,8 +178,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error updating public view {viewModel}: {e.Message}", e);
-                return StatusCode(500, "An unknown error occurred.");
+                _logger.LogError($"Error updating public view {JsonConvert.SerializeObject(viewModel)}: {e.Message}", e);
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -216,7 +217,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             catch (Exception e)
             {
                 _logger.LogError($"Error deleting public view {publicViewId}: {e.Message}", e);
-                return StatusCode(500, "An unknown error occurred.");
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
 
@@ -253,7 +254,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             catch (Exception e)
             {
                 _logger.LogError($"Error while verifying validity of slug {slug} for view {viewId} and user {UserId}: {e.Message}");
-                return StatusCode(500, "An unknown error occurred.");
+                return StatusCode(500, "An unexpected error occurred.");
             }
         }
     }

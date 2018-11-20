@@ -20,6 +20,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Models.ViewModels;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Controller class for behavior related to a user's characters.
@@ -87,13 +88,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
                 var threads = _threadService.GetThreads(UserId, isArchived, _threadRepository, _mapper);
 				var result = threads.Select(_mapper.Map<ThreadDto>).ToList();
 				var response = new ThreadDtoCollection(result);
-			    _logger.LogInformation($"Processed request to get {(isArchived ? "archived" : "active")} threads for user {UserId}");
+			    _logger.LogInformation($"Processed request to get {(isArchived ? "archived" : "active")} threads for user {UserId}. Found {response.Threads.Count} threads");
                 return Ok(response);
 			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, e.Message);
-				return StatusCode(500, "An unknown error occurred.");
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -118,17 +119,17 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-			    _logger.LogInformation($"Received request to create thread for user {UserId}");
+			    _logger.LogInformation($"Received request to create thread for user {UserId}. Request body: {JsonConvert.SerializeObject(thread)}");
                 thread.AssertIsValid();
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var createdThread = _threadService.CreateThread(model, _threadRepository, _mapper);
-			    _logger.LogInformation($"Processed request to create thread for user {UserId}");
+			    _logger.LogInformation($"Processed request to create thread for user {UserId}. Result body: {JsonConvert.SerializeObject(createdThread)}");
 				return Ok(_mapper.Map<ThreadDto>(createdThread));
 			}
 			catch (InvalidThreadException)
 			{
-				_logger.LogWarning($"User {UserId} attempted to add invalid thread {thread}.");
+				_logger.LogWarning($"User {UserId} attempted to add invalid thread {JsonConvert.SerializeObject(thread)}");
 				return BadRequest("The supplied thread is invalid.");
 			}
 			catch (CharacterNotFoundException)
@@ -138,8 +139,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			}
 			catch (Exception e)
 			{
-				_logger.LogError($"Error creating thread {thread}: {e.Message}", e);
-				return StatusCode(500, "An unknown error occurred.");
+				_logger.LogError($"Error creating thread {JsonConvert.SerializeObject(thread)}: {e.Message}", e);
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -165,18 +166,18 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 			try
 			{
-			    _logger.LogInformation($"Received request to update thread {threadId} for user {UserId}");
+			    _logger.LogInformation($"Received request to update thread {threadId} for user {UserId}. Request body: {JsonConvert.SerializeObject(thread)}");
 				thread.AssertIsValid();
 				_threadService.AssertUserOwnsThread(thread.ThreadId, UserId, _threadRepository);
 				_characterService.AssertUserOwnsCharacter(thread.CharacterId, UserId, _characterRepository);
 				var model = _mapper.Map<Models.DomainModels.Thread>(thread);
 				var updatedThread = _threadService.UpdateThread(model, _threadRepository, _mapper);
-			    _logger.LogInformation($"Processed request to update thread {threadId} for user {UserId}");
+			    _logger.LogInformation($"Processed request to update thread {threadId} for user {UserId}. Result body: {JsonConvert.SerializeObject(updatedThread)}");
 				return Ok(_mapper.Map<ThreadDto>(updatedThread));
 			}
 			catch (InvalidThreadException)
 			{
-				_logger.LogWarning($"User {UserId} attempted to add invalid thread {thread}.");
+				_logger.LogWarning($"User {UserId} attempted to add invalid thread {JsonConvert.SerializeObject(thread)}.");
 				return BadRequest("The supplied thread is invalid.");
 			}
 			catch (ThreadNotFoundException)
@@ -191,8 +192,8 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			}
 			catch (Exception e)
 			{
-				_logger.LogError($"Error updating thread {thread}: {e.Message}", e);
-				return StatusCode(500, "An unknown error occurred.");
+				_logger.LogError($"Error updating thread {JsonConvert.SerializeObject(thread)}: {e.Message}", e);
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -230,7 +231,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			catch (Exception e)
 			{
 				_logger.LogError($"Error deleting thread {threadId}: {e.Message}", e);
-				return StatusCode(500, "An unknown error occurred.");
+				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
 
@@ -250,7 +251,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		{
 		    try
 		    {
-		        _logger.LogInformation($"Received request to export threads for user {UserId}. (IncludeHiatused: {includeHiatused}, IncludeArchived: {includeArchive}");
+		        _logger.LogInformation($"Received request to export threads for user {UserId}. (IncludeHiatused: {includeHiatused}, IncludeArchived: {includeArchive})");
                 var characters = _characterService.GetCharacters(UserId, _characterRepository, _mapper, includeHiatused);
 		        var threads =
 		            _threadService.GetThreadsByCharacter(UserId, includeArchive, includeHiatused, _threadRepository, _mapper);
@@ -267,14 +268,14 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		            };
 		            Response.Headers.Add("Content-Disposition", cd.ToString());
 		            Response.Headers.Add("X-Content-Type-Options", "nosniff");
-		            _logger.LogInformation($"Processed request to export threads for user {UserId}. (IncludeHiatused: {includeHiatused}, IncludeArchived: {includeArchive}");
+		            _logger.LogInformation($"Processed request to export threads for user {UserId}. (IncludeHiatused: {includeHiatused}, IncludeArchived: {includeArchive})");
                     return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 }
 		    }
 		    catch (Exception e)
 		    {
                 _logger.LogError(e, $"Error exporting threads for User {UserId}: {e.Message}");
-		        return StatusCode(500, "An unknown error occurred.");
+		        return StatusCode(500, "An unexpected error occurred.");
 		    }
 		}
 
@@ -298,13 +299,13 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	        {
 	            _logger.LogInformation($"Received request to get all thread tags for user {UserId}");
                 var tags = _threadService.GetAllTags(UserId, _threadRepository, _mapper);
-	            _logger.LogInformation($"Processed request to get all thread tags for user {UserId}");
+	            _logger.LogInformation($"Processed request to get all thread tags for user {UserId}. Found {tags.Count()} tags.");
                 return Ok(tags);
 	        }
 	        catch (Exception e)
 	        {
 	            _logger.LogError(e, $"Error retrieving tags for user: {e.Message}");
-	            return StatusCode(500, "An unknown error occurred.");
+	            return StatusCode(500, "An unexpected error occurred.");
             }
 	    }
     }
