@@ -25,3 +25,30 @@
   deploy:
     - provider: Environment
       name: RPThreadTrackerV3-BackEnd-Prod
+-
+  version: '1.0.{build}'
+  image: Visual Studio 2017
+  branches:
+    only:
+    - development
+  init:
+    - cmd: git config --global core.autocrlf true
+  before_build:
+    - cmd: dotnet --version
+    - cmd: dotnet restore RPThreadTrackerV3.BackEnd.sln --verbosity m
+  build_script:
+    - cmd: dotnet publish RPThreadTrackerV3.BackEnd.sln -c Release
+  test_script:
+    - cmd: sh ./coverage.sh
+  after_test:
+    ps: |
+      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh -f "RPThreadTrackerV3.BackEnd.Test/coverage.opencover.xml"
+  artifacts:
+    - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.1\publish'
+      name: WebSite
+      type: WebDeployPackage
+  deploy:
+    - provider: Environment
+      name: RPThreadTrackerV3-BackEnd-Staging
