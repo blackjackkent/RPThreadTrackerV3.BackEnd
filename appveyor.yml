@@ -12,14 +12,14 @@
   build_script:
     - cmd: dotnet publish RPThreadTrackerV3.BackEnd.sln -c Release
   test_script:
-    - ps: sh ./coverage.sh
+    - cmd: sh ./coverage.sh
   after_test:
     ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "coverage.xml"
+      bash codecov.sh -f "RPThreadTrackerV3.BackEnd.Test/coverage.opencover.xml"
   artifacts:
-    - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.0\publish'
+    - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.1\publish'
       name: WebSite
       type: WebDeployPackage
   deploy:
