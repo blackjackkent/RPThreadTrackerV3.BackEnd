@@ -42,9 +42,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
                 // Arrange
                 var threads = new List<ThreadDto>
                 {
-                    new ThreadDto { PostId = "1", Character = new CharacterDto { CharacterId = 2 } },
-                    new ThreadDto { PostId = "2",  Character = new CharacterDto { CharacterId = 3 } },
-                    new ThreadDto { PostId = "3",  Character = new CharacterDto { CharacterId = 4 } }
+                    new ThreadDto { ThreadId = 5, PostId = "1", Character = new CharacterDto { CharacterId = 2 } },
+                    new ThreadDto { ThreadId = 4, PostId = "2",  Character = new CharacterDto { CharacterId = 3 } },
+                    new ThreadDto { ThreadId = 6, PostId = "3",  Character = new CharacterDto { CharacterId = 4 } }
                 };
 
                 // Act
@@ -54,9 +54,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Models.ViewModels
 
                 // Assert
                 data.Count.Should().Be(3);
-                data.Count(t => t.PostId == "1").Should().Be(1);
-                data.Count(t => t.PostId == "2").Should().Be(1);
-                data.Count(t => t.PostId == "3").Should().Be(1);
+                data.Count(t => t.PostId == "1" && t.ThreadId == 5).Should().Be(1);
+                data.Count(t => t.PostId == "2" && t.ThreadId == 4).Should().Be(1);
+                data.Count(t => t.PostId == "3" && t.ThreadId == 6).Should().Be(1);
             }
         }
     }

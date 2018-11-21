@@ -7,6 +7,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
 {
     public class MockThreadStatusRequestItem
     {
+		public int? ThreadId { get; set; }
         public string PostId { get; set; }
     }
 }

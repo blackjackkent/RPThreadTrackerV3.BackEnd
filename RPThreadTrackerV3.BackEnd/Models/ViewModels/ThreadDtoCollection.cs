@@ -48,6 +48,7 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
 	    {
 		    var objects = threads.Where(t => !string.IsNullOrEmpty(t.PostId)).Select(t => new ThreadStatusRequestItem
 		    {
+				ThreadId = t.ThreadId,
 			    PostId = t.PostId,
 				PartnerUrlIdentifier = t.PartnerUrlIdentifier,
 				CharacterUrlIdentifier = t.Character.UrlIdentifier,
@@ -57,8 +58,10 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels
 	    }
 
         private class ThreadStatusRequestItem
-        {
-            public string PostId { get; set; }
+		{
+			public int? ThreadId { get; set; }
+
+			public string PostId { get; set; }
 
             public string CharacterUrlIdentifier { get; set; }
 
