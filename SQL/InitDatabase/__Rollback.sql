@@ -1,8 +1,8 @@
 USE RPThreadTracker;
 GO
 
-IF OBJECT_ID('dbo.Log', 'U') IS NOT NULL 
-  DROP TABLE dbo.Log; 
+IF OBJECT_ID('dbo.Logging', 'U') IS NOT NULL 
+  DROP TABLE dbo.Logging; 
 IF OBJECT_ID('dbo.ThreadTags', 'U') IS NOT NULL 
   DROP TABLE dbo.ThreadTags;
 IF OBJECT_ID('dbo.Threads', 'U') IS NOT NULL 
