@@ -24,7 +24,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _childController = new MockChildController();
         }
 
-        public class Properties : BaseControllerTests
+        public class Props : BaseControllerTests
         {
             [Fact]
             public void UserIdReturnsClaimsPrincipalUserId()
