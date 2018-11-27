@@ -34,12 +34,12 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 			{
 				throw new ThreadNotFoundException();
 			}
-			_context.Entry(existingThread).CurrentValues.SetValues(entity);
+			Context.Entry(existingThread).CurrentValues.SetValues(entity);
 			foreach (var existingTag in existingThread.ThreadTags.ToList())
 			{
 				if (entity.ThreadTags.All(t => t.ThreadTagId != existingTag.ThreadTagId))
 				{
-					_context.ThreadTags.Remove(existingTag);
+					Context.ThreadTags.Remove(existingTag);
 				}
 			}
 			foreach (var updatedTag in entity.ThreadTags)
@@ -60,7 +60,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 						.FirstOrDefault(c => c.ThreadTagId == updatedTag.ThreadTagId);
 					if (existingTag != null)
 					{
-						_context.Entry(existingTag).CurrentValues.SetValues(updatedTag);
+						Context.Entry(existingTag).CurrentValues.SetValues(updatedTag);
 					}
 					else
 					{
@@ -74,11 +74,11 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 					}
 				}
 			}
-			_context.SaveChanges();
-			_context.Entry(existingThread).Reload();
+			Context.SaveChanges();
+			Context.Entry(existingThread).Reload();
 		    if (existingThread.Character == null)
 		    {
-		        _context.Entry(existingThread).Reference(p => p.Character).Load();
+		        Context.Entry(existingThread).Reference(p => p.Character).Load();
 		    }
 		    return existingThread;
 		}
