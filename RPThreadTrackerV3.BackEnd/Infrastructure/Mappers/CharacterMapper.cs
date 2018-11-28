@@ -27,7 +27,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
 				.ForMember(d => d.User, o => o.Ignore())
 				.ReverseMap();
 			CreateMap<Character, CharacterDto>()
-				.ForMember(d => d.HomeUrl, o => o.ResolveUsing<CharacterHomeUrlResolver>())
+				.ForMember(d => d.HomeUrl, o => o.MapFrom<CharacterHomeUrlResolver>())
 				.ReverseMap();
 		}
 	}
