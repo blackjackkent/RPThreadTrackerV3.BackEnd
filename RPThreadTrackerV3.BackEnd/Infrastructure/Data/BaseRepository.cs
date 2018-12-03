@@ -18,47 +18,47 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     public class BaseRepository<T> : IRepository<T>
 	    where T : class, IEntity
 	{
-        /// <summary>
-        /// The database context.
-        /// </summary>
-        protected readonly TrackerContext _context;
+	    /// <summary>
+	    /// Gets the database context.
+	    /// </summary>
+	    protected TrackerContext Context { get; }
 
-        /// <summary>
+	    /// <summary>
         /// Initializes a new instance of the <see cref="BaseRepository{T}"/> class.
         /// </summary>
         /// <param name="context">The database context.</param>
         public BaseRepository(TrackerContext context)
 		{
-			_context = context;
+			Context = context;
 		}
 
 	    /// <inheritdoc />
 	    public T Create(T entity)
 		{
-			_context.Add(entity);
-			_context.SaveChanges();
+			Context.Add(entity);
+			Context.SaveChanges();
 			return entity;
 		}
 
 	    /// <inheritdoc />
 	    public bool Delete(T entity)
 		{
-			_context.Remove(entity);
-			var rowsAffected = _context.SaveChanges();
+			Context.Remove(entity);
+			var rowsAffected = Context.SaveChanges();
 			return rowsAffected > 0;
 		}
 
 	    /// <inheritdoc />
 	    public bool ExistsWhere(Expression<Func<T, bool>> filter)
 		{
-			var query = _context.Set<T>().AsQueryable();
+			var query = Context.Set<T>().AsQueryable();
 			return query.Where(filter).Any();
 		}
 
 	    /// <inheritdoc />
 	    public IEnumerable<T> GetAll(List<string> navigationProperties = null)
 		{
-			var query = _context.Set<T>().AsQueryable();
+			var query = Context.Set<T>().AsQueryable();
 			if (navigationProperties == null)
 			{
 				return query.ToList();
@@ -70,7 +70,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 	    /// <inheritdoc />
 	    public IEnumerable<T> GetWhere(Expression<Func<T, bool>> filter, List<string> navigationProperties = null)
 		{
-			var query = _context.Set<T>().AsQueryable();
+			var query = Context.Set<T>().AsQueryable();
 			if (navigationProperties == null)
 			{
 				return query.Where(filter).ToList();
@@ -83,8 +83,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 	    /// <inheritdoc />
 	    public virtual T Update(string id, T entity)
 		{
-			_context.Update(entity);
-			_context.SaveChanges();
+			Context.Update(entity);
+			Context.SaveChanges();
 			return entity;
 		}
 	}

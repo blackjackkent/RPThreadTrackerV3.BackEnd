@@ -26,7 +26,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Mappers
 			CreateMap<Thread, Data.Entities.Thread>()
 				.ReverseMap();
 			CreateMap<Thread, ThreadDto>()
-				.ForMember(d => d.ThreadHomeUrl, o => o.ResolveUsing<ThreadHomeUrlResolver>())
+				.ForMember(d => d.ThreadHomeUrl, o => o.MapFrom<ThreadHomeUrlResolver>())
 				.ReverseMap();
 			CreateMap<ThreadTag, Data.Entities.ThreadTag>()
 				.ReverseMap();
