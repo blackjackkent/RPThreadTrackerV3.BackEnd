@@ -103,13 +103,11 @@ namespace RPThreadTrackerV3.BackEnd.Models.ViewModels.PublicViews
         {
             TurnFilter.AssertIsValid();
             var slugRegex = new Regex(@"^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$");
-            List<string> reservedSlugs = new List<string> { "myturn", "yourturn", "theirturn", "archived", "queued", "legacy" };
             var invalid =
                 string.IsNullOrEmpty(Name)
                 || string.IsNullOrEmpty(Slug)
                 || !slugRegex.IsMatch(Slug)
-                || !Columns.Any()
-                || reservedSlugs.Contains(Slug);
+                || !Columns.Any();
             if (invalid)
             {
                 throw new InvalidPublicViewException();
