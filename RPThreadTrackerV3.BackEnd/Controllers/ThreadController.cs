@@ -35,26 +35,29 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		private readonly IRepository<Thread> _threadRepository;
 		private readonly ICharacterService _characterService;
 		private readonly IRepository<Character> _characterRepository;
+	    private readonly IRepository<ThreadTag> _tagRepository;
 		private readonly IExporterService _exporterService;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ThreadController"/> class.
-        /// </summary>
-        /// <param name="logger">The logger.</param>
-        /// <param name="mapper">The mapper.</param>
-        /// <param name="threadService">The thread service.</param>
-        /// <param name="threadRepository">The thread repository.</param>
-        /// <param name="characterService">The character service.</param>
-        /// <param name="characterRepository">The character repository.</param>
-        /// <param name="exporterService">The exporter service.</param>
-        public ThreadController(
+	    /// <summary>
+	    /// Initializes a new instance of the <see cref="ThreadController"/> class.
+	    /// </summary>
+	    /// <param name="logger">The logger.</param>
+	    /// <param name="mapper">The mapper.</param>
+	    /// <param name="threadService">The thread service.</param>
+	    /// <param name="threadRepository">The thread repository.</param>
+	    /// <param name="characterService">The character service.</param>
+	    /// <param name="characterRepository">The character repository.</param>
+	    /// <param name="exporterService">The exporter service.</param>
+	    /// <param name="tagRepository">The tag repository.</param>
+	    public ThreadController(
 		    ILogger<ThreadController> logger,
 		    IMapper mapper,
 		    IThreadService threadService,
 			IRepository<Thread> threadRepository,
 		    ICharacterService characterService,
 			IRepository<Character> characterRepository,
-		    IExporterService exporterService)
+		    IExporterService exporterService,
+		    IRepository<ThreadTag> tagRepository)
 		{
 			_logger = logger;
 			_mapper = mapper;
@@ -63,6 +66,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 			_characterService = characterService;
 			_characterRepository = characterRepository;
 			_exporterService = exporterService;
+		    _tagRepository = tagRepository;
 		}
 
         /// <summary>
@@ -307,6 +311,37 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	            _logger.LogError(e, $"Error retrieving tags for user: {e.Message}");
 	            return StatusCode(500, "An unexpected error occurred.");
             }
+	    }
+
+        /// <summary>
+        /// Processes a request to update the text content of a particular tag used by the current user.
+        /// </summary>
+        /// <param name="currentTag">The tag value to be replaced.</param>
+        /// <param name="replacementTag">The tag which should replace the current tag text.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful update of tag</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
+        [HttpPut]
+	    [Route("tags")]
+	    [ProducesResponseType(200)]
+	    [ProducesResponseType(500)]
+	    public IActionResult UpdateTag([FromQuery]string currentTag, [FromQuery]string replacementTag)
+	    {
+	        try
+	        {
+	            _logger.LogInformation($"Received request to replace tag {currentTag} with {replacementTag} for user {UserId}");
+	            _threadService.ReplaceTag(currentTag, replacementTag, UserId, _tagRepository, _mapper);
+	            _logger.LogInformation($"Processed request to replace tag {currentTag} with {replacementTag} for user {UserId}.");
+	            return Ok();
+	        }
+	        catch (Exception e)
+	        {
+	            _logger.LogError(e, $"Error replacing tag {currentTag} with {replacementTag} for user: {e.Message}");
+	            return StatusCode(500, "An unexpected error occurred.");
+	        }
 	    }
     }
 }

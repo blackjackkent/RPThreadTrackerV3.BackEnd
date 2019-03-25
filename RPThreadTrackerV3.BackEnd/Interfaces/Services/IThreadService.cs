@@ -92,5 +92,8 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// List of <see cref="Thread" /> objects associated with the given public view.
         /// </returns>
         IEnumerable<Thread> GetThreadsForView(PublicView view, IRepository<Entities.Thread> threadRepository, IMapper mapper);
+
+        void ReplaceTag(string currentTag, string replacementTag, string userId,
+            IRepository<Entities.ThreadTag> tagRepository, IMapper mapper);
     }
 }

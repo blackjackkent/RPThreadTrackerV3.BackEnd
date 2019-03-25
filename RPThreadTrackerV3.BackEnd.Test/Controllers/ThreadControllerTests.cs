@@ -36,6 +36,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
         private readonly Mock<IExporterService> _mockExporterService;
         private readonly Mock<ICharacterService> _mockCharacterService;
         private readonly Mock<IRepository<Entities.Character>> _mockCharacterRepository;
+        private readonly Mock<IRepository<Entities.ThreadTag>> _mockTagRepository;
 
         public ThreadControllerTests()
         {
@@ -93,8 +94,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockThreadRepository = new Mock<IRepository<Entities.Thread>>();
             _mockCharacterService = new Mock<ICharacterService>();
             _mockCharacterRepository = new Mock<IRepository<Entities.Character>>();
+            _mockTagRepository = new Mock<IRepository<Entities.ThreadTag>>();
             _mockExporterService = new Mock<IExporterService>();
-            Controller = new ThreadController(mockLogger.Object, _mockMapper.Object, _mockThreadService.Object, _mockThreadRepository.Object, _mockCharacterService.Object, _mockCharacterRepository.Object, _mockExporterService.Object);
+            Controller = new ThreadController(mockLogger.Object, _mockMapper.Object, _mockThreadService.Object, _mockThreadRepository.Object, _mockCharacterService.Object, _mockCharacterRepository.Object, _mockExporterService.Object, _mockTagRepository.Object);
             InitControllerContext();
         }
 
