@@ -124,6 +124,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    return mapper.Map<List<Thread>>(filteredThreads);
 	    }
 
+        /// <inheritdoc />
         public void ReplaceTag(string currentTag, string replacementTag, string userId, IRepository<ThreadTag> tagRepository, IMapper mapper)
         {
             var normalized = currentTag.ToUpperInvariant();
@@ -132,6 +133,17 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             {
                 tag.TagText = replacementTag;
                 tagRepository.Update(tag.ThreadTagId, tag);
+            }
+        }
+
+        /// <inheritdoc />
+        public void DeleteTag(string tagText, string userId, IRepository<ThreadTag> tagRepository, IMapper mapper)
+        {
+            var normalized = tagText.ToUpperInvariant();
+            var existingTags = tagRepository.GetWhere(t => t.TagText.ToUpperInvariant() == normalized && t.Thread.Character.UserId == userId).ToList();
+            foreach (var tag in existingTags)
+            {
+                tagRepository.Delete(tag);
             }
         }
     }

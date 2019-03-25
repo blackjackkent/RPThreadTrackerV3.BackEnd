@@ -95,5 +95,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
 
         void ReplaceTag(string currentTag, string replacementTag, string userId,
             IRepository<Entities.ThreadTag> tagRepository, IMapper mapper);
+
+        void DeleteTag(string tagText, string userId, IRepository<Entities.ThreadTag> tagRepository, IMapper mapper);
     }
 }

@@ -343,5 +343,35 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 	            return StatusCode(500, "An unexpected error occurred.");
 	        }
 	    }
+
+	    /// <summary>
+	    /// Processes a request to remove a given tag from all threads belonging to the current user.
+	    /// </summary>
+	    /// <param name="currentTag">The tag value to be removed.</param>
+	    /// <returns>
+	    /// HTTP response containing the results of the request.<para />
+	    /// <list type="table">
+	    /// <item><term>200 OK</term><description>Response code for successful removal of tag</description></item>
+	    /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+	    /// </returns>
+	    [HttpDelete]
+	    [Route("tags/{tagText}")]
+	    [ProducesResponseType(200)]
+	    [ProducesResponseType(500)]
+	    public IActionResult DeleteTag(string tagText)
+	    {
+	        try
+	        {
+	            _logger.LogInformation($"Received request to remove tag {tagText} for user {UserId}");
+	            _threadService.DeleteTag(tagText, UserId, _tagRepository, _mapper);
+	            _logger.LogInformation($"Processed request to remove tag {tagText} for user {UserId}.");
+	            return Ok();
+	        }
+	        catch (Exception e)
+	        {
+	            _logger.LogError(e, $"Error removing tag {tagText} for user: {e.Message}");
+	            return StatusCode(500, "An unexpected error occurred.");
+	        }
+	    }
     }
 }
