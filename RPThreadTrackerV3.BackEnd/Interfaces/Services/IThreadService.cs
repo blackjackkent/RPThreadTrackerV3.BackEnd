@@ -93,9 +93,23 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// </returns>
         IEnumerable<Thread> GetThreadsForView(PublicView view, IRepository<Entities.Thread> threadRepository, IMapper mapper);
 
-        void ReplaceTag(string currentTag, string replacementTag, string userId,
-            IRepository<Entities.ThreadTag> tagRepository, IMapper mapper);
+        /// <summary>
+        /// Updates all tags with the given text for threads belonging to the given user.
+        /// </summary>
+        /// <param name="currentTag">The existing tag which should be replaced.</param>
+        /// <param name="replacementTag">The new text which should replace the existing tag.</param>
+        /// <param name="userId">The user ID.</param>
+        /// <param name="tagRepository">The tag repository.</param>
+        /// <param name="mapper">The application's object mapper.</param>
+        void ReplaceTag(string currentTag, string replacementTag, string userId, IRepository<Entities.ThreadTag> tagRepository, IMapper mapper);
 
+        /// <summary>
+        /// Deletes all tags with the given tag text for threads belonging to the current user.
+        /// </summary>
+        /// <param name="tagText">The existing tag which should be removed.</param>
+        /// <param name="userId">The user ID.</param>
+        /// <param name="tagRepository">The tag repository.</param>
+        /// <param name="mapper">The application's object mapper.</param>
         void DeleteTag(string tagText, string userId, IRepository<Entities.ThreadTag> tagRepository, IMapper mapper);
     }
 }

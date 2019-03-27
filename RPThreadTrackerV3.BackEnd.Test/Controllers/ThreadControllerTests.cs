@@ -494,5 +494,61 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 body.Should().HaveCount(3);
             }
         }
+
+        public class UpdateTag : ThreadControllerTests
+        {
+            [Fact]
+            public void ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockThreadService.Setup(s => s.ReplaceTag("currentTag", "replacementTag", "12345", _mockTagRepository.Object, _mockMapper.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = Controller.UpdateTag("currentTag", "replacementTag");
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public void ReturnsOkResponseWhenRequestSuccessful()
+            {
+                // Act
+                var result = Controller.UpdateTag("currentTag", "replacementTag");
+
+                // Assert
+                _mockThreadService.Verify(s => s.ReplaceTag("currentTag", "replacementTag", "12345", _mockTagRepository.Object, _mockMapper.Object), Times.Once);
+                result.Should().BeOfType<OkResult>();
+            }
+        }
+
+        public class DeleteTag : ThreadControllerTests
+        {
+            [Fact]
+            public void ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockThreadService.Setup(s => s.DeleteTag("tagText", "12345", _mockTagRepository.Object, _mockMapper.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = Controller.DeleteTag("tagText");
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public void ReturnsOkResponseWhenRequestSuccessful()
+            {
+                // Act
+                var result = Controller.DeleteTag("tagText");
+
+                // Assert
+                _mockThreadService.Verify(s => s.DeleteTag("tagText", "12345", _mockTagRepository.Object, _mockMapper.Object), Times.Once);
+                result.Should().BeOfType<OkResult>();
+            }
+        }
     }
 }
