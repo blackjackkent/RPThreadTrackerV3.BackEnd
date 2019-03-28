@@ -90,7 +90,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             var threads = threadRepository.GetWhere(t => t.Character.UserId == userId, new List<string> { "ThreadTags" })
                 .ToList();
             var rawTags = threads.SelectMany(t => t.ThreadTags);
-            var deduplicated = rawTags.GroupBy(t => t.TagText).Select(g => g.First());
+            var deduplicated = rawTags.GroupBy(t => t.TagText.ToUpperInvariant()).Select(g => g.First());
             return deduplicated.Select(t => t.TagText);
         }
 

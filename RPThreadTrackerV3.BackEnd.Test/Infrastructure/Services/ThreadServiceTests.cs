@@ -117,6 +117,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 ThreadId = 4,
                 Thread = new Thread()
             };
+            var duplicateTag = new ThreadTag
+            {
+                TagText = "tag1",
+                ThreadTagId = "ThreadTag5",
+                ThreadId = 3
+            };
             var thread1 = new Thread
             {
                 Character = new Character { UserId = "12345" },
@@ -134,7 +140,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 ThreadTags = new List<ThreadTag>
                     {
                         tag2,
-                        tag3
+                        tag3,
+                        duplicateTag
                     }
             };
             var thread3 = new Thread()
@@ -576,7 +583,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class GetAllTags : ThreadServiceTests
         {
             [Fact]
-            public void GetsDeduplicatedListOfTagsBelongingToUser()
+            public void GetsCaseInsensitiveDeduplicatedListOfTagsBelongingToUser()
             {
                 // Arrange
                 var threadList = BuildThreadListWithTags();
