@@ -14,6 +14,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
     using Interfaces.Services;
     using Models.DomainModels;
     using Models.DomainModels.PublicViews;
+    using ThreadTag = Data.Entities.ThreadTag;
 
     /// <inheritdoc />
     public class ThreadService : IThreadService
@@ -89,7 +90,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             var threads = threadRepository.GetWhere(t => t.Character.UserId == userId, new List<string> { "ThreadTags" })
                 .ToList();
             var rawTags = threads.SelectMany(t => t.ThreadTags);
-            var deduplicated = rawTags.GroupBy(t => t.TagText).Select(g => g.First());
+            var deduplicated = rawTags.GroupBy(t => t.TagText.ToUpperInvariant()).Select(g => g.First());
             return deduplicated.Select(t => t.TagText);
         }
 
@@ -122,5 +123,28 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 		    }
 		    return mapper.Map<List<Thread>>(filteredThreads);
 	    }
+
+        /// <inheritdoc />
+        public void ReplaceTag(string currentTag, string replacementTag, string userId, IRepository<ThreadTag> tagRepository, IMapper mapper)
+        {
+            var normalized = currentTag.ToUpperInvariant();
+            var existingTags = tagRepository.GetWhere(t => t.TagText.ToUpperInvariant() == normalized && t.Thread.Character.UserId == userId).ToList();
+            foreach (var tag in existingTags)
+            {
+                tag.TagText = replacementTag;
+                tagRepository.Update(tag.ThreadTagId, tag);
+            }
+        }
+
+        /// <inheritdoc />
+        public void DeleteTag(string tagText, string userId, IRepository<ThreadTag> tagRepository, IMapper mapper)
+        {
+            var normalized = tagText.ToUpperInvariant();
+            var existingTags = tagRepository.GetWhere(t => t.TagText.ToUpperInvariant() == normalized && t.Thread.Character.UserId == userId).ToList();
+            foreach (var tag in existingTags)
+            {
+                tagRepository.Delete(tag);
+            }
+        }
     }
 }

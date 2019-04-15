@@ -26,10 +26,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         private readonly ThreadService _threadService;
         private readonly Mock<IMapper> _mockMapper;
         private readonly Mock<IRepository<Thread>> _mockThreadRepository;
+        private readonly Mock<IRepository<ThreadTag>> _mockTagRepository;
 
         public ThreadServiceTests()
         {
             _mockThreadRepository = new Mock<IRepository<Thread>>();
+            _mockTagRepository = new Mock<IRepository<ThreadTag>>();
             _mockMapper = new Mock<IMapper>();
             _mockMapper.Setup(m => m.Map<DomainModels.Thread>(It.IsAny<Thread>()))
                 .Returns((Thread entity) => new DomainModels.Thread
@@ -115,6 +117,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 ThreadId = 4,
                 Thread = new Thread()
             };
+            var duplicateTag = new ThreadTag
+            {
+                TagText = "tag1",
+                ThreadTagId = "ThreadTag5",
+                ThreadId = 3
+            };
             var thread1 = new Thread
             {
                 Character = new Character { UserId = "12345" },
@@ -132,7 +140,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 ThreadTags = new List<ThreadTag>
                     {
                         tag2,
-                        tag3
+                        tag3,
+                        duplicateTag
                     }
             };
             var thread3 = new Thread()
@@ -288,6 +297,74 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 archivedThreadAnotherUsersCharacter
             };
             return threadList;
+        }
+
+        private List<ThreadTag> BuildTagList()
+        {
+            var character1 = new Character()
+            {
+                CharacterId = 1,
+                CharacterName = "Character 1",
+                IsOnHiatus = false,
+                UserId = "98765"
+            };
+            var character2 = new Character()
+            {
+                CharacterId = 2,
+                CharacterName = "Character 2",
+                IsOnHiatus = false,
+                UserId = "98765"
+            };
+            var anotherUsersCharacter = new Character()
+            {
+                CharacterId = 4,
+                CharacterName = "Another User's Character",
+                IsOnHiatus = false,
+                UserId = "12345"
+            };
+            var tag1 = new ThreadTag
+            {
+                ThreadTagId = "1",
+                TagText = "My Tag",
+                Thread = new Thread
+                {
+                    Character = character1
+                }
+            };
+            var tag2 = new ThreadTag
+            {
+                ThreadTagId = "2",
+                TagText = "My Tag",
+                Thread = new Thread()
+                {
+                    Character = character2
+                }
+            };
+            var tag3 = new ThreadTag
+            {
+                ThreadTagId = "3",
+                TagText = "My Tag",
+                Thread = new Thread
+                {
+                    Character = anotherUsersCharacter
+                }
+            };
+            var tag4 = new ThreadTag
+            {
+                ThreadTagId = "4",
+                TagText = "My Tag 2",
+                Thread = new Thread
+                {
+                    Character = character1
+                }
+            };
+            return new List<ThreadTag>
+            {
+                tag1,
+                tag2,
+                tag3,
+                tag4
+            };
         }
 
         public class GetThreads : ThreadServiceTests
@@ -506,7 +583,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
         public class GetAllTags : ThreadServiceTests
         {
             [Fact]
-            public void GetsDeduplicatedListOfTagsBelongingToUser()
+            public void GetsCaseInsensitiveDeduplicatedListOfTagsBelongingToUser()
             {
                 // Arrange
                 var threadList = BuildThreadListWithTags();
@@ -784,6 +861,130 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 
                 // Assert
                 result.Should().HaveCount(4);
+            }
+        }
+
+        public class ReplaceTag : ThreadServiceTests
+        {
+            [Fact]
+            public void DoesNothingIfTagDoesNotExistForUser()
+            {
+                // Arrange
+                var tagList = BuildTagList();
+                _mockTagRepository
+                    .Setup(r => r.GetWhere(
+                        It.Is<Expression<Func<ThreadTag, bool>>>(y => tagList.Any(y.Compile())),
+                        It.IsAny<List<string>>()))
+                    .Returns((Expression<Func<ThreadTag, bool>> predicate, List<string> navigationProperties) => tagList.Where(predicate.Compile()));
+
+                // Act
+                _threadService.ReplaceTag("My Tag 3", "replacementTag", "98765", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockTagRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<ThreadTag>()), Times.Never);
+            }
+
+            [Fact]
+            public void ReplacesAllMatchingTagsBelongingToUser()
+            {
+                // Arrange
+                var tagList = BuildTagList();
+                _mockTagRepository
+                    .Setup(r => r.GetWhere(
+                        It.Is<Expression<Func<ThreadTag, bool>>>(y => tagList.Any(y.Compile())),
+                        It.IsAny<List<string>>()))
+                    .Returns((Expression<Func<ThreadTag, bool>> predicate, List<string> navigationProperties) => tagList.Where(predicate.Compile()));
+
+                // Act
+                _threadService.ReplaceTag("My Tag", "replacementTag", "98765", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockTagRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<ThreadTag>()), Times.Exactly(2));
+                _mockTagRepository.Verify(r => r.Update("1", tagList[0]));
+                _mockTagRepository.Verify(r => r.Update("2", tagList[1]));
+            }
+
+            [Fact]
+            public void ReplacesAllMatchingTagsBelongingToUserCaseInsensitive()
+            {
+                // Arrange
+                var tagList = BuildTagList();
+                tagList[1].TagText = "my TAG";
+                _mockTagRepository
+                    .Setup(r => r.GetWhere(
+                        It.Is<Expression<Func<ThreadTag, bool>>>(y => tagList.Any(y.Compile())),
+                        It.IsAny<List<string>>()))
+                    .Returns((Expression<Func<ThreadTag, bool>> predicate, List<string> navigationProperties) => tagList.Where(predicate.Compile()));
+
+                // Act
+                _threadService.ReplaceTag("My Tag", "replacementTag", "98765", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockTagRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<ThreadTag>()), Times.Exactly(2));
+                _mockTagRepository.Verify(r => r.Update("1", tagList[0]));
+                _mockTagRepository.Verify(r => r.Update("2", tagList[1]));
+            }
+        }
+
+        public class DeleteTag : ThreadServiceTests
+        {
+            [Fact]
+            public void DoesNothingIfTagDoesNotExistForUser()
+            {
+                // Arrange
+                var tagList = BuildTagList();
+                _mockTagRepository
+                    .Setup(r => r.GetWhere(
+                        It.Is<Expression<Func<ThreadTag, bool>>>(y => tagList.Any(y.Compile())),
+                        It.IsAny<List<string>>()))
+                    .Returns((Expression<Func<ThreadTag, bool>> predicate, List<string> navigationProperties) => tagList.Where(predicate.Compile()));
+
+                // Act
+                _threadService.DeleteTag("My Tag 3", "98765", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockTagRepository.Verify(r => r.Delete(It.IsAny<ThreadTag>()), Times.Never);
+            }
+
+            [Fact]
+            public void ReplacesAllMatchingTagsBelongingToUser()
+            {
+                // Arrange
+                var tagList = BuildTagList();
+                _mockTagRepository
+                    .Setup(r => r.GetWhere(
+                        It.Is<Expression<Func<ThreadTag, bool>>>(y => tagList.Any(y.Compile())),
+                        It.IsAny<List<string>>()))
+                    .Returns((Expression<Func<ThreadTag, bool>> predicate, List<string> navigationProperties) => tagList.Where(predicate.Compile()));
+
+                // Act
+                _threadService.DeleteTag("My Tag", "98765", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockTagRepository.Verify(r => r.Delete(It.IsAny<ThreadTag>()), Times.Exactly(2));
+                _mockTagRepository.Verify(r => r.Delete(tagList[0]));
+                _mockTagRepository.Verify(r => r.Delete(tagList[1]));
+            }
+
+            [Fact]
+            public void ReplacesAllMatchingTagsBelongingToUserCaseInsensitive()
+            {
+                // Arrange
+                var tagList = BuildTagList();
+                tagList[1].TagText = "my TAG";
+                _mockTagRepository
+                    .Setup(r => r.GetWhere(
+                        It.Is<Expression<Func<ThreadTag, bool>>>(y => tagList.Any(y.Compile())),
+                        It.IsAny<List<string>>()))
+                    .Returns((Expression<Func<ThreadTag, bool>> predicate, List<string> navigationProperties) => tagList.Where(predicate.Compile()));
+
+                // Act
+                _threadService.DeleteTag("My Tag", "98765", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockTagRepository.Verify(r => r.Delete(It.IsAny<ThreadTag>()), Times.Exactly(2));
+                _mockTagRepository.Verify(r => r.Delete(tagList[0]));
+                _mockTagRepository.Verify(r => r.Delete(tagList[1]));
             }
         }
     }

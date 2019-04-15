@@ -36,6 +36,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
         private readonly Mock<IExporterService> _mockExporterService;
         private readonly Mock<ICharacterService> _mockCharacterService;
         private readonly Mock<IRepository<Entities.Character>> _mockCharacterRepository;
+        private readonly Mock<IRepository<Entities.ThreadTag>> _mockTagRepository;
 
         public ThreadControllerTests()
         {
@@ -93,8 +94,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             _mockThreadRepository = new Mock<IRepository<Entities.Thread>>();
             _mockCharacterService = new Mock<ICharacterService>();
             _mockCharacterRepository = new Mock<IRepository<Entities.Character>>();
+            _mockTagRepository = new Mock<IRepository<Entities.ThreadTag>>();
             _mockExporterService = new Mock<IExporterService>();
-            Controller = new ThreadController(mockLogger.Object, _mockMapper.Object, _mockThreadService.Object, _mockThreadRepository.Object, _mockCharacterService.Object, _mockCharacterRepository.Object, _mockExporterService.Object);
+            Controller = new ThreadController(mockLogger.Object, _mockMapper.Object, _mockThreadService.Object, _mockThreadRepository.Object, _mockCharacterService.Object, _mockCharacterRepository.Object, _mockExporterService.Object, _mockTagRepository.Object);
             InitControllerContext();
         }
 
@@ -490,6 +492,62 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Assert
                 result.Should().BeOfType<OkObjectResult>();
                 body.Should().HaveCount(3);
+            }
+        }
+
+        public class UpdateTag : ThreadControllerTests
+        {
+            [Fact]
+            public void ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockThreadService.Setup(s => s.ReplaceTag("currentTag", "replacementTag", "12345", _mockTagRepository.Object, _mockMapper.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = Controller.UpdateTag("currentTag", "replacementTag");
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public void ReturnsOkResponseWhenRequestSuccessful()
+            {
+                // Act
+                var result = Controller.UpdateTag("currentTag", "replacementTag");
+
+                // Assert
+                _mockThreadService.Verify(s => s.ReplaceTag("currentTag", "replacementTag", "12345", _mockTagRepository.Object, _mockMapper.Object), Times.Once);
+                result.Should().BeOfType<OkResult>();
+            }
+        }
+
+        public class DeleteTag : ThreadControllerTests
+        {
+            [Fact]
+            public void ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockThreadService.Setup(s => s.DeleteTag("tagText", "12345", _mockTagRepository.Object, _mockMapper.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = Controller.DeleteTag("tagText");
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public void ReturnsOkResponseWhenRequestSuccessful()
+            {
+                // Act
+                var result = Controller.DeleteTag("tagText");
+
+                // Assert
+                _mockThreadService.Verify(s => s.DeleteTag("tagText", "12345", _mockTagRepository.Object, _mockMapper.Object), Times.Once);
+                result.Should().BeOfType<OkResult>();
             }
         }
     }
