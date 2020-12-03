@@ -36,7 +36,13 @@ You can run all unit tests using your preferred C# test runner. To generate a co
 
 This application communicates with the following external services:
 
-1. A SQL Server database for Tracker-specific account information. The connection string for this database is set in `./RPThreadTrackerV3.BackEnd/appsettings.json`. You can use the scripts in `./SQL/InitDatabase` to set up a local copy of the database tables for development purposes.
+
+1. A SQL Server database for Tracker-specific account information. The connection string for this database is set in `./RPThreadTrackerV3.BackEnd/appsettings.json`. You can use the following command to set up a local copy of the database tables for development purposes:
+
+```
+cd ./SQL/InitDatabase
+sh ./InitDatabase.sh "(localdb)\mssqllocaldb" # or other local SQL server info
+```
 2. A DocumentDB NoSQL database for maintaining information about customized public views. You can run a local DocumentDB server using the [Azure CosmosDB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator), and set the connection information for this server in the `./RPThreadTrackerV3.BackEnd/appsettings.secure.json` file that you created earlier.
 
 	Unfortunately, this portion of the service can only be run on Windows machines at this time.
