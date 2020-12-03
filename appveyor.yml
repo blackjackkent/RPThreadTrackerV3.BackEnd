@@ -17,7 +17,7 @@
     ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "RPThreadTrackerV3.BackEnd.Test/coverage.opencover.xml"
+      bash codecov.sh -f "RPThreadTrackerV3.BackEnd.Test/coverage.opencover.xml" -U "-s" -A "-s"
   artifacts:
     - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.1\publish'
       name: WebSite
@@ -50,7 +50,7 @@
     ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "RPThreadTrackerV3.BackEnd.Test/coverage.opencover.xml"
+      bash codecov.sh -f "RPThreadTrackerV3.BackEnd.Test/coverage.opencover.xml" -U "-s" -A "-s"
   artifacts:
     - path: '\RPThreadTrackerV3.BackEnd\bin\Release\netcoreapp2.1\publish'
       name: WebSite
