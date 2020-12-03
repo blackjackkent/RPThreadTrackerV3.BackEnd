@@ -172,6 +172,16 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         Task AddUserToRole(IdentityUser user, string role, UserManager<IdentityUser> userManager);
 
         /// <summary>
+        /// Deletes a user's account.
+        /// </summary>
+        /// <param name="claimsUser">The claims principal.</param>
+        /// <param name="userManager">The user manager.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// </returns>
+        Task DeleteAccount(ClaimsPrincipal claimsUser, UserManager<IdentityUser> userManager);
+
+        /// <summary>
         /// Revokes the given refresh token.
         /// </summary>
         /// <param name="refreshToken">The refresh token to be revoked.</param>

@@ -157,6 +157,42 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 				_logger.LogError(e, $"Error requesting account information change for {User.Identity.Name}");
 			    return StatusCode(500, "An unexpected error occurred.");
 			}
-	    }
-	}
+        }
+
+        /// <summary>
+        /// Processes a request to delete the current user's account.
+        /// </summary>
+        /// <returns>
+        /// HTTP response containing the results of the request<para />
+        /// <list type="table"><item><term>200 OK</term><description>Response code for successful deletion of account information</description></item>
+        /// <item><term>400 Bad Request</term><description>Response code for invalid account information deletion request</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
+        [HttpDelete]
+        [Route("")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400, Type = typeof(List<string>))]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            try
+            {
+                _logger.LogInformation($"Received request to delete account information for user {UserId}");
+                var claimsUser = User;
+                await _authService.DeleteAccount(claimsUser, _userManager);
+                _logger.LogInformation($"Processed request to delete user data for user {UserId}");
+                return Ok();
+            }
+            catch (InvalidAccountDeletionException e)
+            {
+                _logger.LogWarning(e, $"Error deleting account info for {User.Identity.Name}: {e.Errors}");
+                return BadRequest(new List<string> { "You do not have permission to delete this account." });
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error deleting account information for {User.Identity.Name}");
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+    }
 }

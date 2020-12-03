@@ -726,6 +726,50 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
         }
 
+        public class DeleteAccount : AuthServiceTests
+        {
+            [Fact]
+            public async Task DeletesSuccessfully()
+            {
+                // Arrange
+                var user = new ClaimsPrincipal();
+                _mockUserManager.Setup(m => m.DeleteAsync(It.IsAny<IdentityUser>())).Returns(Task.FromResult(IdentityResult.Success));
+                _mockUserManager.Setup(m => m.GetUserAsync(It.Is<ClaimsPrincipal>(p => ReferenceEquals(p, user))))
+                    .Returns(Task.FromResult(new IdentityUser("my-username")));
+
+                // Act
+                await _authService.DeleteAccount(user, _mockUserManager.Object);
+
+                // Assert
+                _mockUserManager.Verify(m => m.DeleteAsync(It.Is<IdentityUser>(u => u.UserName == "my-username")), Times.Once);
+            }
+
+            [Fact]
+            public void ThrowsExceptionIfDeletionUnsuccessful()
+            {
+                // Arrange
+                var user = new ClaimsPrincipal();
+                _mockUserManager.Setup(m => m.GetUserAsync(It.Is<ClaimsPrincipal>(p => ReferenceEquals(p, user))))
+                    .Returns(Task.FromResult(new IdentityUser("my-username")));
+                var failureResult = IdentityResult.Failed(new List<IdentityError>
+                {
+                    new IdentityError { Description = "Test Error 1" },
+                    new IdentityError { Description = "Test Error 2" }
+                }.ToArray());
+                _mockUserManager.Setup(m => m.DeleteAsync(It.IsAny<IdentityUser>()))
+                    .Returns(Task.FromResult(failureResult));
+
+                // Act
+                Func<Task> action = async () => await _authService.DeleteAccount(user, _mockUserManager.Object);
+
+                // Assert
+                action.Should().Throw<InvalidAccountDeletionException>()
+                    .Which.Errors.Should().HaveCount(2)
+                    .And.Contain("Test Error 1")
+                    .And.Contain("Test Error 2");
+            }
+        }
+
         public class RevokeRefreshToken : AuthServiceTests
         {
             [Fact]

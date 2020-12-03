@@ -171,6 +171,51 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             }
         }
 
+        public class DeleteAccount : UserControllerTests
+        {
+            [Fact]
+            public async Task ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockAuthService.Setup(s => s.DeleteAccount(It.IsAny<ClaimsPrincipal>(), _mockUserManager.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = await Controller.DeleteAccount();
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>();
+                ((ObjectResult)result).StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public async Task ReturnsBadRequestWhenRequestIsInvalid()
+            {
+                // Arrange
+                var exception = new InvalidAccountDeletionException(new List<string> { "error1", "error2" });
+                _mockAuthService.Setup(s => s.DeleteAccount(It.IsAny<ClaimsPrincipal>(), _mockUserManager.Object))
+                    .Throws(exception);
+
+                // Act
+                var result = await Controller.DeleteAccount();
+                var body = ((BadRequestObjectResult)result).Value as List<string>;
+
+                // Assert
+                result.Should().BeOfType<BadRequestObjectResult>();
+                body.Should().HaveCount(1);
+            }
+
+            [Fact]
+            public async Task ReturnsOkWhenRequestSuccessful()
+            {
+                // Act
+                var result = await Controller.DeleteAccount();
+
+                // Assert
+                result.Should().BeOfType<OkResult>();
+            }
+        }
+
         public class ChangeAccountInformation : UserControllerTests
         {
             [Fact]

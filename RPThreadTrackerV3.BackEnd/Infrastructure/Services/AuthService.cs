@@ -254,6 +254,18 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         }
 
         /// <inheritdoc />
+        /// <exception cref="InvalidAccountDeletionException">Thrown if the account deletion could not be completed.</exception>
+        public async Task DeleteAccount(ClaimsPrincipal claimsUser, UserManager<IdentityUser> userManager)
+        {
+            var identityUser = await userManager.GetUserAsync(claimsUser);
+            var result = await userManager.DeleteAsync(identityUser);
+            if (!result.Succeeded)
+            {
+                throw new InvalidAccountDeletionException(result.Errors.Select(e => e.Description).ToList());
+            }
+        }
+
+        /// <inheritdoc />
         public void RevokeRefreshToken(string refreshToken, IRepository<RefreshToken> refreshTokenRepository)
         {
             var token = refreshTokenRepository.GetWhere(t => t.Token == refreshToken).FirstOrDefault();
