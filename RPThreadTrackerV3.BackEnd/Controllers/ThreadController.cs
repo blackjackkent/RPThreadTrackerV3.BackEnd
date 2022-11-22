@@ -373,5 +373,35 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 				return StatusCode(500, "An unexpected error occurred.");
 			}
 		}
-	}
+
+        /// <summary>
+        /// Processes a request to get all partner shortnames for all threads belonging to the current user.
+        /// </summary>
+        /// <returns>
+        /// HTTP response containing the results of the request and, if successful,
+        /// a list of thread partner shortnames as strings in the response body.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful retrieval of thread partner information</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
+        [HttpGet]
+        [Route("partners")]
+        [ProducesResponseType(200, Type = typeof(List<string>))]
+        [ProducesResponseType(500)]
+        public IActionResult Partners()
+        {
+            try
+            {
+                _logger.LogInformation($"Received request to get all thread partner information for user {UserId}");
+                var partners = _threadService.GetAllPartners(UserId, _threadRepository, _mapper);
+                _logger.LogInformation($"Processed request to get all thread partner information for user {UserId}. Found {partners.Count()} unique partners.");
+                return Ok(partners);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error retrieving partners for user: {e.Message}");
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
+    }
 }

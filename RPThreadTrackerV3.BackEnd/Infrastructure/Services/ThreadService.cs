@@ -146,5 +146,15 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
                 tagRepository.Delete(tag);
             }
         }
+
+        /// <inheritdoc />
+        public IEnumerable<string> GetAllPartners(string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
+            var threads = threadRepository.GetWhere(t => t.Character.UserId == userId)
+                .ToList();
+            var rawList = threads.Select(t => t.PartnerUrlIdentifier);
+            var deduplicated = rawList.Where(t => t != null).GroupBy(t => t.ToUpperInvariant()).Select(g => g.First());
+            return deduplicated;
+        }
     }
 }
