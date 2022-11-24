@@ -403,5 +403,36 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
+
+        /// <summary>
+        /// Processes a request to update the text content of a particular partner shortname used by the current user.
+        /// </summary>
+        /// <param name="currentShortname">The partner shortname value to be replaced.</param>
+        /// <param name="replacementShortname">The shortname which should replace the current partner shortname.</param>
+        /// <returns>
+        /// HTTP response containing the results of the request.<para />
+        /// <list type="table">
+        /// <item><term>200 OK</term><description>Response code for successful update of partner info</description></item>
+        /// <item><term>500 Internal Server Error</term><description>Response code for unexpected errors</description></item></list>
+        /// </returns>
+        [HttpPut]
+        [Route("partners")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public IActionResult UpdatePartner([FromQuery] string currentShortname, [FromQuery] string replacementShortname)
+        {
+            try
+            {
+                _logger.LogInformation($"Received request to replace partner shortname {currentShortname} with {replacementShortname} for user {UserId}");
+                _threadService.ReplacePartners(currentShortname, replacementShortname, UserId, _threadRepository, _mapper);
+                _logger.LogInformation($"Processed request to replace partner shortname {currentShortname} with {replacementShortname} for user {UserId}.");
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Error replacing partner shortname {currentShortname} with {replacementShortname} for user: {e.Message}");
+                return StatusCode(500, "An unexpected error occurred.");
+            }
+        }
     }
 }

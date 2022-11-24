@@ -156,5 +156,17 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             var deduplicated = rawList.Where(t => t != null).GroupBy(t => t.ToUpperInvariant()).Select(g => g.First());
             return deduplicated;
         }
+
+        /// <inheritdoc />
+        public void ReplacePartners(string currentShortname, string replacementShortname, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
+            var normalized = currentShortname.ToUpperInvariant();
+            var affectedThreads = threadRepository.GetWhere(t => t.PartnerUrlIdentifier != null && t.PartnerUrlIdentifier.ToUpperInvariant() == normalized && t.Character.UserId == userId).ToList();
+            foreach (var thread in affectedThreads)
+            {
+                thread.PartnerUrlIdentifier = replacementShortname;
+                threadRepository.Update(thread.ThreadId.ToString(CultureInfo.CurrentCulture), thread);
+            }
+        }
     }
 }

@@ -120,5 +120,15 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="mapper">The application's object mapper.</param>
         /// <returns>A deduplicated list of all the partner shortnames for all threads belonging to the given user, as strings.</returns>
         IEnumerable<string> GetAllPartners(string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
+
+        /// <summary>
+        /// Updates all partner shortnames with the given text for threads belonging to the given user.
+        /// </summary>
+        /// <param name="currentShortname">The existing partner shortname which should be replaced.</param>
+        /// <param name="replacementShortname">The new text which should replace the existing partner shortname.</param>
+        /// <param name="userId">The user ID.</param>
+        /// <param name="threadRepository">The tag repository.</param>
+        /// <param name="mapper">The application's object mapper.</param>
+        void ReplacePartners(string currentShortname, string replacementShortname, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
     }
 }
