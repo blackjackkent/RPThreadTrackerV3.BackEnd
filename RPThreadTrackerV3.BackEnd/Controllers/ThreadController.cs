@@ -424,7 +424,7 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             try
             {
                 _logger.LogInformation($"Received request to replace partner shortname {currentShortname} with {replacementShortname} for user {UserId}");
-                _threadService.ReplacePartners(currentShortname, replacementShortname, UserId, _threadRepository, _mapper);
+                _threadService.ReplacePartner(currentShortname, replacementShortname, UserId, _threadRepository, _mapper);
                 _logger.LogInformation($"Processed request to replace partner shortname {currentShortname} with {replacementShortname} for user {UserId}.");
                 return Ok();
             }

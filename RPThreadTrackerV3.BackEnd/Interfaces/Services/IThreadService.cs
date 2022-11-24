@@ -129,6 +129,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Services
         /// <param name="userId">The user ID.</param>
         /// <param name="threadRepository">The tag repository.</param>
         /// <param name="mapper">The application's object mapper.</param>
-        void ReplacePartners(string currentShortname, string replacementShortname, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
+        void ReplacePartner(string currentShortname, string replacementShortname, string userId, IRepository<Entities.Thread> threadRepository, IMapper mapper);
     }
 }

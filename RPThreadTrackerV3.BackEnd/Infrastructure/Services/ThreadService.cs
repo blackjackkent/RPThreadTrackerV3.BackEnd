@@ -158,7 +158,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
         }
 
         /// <inheritdoc />
-        public void ReplacePartners(string currentShortname, string replacementShortname, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        public void ReplacePartner(string currentShortname, string replacementShortname, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
         {
             var normalized = currentShortname.ToUpperInvariant();
             var affectedThreads = threadRepository.GetWhere(t => t.PartnerUrlIdentifier != null && t.PartnerUrlIdentifier.ToUpperInvariant() == normalized && t.Character.UserId == userId).ToList();
