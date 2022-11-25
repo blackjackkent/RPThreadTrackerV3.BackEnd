@@ -550,5 +550,67 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 result.Should().BeOfType<OkResult>();
             }
         }
+
+        public class Partners : ThreadControllerTests
+        {
+            [Fact]
+            public void ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockThreadService.Setup(s => s.GetAllPartners("12345", _mockThreadRepository.Object, _mockMapper.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = Controller.Partners();
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public void ReturnsOkResponseWithTagsWhenRequestSuccessful()
+            {
+                // Arrange
+                var partners = new List<string> { "partner1", "partner2", "partner3" };
+                _mockThreadService.Setup(s => s.GetAllPartners("12345", _mockThreadRepository.Object, _mockMapper.Object))
+                    .Returns(partners);
+
+                // Act
+                var result = Controller.Partners();
+                var body = ((OkObjectResult)result).Value as List<string>;
+
+                // Assert
+                result.Should().BeOfType<OkObjectResult>();
+                body.Should().HaveCount(3);
+            }
+        }
+
+        public class UpdatePartner : ThreadControllerTests
+        {
+            [Fact]
+            public void ReturnsServerErrorWhenUnexpectedErrorOccurs()
+            {
+                // Arrange
+                _mockThreadService.Setup(s => s.ReplacePartner("currentPartner", "replacementPartner", "12345", _mockThreadRepository.Object, _mockMapper.Object))
+                    .Throws<NullReferenceException>();
+
+                // Act
+                var result = Controller.UpdatePartner("currentPartner", "replacementPartner");
+
+                // Assert
+                result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(500);
+            }
+
+            [Fact]
+            public void ReturnsOkResponseWhenRequestSuccessful()
+            {
+                // Act
+                var result = Controller.UpdatePartner("currentPartner", "replacementPartner");
+
+                // Assert
+                _mockThreadService.Verify(s => s.ReplacePartner("currentPartner", "replacementPartner", "12345", _mockThreadRepository.Object, _mockMapper.Object), Times.Once);
+                result.Should().BeOfType<OkResult>();
+            }
+        }
     }
 }

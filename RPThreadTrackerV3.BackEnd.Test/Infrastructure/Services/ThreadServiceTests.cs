@@ -210,20 +210,23 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 CharacterId = 1,
                 Character = character1,
                 IsArchived = false,
+                PartnerUrlIdentifier = "MyPartner1"
             };
             var activeThreadActiveCharacter1_2 = new Thread
             {
                 ThreadId = 2,
                 CharacterId = 1,
                 Character = character1,
-                IsArchived = false
+                IsArchived = false,
+                PartnerUrlIdentifier = "MyPartner2"
             };
             var archivedThreadActiveCharacter1 = new Thread
             {
                 ThreadId = 3,
                 CharacterId = 1,
                 Character = character1,
-                IsArchived = true
+                IsArchived = true,
+                PartnerUrlIdentifier = "MyPartner2"
             };
             var activeThreadActiveCharacter2 = new Thread
             {
@@ -231,20 +234,23 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 CharacterId = 2,
                 Character = character2,
                 IsArchived = false,
+                PartnerUrlIdentifier = "MyPartner3"
             };
             var activeThreadActiveCharacter2_2 = new Thread
             {
                 ThreadId = 5,
                 CharacterId = 2,
                 Character = character2,
-                IsArchived = false
+                IsArchived = false,
+                PartnerUrlIdentifier = "MyPartner3"
             };
             var archivedThreadActiveCharacter2 = new Thread
             {
                 ThreadId = 6,
                 CharacterId = 2,
                 Character = character2,
-                IsArchived = true
+                IsArchived = true,
+                PartnerUrlIdentifier = "MyPartner3"
             };
             var activeThreadHiatusedCharacter = new Thread
             {
@@ -272,14 +278,16 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 ThreadId = 10,
                 CharacterId = 4,
                 Character = anotherUsersCharacter,
-                IsArchived = false
+                IsArchived = false,
+                PartnerUrlIdentifier = "AnotherUsersPartner"
             };
             var archivedThreadAnotherUsersCharacter = new Thread
             {
                 ThreadId = 11,
                 CharacterId = 4,
                 Character = anotherUsersCharacter,
-                IsArchived = true
+                IsArchived = true,
+                PartnerUrlIdentifier = "MyPartner3"
             };
 
             var threadList = new List<Thread>
@@ -615,6 +623,37 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             }
         }
 
+        public class GetAllPartners : ThreadServiceTests
+        {
+            [Fact]
+            public void GetsCaseInsensitiveDeduplicatedListOfPartnersBelongingToUser()
+            {
+                // Act
+                var partners = _threadService.GetAllPartners("98765", _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                partners.Should().HaveCount(3)
+                    .And.Contain("MyPartner1")
+                    .And.Contain("MyPartner2")
+                    .And.Contain("MyPartner3");
+            }
+
+            [Fact]
+            public void ReturnsEmptyListWhenNoPartnersFoundForUser()
+            {
+                // Arrange
+                var threadList = BuildThreadListWithTags();
+                threadList.ForEach(t => t.PartnerUrlIdentifier = null);
+                _mockThreadRepository.Setup(r => r.GetWhere(It.Is<Expression<Func<Thread, bool>>>(y => threadList.Any(y.Compile())), It.IsAny<List<string>>())).Returns((Expression<Func<Thread, bool>> predicate, List<string> navigationProperties) => threadList.Where(predicate.Compile()));
+
+                // Act
+                var partners = _threadService.GetAllPartners("12345", _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                partners.Should().HaveCount(0);
+            }
+        }
+
         public class GetThreadsForView : ThreadServiceTests
         {
             public GetThreadsForView()
@@ -923,6 +962,44 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 _mockTagRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<ThreadTag>()), Times.Exactly(2));
                 _mockTagRepository.Verify(r => r.Update("1", tagList[0]));
                 _mockTagRepository.Verify(r => r.Update("2", tagList[1]));
+            }
+        }
+
+        public class ReplacePartner : ThreadServiceTests
+        {
+            [Fact]
+            public void DoesNothingIfPartnerDoesNotExistForUser()
+            {
+                // Act
+                _threadService.ReplaceTag("MyPartner4", "replacementPartner", "12345", _mockTagRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<Thread>()), Times.Never);
+            }
+
+            [Fact]
+            public void ReplacesAllMatchingPartnersBelongingToUser()
+            {
+                // Act
+                _threadService.ReplacePartner("MyPartner3", "replacementPartner", "98765", _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<Thread>()), Times.Exactly(3));
+                _mockThreadRepository.Verify(r => r.Update("4", It.Is<Thread>(t => t.ThreadId == 4 && t.PartnerUrlIdentifier == "replacementPartner")));
+                _mockThreadRepository.Verify(r => r.Update("5", It.Is<Thread>(t => t.ThreadId == 5 && t.PartnerUrlIdentifier == "replacementPartner")));
+                _mockThreadRepository.Verify(r => r.Update("6", It.Is<Thread>(t => t.ThreadId == 6 && t.PartnerUrlIdentifier == "replacementPartner")));
+            }
+
+            [Fact]
+            public void ReplacesAllMatchingPartnersBelongingToUserCaseInsensitive()
+            {
+                _threadService.ReplacePartner("mypartner3", "replacementPartner", "98765", _mockThreadRepository.Object, _mockMapper.Object);
+
+                // Assert
+                _mockThreadRepository.Verify(r => r.Update(It.IsAny<string>(), It.IsAny<Thread>()), Times.Exactly(3));
+                _mockThreadRepository.Verify(r => r.Update("4", It.Is<Thread>(t => t.ThreadId == 4 && t.PartnerUrlIdentifier == "replacementPartner")));
+                _mockThreadRepository.Verify(r => r.Update("5", It.Is<Thread>(t => t.ThreadId == 5 && t.PartnerUrlIdentifier == "replacementPartner")));
+                _mockThreadRepository.Verify(r => r.Update("6", It.Is<Thread>(t => t.ThreadId == 6 && t.PartnerUrlIdentifier == "replacementPartner")));
             }
         }
 

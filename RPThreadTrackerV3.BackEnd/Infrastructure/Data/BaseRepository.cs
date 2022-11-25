@@ -73,7 +73,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 			var query = Context.Set<T>().AsQueryable();
 			if (navigationProperties == null)
 			{
-				return query.Where(filter).ToList();
+				var result = query.Where(filter);
+				return result.ToList();
 			}
 
 			query = navigationProperties.Aggregate(query, (current, navigationProperty) => current.Include(navigationProperty));

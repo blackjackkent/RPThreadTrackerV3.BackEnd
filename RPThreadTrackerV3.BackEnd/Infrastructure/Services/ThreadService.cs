@@ -146,5 +146,27 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
                 tagRepository.Delete(tag);
             }
         }
+
+        /// <inheritdoc />
+        public IEnumerable<string> GetAllPartners(string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
+            var threads = threadRepository.GetWhere(t => t.Character.UserId == userId)
+                .ToList();
+            var rawList = threads.Select(t => t.PartnerUrlIdentifier);
+            var deduplicated = rawList.Where(t => t != null).GroupBy(t => t.ToUpperInvariant()).Select(g => g.First());
+            return deduplicated;
+        }
+
+        /// <inheritdoc />
+        public void ReplacePartner(string currentShortname, string replacementShortname, string userId, IRepository<Data.Entities.Thread> threadRepository, IMapper mapper)
+        {
+            var normalized = currentShortname.ToUpperInvariant();
+            var affectedThreads = threadRepository.GetWhere(t => t.PartnerUrlIdentifier != null && t.PartnerUrlIdentifier.ToUpperInvariant() == normalized && t.Character.UserId == userId).ToList();
+            foreach (var thread in affectedThreads)
+            {
+                thread.PartnerUrlIdentifier = replacementShortname;
+                threadRepository.Update(thread.ThreadId.ToString(CultureInfo.CurrentCulture), thread);
+            }
+        }
     }
 }
