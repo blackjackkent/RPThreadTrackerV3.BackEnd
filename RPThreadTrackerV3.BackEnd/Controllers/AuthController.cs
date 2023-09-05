@@ -304,12 +304,12 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
 		    }
 		    catch (InvalidChangePasswordException e)
 		    {
-                _logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors.Join()}");
-		        return BadRequest(e.Errors.Join(" "));
+                _logger.LogError(e, $"Error resetting password for {model.Email}: {string.Join(" ", e.Errors)}");
+		        return BadRequest(string.Join(" ", e.Errors));
 		    }
 			catch (InvalidPasswordResetTokenException e)
 			{
-				_logger.LogError(e, $"Error resetting password for {model.Email}: {e.Errors.Join(",")}");
+				_logger.LogError(e, $"Error resetting password for {model.Email}: {string.Join(" ", e.Errors)}");
 				return BadRequest("This reset token is invalid. Please request a new password reset link.");
 			}
 			catch (UserNotFoundException e)

@@ -1,67 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Configurations>Debug;Release;Staging</Configurations>
   </PropertyGroup>
-  
   <PropertyGroup>
     <RuntimeIdentifiers>debian-x64</RuntimeIdentifiers>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>bin\Debug\netcoreapp2.0\RPThreadTrackerV3.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\netapp6\RPThreadTrackerV3.xml</DocumentationFile>
     <CodeAnalysisRuleSet>RPThreadTrackerV3.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netcoreapp2.0\RPThreadTrackerV3.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netapp6\RPThreadTrackerV3.xml</DocumentationFile>
     <CodeAnalysisRuleSet>RPThreadTrackerV3.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Staging|AnyCPU'">
-    <DocumentationFile>bin\Staging\netcoreapp2.0\RPThreadTrackerV3.xml</DocumentationFile>
+    <DocumentationFile>bin\Staging\netapp6\RPThreadTrackerV3.xml</DocumentationFile>
     <CodeAnalysisRuleSet>RPThreadTrackerV3.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <DebugType>Full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <Content Remove="stylecop.json" />
   </ItemGroup>
-
   <ItemGroup>
     <AdditionalFiles Include="stylecop.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="coverlet.msbuild" Version="2.4.0" />
     <PackageReference Include="DotNetCore.NPOI" Version="1.2.1" />
     <PackageReference Include="EPPlus" Version="4.5.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.1.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
-	  <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.1.3" />
-	  <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2" />
-	  <PackageReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.2" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="2.0.1" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.1.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.2" />
+    <PackageReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.2" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.3" />
     <PackageReference Include="runtime.linux-x64.CoreCompat.System.Drawing" Version="1.0.0-beta009" />
     <PackageReference Include="Sendgrid" Version="9.10.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.21" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.21" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.21" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.7" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.1" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
@@ -78,7 +68,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-	<Target Name="SwaggerFile">
+  <Target Name="SwaggerFile">
     <ItemGroup>
       <_CustomFiles Include="bin\(Configuration)\(Platform)\*.xml" />
       <FilesForPackagingFromProject Include="%(_CustomFiles.Identity)">
@@ -87,9 +77,10 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-      <CopyAllFilesToSingleFolderForPackageDependsOn>
+    <CopyAllFilesToSingleFolderForPackageDependsOn>
         SwaggerFile;
         $(CopyAllFilesToSingleFolderForPackageDependsOn);
       </CopyAllFilesToSingleFolderForPackageDependsOn>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 </Project>

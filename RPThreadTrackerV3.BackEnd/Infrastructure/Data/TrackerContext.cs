@@ -5,10 +5,12 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using Entities;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
     /// <summary>
     /// Database context for entity management.
@@ -65,5 +67,27 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 	    /// The dataset containing thread entities.
 	    /// </value>
         public DbSet<RefreshToken> RefreshTokens { get; set; }
-	}
+
+        /// <inheritdoc/>
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder
+                .Properties<DateTime>()
+                .HaveConversion(typeof(UtcValueConverter));
+        }
+
+        /// <summary>
+        /// Configures all DateTimes in database to be converted to UTC.
+        /// </summary>
+        protected class UtcValueConverter : ValueConverter<DateTime, DateTime>
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="UtcValueConverter"/> class.
+            /// </summary>
+            public UtcValueConverter()
+                : base(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+            {
+            }
+        }
+    }
 }
