@@ -5,27 +5,17 @@
 
 namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
 {
+    using System;
     using System.Net;
-    using System.Net.Http.Headers;
     using System.Reflection;
-    using Microsoft.Azure.Documents;
+    using Microsoft.Azure.Cosmos;
 
     public class ExceptionBuilder
     {
-        public static DocumentClientException BuildDocumentClientException(Error error, HttpStatusCode httpStatusCode)
+        public static CosmosException BuildDocumentClientException(Exception error, HttpStatusCode httpStatusCode)
         {
-            var type = typeof(DocumentClientException);
+            return new CosmosException(error.Message, httpStatusCode, 0, string.Empty, 0);
 
-            var documentClientExceptionInstance = type.Assembly.CreateInstance(
-                type.FullName,
-                false,
-                BindingFlags.Instance | BindingFlags.NonPublic,
-                null,
-                new object[] { error, null, httpStatusCode },
-                null,
-                null);
-
-            return (DocumentClientException)documentClientExceptionInstance;
         }
     }
 }

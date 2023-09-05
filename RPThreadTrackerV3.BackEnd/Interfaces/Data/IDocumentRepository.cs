@@ -16,7 +16,7 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
     /// </summary>
     /// <typeparam name="T">The type to which retrieved documents should be cast.</typeparam>
     public interface IDocumentRepository<T>
-        where T : Resource, IDocument
+        where T : IDocument
     {
         /// <summary>
         /// Creates a new document representing an object of type <c>T</c>.

@@ -8,7 +8,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.TestHelpers
     using Interfaces.Data;
     using Microsoft.Azure.Documents;
 
-    public class MockDocumentPoco : Resource, IDocument
+    public class MockDocumentPoco : IDocument
     {
         public string Name { get; set; }
 
