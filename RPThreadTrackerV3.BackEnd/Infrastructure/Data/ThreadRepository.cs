@@ -11,9 +11,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
     using System.Linq;
     using Entities;
     using Exceptions.Thread;
+	using Microsoft.EntityFrameworkCore;
 
-    /// <inheritdoc />
-    [ExcludeFromCodeCoverage]
+	/// <inheritdoc />
+	[ExcludeFromCodeCoverage]
     public class ThreadRepository : BaseRepository<Thread>
 	{
         /// <summary>
@@ -29,58 +30,63 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         /// <inheritdoc />
         public override Thread Update(string id, Thread entity)
 		{
-			var existingThread = GetWhere(t => t.ThreadId == entity.ThreadId, new List<string> { "ThreadTags", "Character" }).FirstOrDefault();
-			if (existingThread == null)
-			{
-				throw new ThreadNotFoundException();
-			}
-			Context.Entry(existingThread).CurrentValues.SetValues(entity);
-			foreach (var existingTag in existingThread.ThreadTags.ToList())
-			{
-				if (entity.ThreadTags.All(t => t.ThreadTagId != existingTag.ThreadTagId))
-				{
-					Context.ThreadTags.Remove(existingTag);
-				}
-			}
-			foreach (var updatedTag in entity.ThreadTags)
-			{
-				if (string.IsNullOrEmpty(updatedTag.ThreadTagId))
-				{
-					var newTag = new ThreadTag
-					{
-						ThreadTagId = Guid.NewGuid().ToString(),
-						TagText = updatedTag.TagText,
-						ThreadId = existingThread.ThreadId
-					};
-					existingThread.ThreadTags.Add(newTag);
-				}
-				else
-				{
-					var existingTag = existingThread.ThreadTags
-						.FirstOrDefault(c => c.ThreadTagId == updatedTag.ThreadTagId);
-					if (existingTag != null)
-					{
-						Context.Entry(existingTag).CurrentValues.SetValues(updatedTag);
-					}
-					else
-					{
-						var newTag = new ThreadTag
-						{
-							ThreadTagId = Guid.NewGuid().ToString(),
-							TagText = updatedTag.TagText,
-							ThreadId = existingThread.ThreadId
-						};
-						existingThread.ThreadTags.Add(newTag);
-					}
-				}
-			}
-			Context.SaveChanges();
-			Context.Entry(existingThread).Reload();
-		    if (existingThread.Character == null)
-		    {
-		        Context.Entry(existingThread).Reference(p => p.Character).Load();
-		    }
-		    return existingThread;
-		}
+            Context.Update(entity);
+			Context.SaveChanges(); 
+            var updatedThread = GetWhere(t => t.ThreadId == entity.ThreadId, new List<string> { "ThreadTags", "Character" }).FirstOrDefault();
+            return updatedThread;
+            //var existingThread = GetWhere(t => t.ThreadId == entity.ThreadId, new List<string> { "ThreadTags", "Character" }).FirstOrDefault();
+            //if (existingThread == null)
+            //{
+            //	throw new ThreadNotFoundException();
+            //}
+            //Context.Entry(existingThread).CurrentValues.SetValues(entity);
+            //foreach (var existingTag in existingThread.ThreadTags.ToList())
+            //{
+            //	if (entity.ThreadTags.All(t => t.ThreadTagId != existingTag.ThreadTagId))
+            //	{
+            //		Context.ThreadTags.Remove(existingTag);
+            //	}
+            //}
+            //foreach (var updatedTag in entity.ThreadTags)
+            //{
+            //	if (string.IsNullOrEmpty(updatedTag.ThreadTagId))
+            //	{
+            //		var newTag = new ThreadTag
+            //		{
+            //			ThreadTagId = Guid.NewGuid().ToString(),
+            //			TagText = updatedTag.TagText,
+            //			ThreadId = existingThread.ThreadId
+            //		};
+            //		existingThread.ThreadTags.Add(newTag);
+            //	}
+            //	else
+            //	{
+            //		var existingTag = existingThread.ThreadTags
+            //			.FirstOrDefault(c => c.ThreadTagId == updatedTag.ThreadTagId);
+            //		if (existingTag != null)
+            //		{
+            //			Context.Entry(existingTag).CurrentValues.SetValues(updatedTag);
+            //		}
+            //		else
+            //		{
+            //			var newTag = new ThreadTag
+            //			{
+            //				ThreadTagId = Guid.NewGuid().ToString(),
+            //				TagText = updatedTag.TagText,
+            //				ThreadId = existingThread.ThreadId
+            //			};
+            //			existingThread.ThreadTags.Add(newTag);
+            //		}
+            //	}
+            //}
+            //Context.Entry(existingThread).State = EntityState.Modified;
+            //Context.SaveChanges();
+            //Context.Entry(existingThread).Reload();
+            //   if (existingThread.Character == null)
+            //   {
+            //       Context.Entry(existingThread).Reference(p => p.Character).Load();
+            //   }
+            //   return existingThread;
+        }
     }
 }

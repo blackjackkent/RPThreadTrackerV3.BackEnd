@@ -21,7 +21,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Entities
         /// The unique ID of this thread tag.
         /// </value>
         [Column("TagId")]
-		public string ThreadTagId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string ThreadTagId { get; set; }
 
         /// <summary>
         /// Gets or sets the tag text.

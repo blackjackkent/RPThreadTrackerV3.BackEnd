@@ -80,7 +80,9 @@ namespace RPThreadTrackerV3.BackEnd
             builder.Host.UseNLog();
 
             builder.Services.AddControllers();
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
             var connection = settings.GetConnectionString("Database");
             builder.Services.AddDbContext<TrackerContext>(options =>
             {
@@ -130,12 +132,21 @@ namespace RPThreadTrackerV3.BackEnd
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             var app = builder.Build();
+
             app.UseCors(builder =>
                 builder.WithOrigins(settings["Cors:CorsUrl"].Split(',')).AllowAnyHeader().AllowAnyMethod());
             app.UseDeveloperExceptionPage();
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseRouting();
+            app.UseSwagger();
+            app.UseSwaggerUI();
+
+            app.UseHttpsRedirection();
+
+            app.UseAuthorization();
+
+            app.MapControllers();
             LogManager.Configuration.Variables["connectionString"] = settings.GetConnectionString("Database");
 
             return app;
