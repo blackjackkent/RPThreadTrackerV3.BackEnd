@@ -1,13 +1,13 @@
--
-  version: '1.0.{build}'
+- version: "1.0.{build}"
   image: Visual Studio 2017
   branches:
     only:
-    - production
+      - production
   init:
     - cmd: git config --global core.autocrlf true
   before_build:
     - cmd: dotnet --version
+    - cmd: dotnet --info
     - cmd: dotnet restore RPThreadTrackerV3.BackEnd.sln --verbosity m
   build_script:
     - cmd: dotnet publish RPThreadTrackerV3.BackEnd.sln -c Release
@@ -31,12 +31,11 @@
   on_failure:
     - ps: Invoke-RestMethod https://raw.githubusercontent.com/blackjackkent/appveyor-discord-webhook/master/send.ps1 -o send.ps1
     - ps: ./send.ps1 failure $env:WEBHOOK_URL
--
-  version: '1.0.{build}'
+- version: "1.0.{build}"
   image: Visual Studio 2017
   branches:
     only:
-    - development
+      - development
   init:
     - cmd: git config --global core.autocrlf true
   before_build:

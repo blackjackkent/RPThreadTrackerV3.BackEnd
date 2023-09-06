@@ -7,6 +7,7 @@
 
 [![Build Status](https://travis-ci.org/blackjackkent/RPThreadTrackerV3.BackEnd.svg?branch=development)](https://travis-ci.org/blackjackkent/RPThreadTrackerV3.BackEnd)
 [![codecov](https://codecov.io/gh/blackjackkent/RPThreadTrackerV3.BackEnd/branch/development/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
+[![Discord](https://img.shields.io/discord/375365160057176064?color=7389D8&label=Discord&logo=discord)](https://discord.gg/k4gDad5)
 
 
 This is a web service API called by [RPThreadTrackerV3.FrontEnd](https://github.com/blackjackkent/RPThreadTrackerV3.FrontEnd) to retrieve information about a user's account, tracked characters, tracked threads, and other account tools.

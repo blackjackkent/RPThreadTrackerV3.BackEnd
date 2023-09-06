@@ -7,14 +7,23 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
 {
     using System.Collections.Generic;
     using Interfaces.Data;
-    using Microsoft.Azure.Documents;
 
     /// <summary>
     /// Data-layer representation of a user's settings for a particular public thread view.
     /// </summary>
     /// <seealso cref="IDocument" />
-    public class PublicView : Resource, IDocument
+    public class PublicView : IDocument
     {
+        /// <summary>
+        /// Gets or sets the ID of the public view.
+        /// </summary>
+        /// <value>
+        /// The ID of the public view.
+        /// </value>
+        #pragma warning disable SA1300 // Element must begin with upper-case letter
+        public string id { get; set; }
+        #pragma warning restore SA1300 // Element must begin with upper-case letter
+
         /// <summary>
         /// Gets or sets the name of the public view.
         /// </summary>

@@ -7,6 +7,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Net;
     using System.Threading;
@@ -14,138 +15,22 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
     using BackEnd.Infrastructure.Data;
     using BackEnd.Infrastructure.Exceptions;
     using FluentAssertions;
-    using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.Client;
-    using Microsoft.Azure.Documents.Linq;
+    using Microsoft.Azure.Cosmos;
     using Moq;
+    using RPThreadTrackerV3.BackEnd.Interfaces.Data;
     using TestHelpers;
     using Xunit;
-    using IDocumentClient = Interfaces.Data.IDocumentClient;
 
     [Trait("Class", "BaseDocumentRepository")]
     public class BaseDocumentRepositoryTests
     {
-        private readonly Mock<IDocumentClient> _mockClient;
+        private readonly Mock<IDocumentClient<MockDocumentPoco>> _mockClient;
         private readonly BaseDocumentRepository<MockDocumentPoco> _repo;
 
         public BaseDocumentRepositoryTests()
         {
-            _mockClient = new Mock<IDocumentClient>();
+            _mockClient = new Mock<IDocumentClient<MockDocumentPoco>>();
             _repo = new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-        }
-
-        public class Constructor : BaseDocumentRepositoryTests
-        {
-            [Fact]
-            public void CreatesDatabaseIfItDoesNotExist()
-            {
-                // Arrange
-                var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.NotFound);
-                _mockClient.Setup(c => c.AssertDatabaseExists()).Throws(exception);
-
-                // Act
-                var repo = new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Once);
-            }
-
-            [Fact]
-            public void CreatesCollectionIfItDoesNotExist()
-            {
-                // Arrange
-                var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.NotFound);
-                _mockClient.Setup(c => c.AssertCollectionExists()).Throws(exception);
-
-                // Act
-                var repo = new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                _mockClient.Verify(c => c.CreateDocumentCollectionAsync(), Times.Once);
-            }
-
-            [Fact]
-            public void ThrowsIfUnexpectedDocumentClientExceptionOccursInReadingDatabase()
-            {
-                // Arrange
-                var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.BadGateway);
-                _mockClient.Setup(c => c.AssertDatabaseExists()).Throws(exception);
-
-                // Act
-                Action action = () => new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                action.Should().Throw<AggregateException>()
-                    .WithInnerException<DocumentDatabaseException>()
-                        .WithInnerException<DocumentClientException>()
-                        .Which.Should().Be(exception);
-                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Never);
-            }
-
-            [Fact]
-            public void ThrowsIfUnexpectedDocumentClientExceptionOccursInReadingCollection()
-            {
-                // Arrange
-                var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.BadGateway);
-                _mockClient.Setup(c => c.AssertCollectionExists()).Throws(exception);
-
-                // Act
-                Action action = () => new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                action.Should().Throw<AggregateException>()
-                    .WithInnerException<DocumentDatabaseException>()
-                        .WithInnerException<DocumentClientException>()
-                        .Which.Should().Be(exception);
-                _mockClient.Verify(c => c.CreateDocumentCollectionAsync(), Times.Never);
-            }
-
-            [Fact]
-            public void ThrowsIfUnexpectedExceptionOccursInReadingDatabase()
-            {
-                // Arrange
-                var exception = new NullReferenceException();
-                _mockClient.Setup(c => c.AssertDatabaseExists()).Throws(exception);
-
-                // Act
-                Action action = () => new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                action.Should().Throw<AggregateException>()
-                    .WithInnerException<DocumentDatabaseException>()
-                        .WithInnerException<NullReferenceException>()
-                        .Which.Should().Be(exception);
-                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Never);
-            }
-
-            [Fact]
-            public void ThrowsIfUnexpectedExceptionOccursInReadingCollection()
-            {
-                // Arrange
-                var exception = new NullReferenceException();
-                _mockClient.Setup(c => c.AssertCollectionExists()).Throws(exception);
-
-                // Act
-                Action action = () => new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                action.Should().Throw<AggregateException>()
-                    .WithInnerException<DocumentDatabaseException>()
-                        .WithInnerException<NullReferenceException>()
-                        .Which.Should().Be(exception);
-                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Never);
-            }
-
-            [Fact]
-            public void DoesNothingIfDatabaseAndCollectionExist()
-            {
-                // Act
-                var repo = new BaseDocumentRepository<MockDocumentPoco>(_mockClient.Object);
-
-                // Assert
-                _mockClient.Verify(c => c.CreateDatabaseAsync(), Times.Never);
-                _mockClient.Verify(c => c.CreateDocumentCollectionAsync(), Times.Never);
-            }
         }
 
         public class GetItemAsync : BaseDocumentRepositoryTests
@@ -154,11 +39,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             public async Task ReturnsTypedObjectWhenRetrievalIsSuccessful()
             {
                 // Arrange
-                var document = new Document();
-                document.SetPropertyValue("Name", "Test Name");
-                document.SetPropertyValue("Slug", "test-slug");
-                document.SetPropertyValue("Size", 15);
-                _mockClient.Setup(c => c.ReadDocumentAsync("documentid")).Returns(Task.FromResult(document));
+                var document = new MockDocumentPoco();
+                document.Name = "Test Name";
+                document.Slug = "test-slug";
+                document.Size = 15;
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>()))
+                    .Returns(Task.FromResult(new List<MockDocumentPoco> { document }.AsEnumerable()));
 
                 // Act
                 var result = await _repo.GetItemAsync("documentid");
@@ -174,8 +60,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             public async Task ReturnsNullIfItemIsNotFound()
             {
                 // Arrange
-                var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.NotFound);
-                _mockClient.Setup(c => c.ReadDocumentAsync("documentid")).Throws(exception);
+                var exception = ExceptionBuilder.BuildDocumentClientException(new Exception("not found"), HttpStatusCode.NotFound);
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>()))
+                    .Throws(exception);
 
                 // Act
                 var result = await _repo.GetItemAsync("documentid");
@@ -188,8 +75,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             public void RethrowsDocumentClientExceptionOtherThanNotFound()
             {
                 // Arrange
-                var exception = ExceptionBuilder.BuildDocumentClientException(new Error(), HttpStatusCode.BadRequest);
-                _mockClient.Setup(c => c.ReadDocumentAsync("documentid")).Throws(exception);
+                var exception = ExceptionBuilder.BuildDocumentClientException(new Exception(), HttpStatusCode.BadRequest);
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>()))
+                    .Throws(exception);
 
                 // Act
                 Func<Task> action = async () => await _repo.GetItemAsync("documentid");
@@ -197,7 +85,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
                 // Assert
                 action.Should().Throw<AggregateException>()
                     .WithInnerException<DocumentDatabaseException>()
-                        .WithInnerException<DocumentClientException>()
+                        .WithInnerException<CosmosException>()
                         .Which.Should().Be(exception);
             }
         }
@@ -208,9 +96,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             public async Task ReturnsEmptyListIfNoResults()
             {
                 // Arrange
-                var mockQuery = new Mock<IDocumentQuery<MockDocumentPoco>>();
-                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>())).Returns(mockQuery.Object);
-                mockQuery.SetupGet(q => q.HasMoreResults).Returns(false);
+                var mockResults = new List<MockDocumentPoco>();
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>())).Returns(Task.FromResult(mockResults.AsEnumerable()));
 
                 // Act
                 var result = await _repo.GetItemsAsync(p => p.Name == "Test");
@@ -223,25 +110,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             public async Task ReturnsQueryResultsWhenQuerySuccessful()
             {
                 // Arrange
-                var querySet1 = new FeedResponse<MockDocumentPoco>(new List<MockDocumentPoco>
-                {
+                var mockResults = new List<MockDocumentPoco> { 
                     new MockDocumentPoco { Name = "Test 1" },
-                    new MockDocumentPoco { Name = "Test 2" }
-                });
-                var querySet2 = new FeedResponse<MockDocumentPoco>(new List<MockDocumentPoco>
-                {
+                    new MockDocumentPoco { Name = "Test 2" },
                     new MockDocumentPoco { Name = "Test 3" },
                     new MockDocumentPoco { Name = "Test 4" }
-                });
-                var mockQuery = new Mock<IDocumentQuery<MockDocumentPoco>>();
-                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>())).Returns(mockQuery.Object);
-                mockQuery.SetupSequence(q => q.HasMoreResults)
-                    .Returns(true)
-                    .Returns(true)
-                    .Returns(false);
-                mockQuery.SetupSequence(q => q.ExecuteNextAsync<MockDocumentPoco>(It.IsAny<CancellationToken>()))
-                    .Returns(Task.FromResult(querySet1))
-                    .Returns(Task.FromResult(querySet2));
+                };
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>())).Returns(Task.FromResult(mockResults.AsEnumerable()));
 
                 // Act
                 var result = await _repo.GetItemsAsync(p => p.Name == "Test");
@@ -267,11 +142,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
                     Slug = "test-slug",
                     Size = 15
                 };
-                var document = new Document();
-                document.SetPropertyValue("Name", "Test Name");
-                document.SetPropertyValue("Slug", "test-slug");
-                document.SetPropertyValue("Size", 15);
-                _mockClient.Setup(c => c.CreateDocumentAsync(item)).Returns(Task.FromResult(document));
+                _mockClient.Setup(c => c.CreateDocumentAsync(item)).Returns(Task.FromResult(item));
 
                 // Act
                 var result = await _repo.CreateItemAsync(item);
@@ -296,11 +167,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
                     Slug = "test-slug",
                     Size = 15
                 };
-                var document = new Document();
-                document.SetPropertyValue("Name", "Test Name");
-                document.SetPropertyValue("Slug", "test-slug");
-                document.SetPropertyValue("Size", 15);
-                _mockClient.Setup(c => c.ReplaceDocumentAsync("12345", item)).Returns(Task.FromResult(document));
+                _mockClient.Setup(c => c.ReplaceDocumentAsync("12345", item)).Returns(Task.FromResult(item));
 
                 // Act
                 var result = await _repo.UpdateItemAsync("12345", item);

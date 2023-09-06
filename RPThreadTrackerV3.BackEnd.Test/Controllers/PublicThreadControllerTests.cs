@@ -48,7 +48,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 {
                     UserId = model.UserId,
                     Name = model.Name,
-                    Id = model.Id,
+                    Id = model.id,
                     Slug = model.Slug,
                     CharacterIds = model.CharacterIds,
                     Columns = model.Columns,
@@ -68,7 +68,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 {
                     UserId = dto.UserId,
                     Name = dto.Name,
-                    Id = dto.Id,
+                    id = dto.Id,
                     Slug = dto.Slug,
                     TurnFilter = new PublicTurnFilter
                     {
@@ -175,7 +175,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Arrange
                 var view = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     Slug = "my-view"
                 };
                 var threads = new List<Thread>
@@ -241,7 +241,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 // Arrange
                 var view = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     Slug = "my-view"
                 };
                 var threads = new List<Thread>

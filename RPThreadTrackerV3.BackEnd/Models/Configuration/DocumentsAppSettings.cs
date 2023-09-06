@@ -41,5 +41,13 @@ namespace RPThreadTrackerV3.BackEnd.Models.Configuration
         /// The document database collection ID.
         /// </value>
         public string CollectionId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the document database partition key.
+        /// </summary>
+        /// <value>
+        /// The document database partition key.
+        /// </value>
+        public string PartitionKey { get; set; }
     }
 }

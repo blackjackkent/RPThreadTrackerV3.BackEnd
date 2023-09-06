@@ -34,10 +34,10 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
             _mockPublicViewRepository = new Mock<IDocumentRepository<PublicView>>();
             _mockMapper = new Mock<IMapper>();
             _mockMapper.Setup(m => m.Map<DomainModels.PublicView>(It.IsAny<PublicView>()))
-                .Returns((PublicView entity) => new DomainModels.PublicView
+                .Returns((Delegate)((PublicView entity) => new DomainModels.PublicView
                 {
                     UserId = entity.UserId,
-                    Id = entity.Id,
+                    id = entity.id,
                     Slug = entity.Slug,
                     Name = entity.Name,
                     TurnFilter = new DomainModels.PublicTurnFilter
@@ -52,12 +52,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                     SortKey = entity.SortKey,
                     Tags = entity.Tags,
                     SortDescending = entity.SortDescending
-                });
+                }));
             _mockMapper.Setup(m => m.Map<PublicView>(It.IsAny<DomainModels.PublicView>()))
                 .Returns((DomainModels.PublicView model) => new PublicView
                 {
                     UserId = model.UserId,
-                    Id = model.Id,
+                    id = model.id,
                     Slug = model.Slug,
                     Name = model.Name,
                     TurnFilter = new PublicTurnFilter
@@ -85,7 +85,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var view1 = new PublicView
                 {
                     UserId = "12345",
-                    Id = "13579",
+                    id = "13579",
                     Name = "View 1",
                     Slug = "view-1",
                     CharacterIds = new List<int> { 13579 },
@@ -104,7 +104,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var view2 = new PublicView
                 {
                     UserId = "12345",
-                    Id = "24680",
+                    id = "24680",
                     Name = "View 2",
                     Slug = "view-2",
                     CharacterIds = new List<int> { 13579 },
@@ -128,8 +128,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
 
                 // Assert
                 views.Should().HaveCount(2)
-                    .And.Contain(c => c.Id == "13579")
-                    .And.Contain(c => c.Id == "24680");
+                    .And.Contain(c => c.id == "13579")
+                    .And.Contain(c => c.id == "24680");
             }
         }
 
@@ -141,13 +141,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingDocument = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-slug"
                 };
                 var newDocument = new DomainModels.PublicView
                 {
-                    Id = "23456",
+                    id = "23456",
                     UserId = "12345",
                     Slug = "my-slug"
                 };
@@ -166,12 +166,12 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingDocument = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     Slug = "my-slug"
                 };
                 var newDocument = new DomainModels.PublicView
                 {
-                    Id = "23456",
+                    id = "23456",
                     UserId = "54321",
                     Slug = "my-slug"
                 };
@@ -182,7 +182,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 await _publicViewService.CreatePublicView(newDocument, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.CreateItemAsync(It.Is<PublicView>(v => v.Id == "23456" && v.Slug == "my-slug")));
+                _mockPublicViewRepository.Verify(r => r.CreateItemAsync(It.Is<PublicView>(v => v.id == "23456" && v.Slug == "my-slug")));
             }
 
             [Fact]
@@ -191,7 +191,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var newDocument = new DomainModels.PublicView
                 {
-                    Id = "23456",
+                    id = "23456",
                     Slug = "my-slug"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemsAsync(It.IsAny<Expression<Func<PublicView, bool>>>())).Returns(Task.FromResult(new List<PublicView>().AsEnumerable()));
@@ -201,7 +201,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 await _publicViewService.CreatePublicView(newDocument, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.CreateItemAsync(It.Is<PublicView>(v => v.Id == "23456" && v.Slug == "my-slug")));
+                _mockPublicViewRepository.Verify(r => r.CreateItemAsync(It.Is<PublicView>(v => v.id == "23456" && v.Slug == "my-slug")));
             }
         }
 
@@ -227,7 +227,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var publicView = new PublicView
                 {
                     UserId = "97531",
-                    Id = "12345"
+                    id = "12345"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemAsync("12345")).Returns(Task.FromResult(publicView));
 
@@ -245,7 +245,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var publicView = new PublicView
                 {
                     UserId = "13579",
-                    Id = "12345"
+                    id = "12345"
                 };
                 _mockPublicViewRepository.Setup(r => r.GetItemAsync("12345")).Returns(Task.FromResult(publicView));
 
@@ -265,13 +265,13 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-slug"
                 };
                 var existingView = new PublicView
                 {
-                    Id = "98765",
+                    id = "98765",
                     UserId = "12345",
                     Slug = "my-slug"
                 };
@@ -290,14 +290,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-slug",
                     Name = "New View Name"
                 };
                 var existingView = new PublicView
                 {
-                    Id = "97531",
+                    id = "97531",
                     UserId = "54321",
                     Slug = "my-slug",
                     Name = "Old View Name"
@@ -309,7 +309,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.Id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
+                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
             }
 
             [Fact]
@@ -318,14 +318,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-slug",
                     Name = "New View Name"
                 };
                 var existingView = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-slug",
                     Name = "Old View Name"
@@ -337,7 +337,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.Id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
+                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
             }
 
             [Fact]
@@ -346,14 +346,14 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var model = new DomainModels.PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-slug",
                     Name = "New View Name"
                 };
                 var existingView = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-old-slug",
                     Name = "Old View Name"
@@ -365,7 +365,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 await _publicViewService.UpdatePublicView(model, _mockPublicViewRepository.Object, _mockMapper.Object);
 
                 // Assert
-                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.Id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
+                _mockPublicViewRepository.Verify(r => r.UpdateItemAsync("13579", It.Is<PublicView>(v => v.id == "13579" && v.Slug == "my-slug" && v.Name == "New View Name")), Times.Once);
             }
         }
 
@@ -473,7 +473,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 var result = _publicViewService.GetViewFromLegacyDto(_legacyDto, new List<Character>());
 
                 // Assert
-                result.Id.Should().BeNullOrEmpty();
+                result.id.Should().BeNullOrEmpty();
                 result.Name.Should().Be("My View");
                 result.Slug.Should().Be("my-view");
                 result.CharacterIds.Should().HaveCount(0);
@@ -561,7 +561,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-view",
                     Name = "My View"
@@ -582,7 +582,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-view",
                     Name = "My View"
@@ -603,7 +603,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     UserId = "12345",
                     Slug = "my-view",
                     Name = "My View"
@@ -624,7 +624,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "98765",
+                    id = "98765",
                     UserId = "54321",
                     Slug = "my-view",
                     Name = "My View"
@@ -645,7 +645,7 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Services
                 // Arrange
                 var existingView = new PublicView
                 {
-                    Id = "13579",
+                    id = "13579",
                     Slug = "my-view",
                     Name = "My View"
                 };

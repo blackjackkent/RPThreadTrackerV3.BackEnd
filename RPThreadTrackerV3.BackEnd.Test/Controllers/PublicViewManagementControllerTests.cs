@@ -36,9 +36,9 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
             var mockLogger = new Mock<ILogger<PublicViewManagementController>>();
             _mockMapper = new Mock<IMapper>();
             _mockMapper.Setup(m => m.Map<PublicViewDto>(It.IsAny<PublicView>()))
-                .Returns((PublicView model) => new PublicViewDto
+                .Returns((Delegate)((PublicView model) => new PublicViewDto
                 {
-                    Id = model.Id,
+                    Id = model.id,
                     UserId = model.UserId,
                     Name = model.Name,
                     Slug = model.Slug,
@@ -54,11 +54,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                     SortKey = model.SortKey,
                     Tags = model.Tags,
                     SortDescending = model.SortDescending
-                });
+                }));
             _mockMapper.Setup(m => m.Map<PublicView>(It.IsAny<PublicViewDto>()))
                 .Returns((PublicViewDto dto) => new PublicView
                 {
-                    Id = dto.Id,
+                    id = dto.Id,
                     UserId = dto.UserId,
                     Name = dto.Name,
                     Slug = dto.Slug,
@@ -105,11 +105,11 @@ namespace RPThreadTrackerV3.BackEnd.Test.Controllers
                 {
                     new PublicView
                     {
-                        Id = "13579"
+                        id = "13579"
                     },
                     new PublicView
                     {
-                        Id = "97531"
+                        id = "97531"
                     }
                 };
                 _mockPublicViewService.Setup(s => s.GetPublicViews("12345", _mockPublicViewRepository.Object, _mockMapper.Object))

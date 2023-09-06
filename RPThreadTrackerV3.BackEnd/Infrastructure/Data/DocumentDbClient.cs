@@ -6,25 +6,27 @@
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Interfaces.Data;
-    using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.Client;
-    using Microsoft.Azure.Documents.Linq;
+    using Microsoft.Azure.Cosmos;
+    using Microsoft.Azure.Cosmos.Linq;
     using Microsoft.Extensions.Options;
     using Models.Configuration;
-    using IDocumentClient = Interfaces.Data.IDocumentClient;
 
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    public class DocumentDbClient : IDocumentClient
+    public class DocumentDbClient<T> : IDocumentClient<T>
+        where T : IDocument
     {
-        private readonly DocumentClient _client;
+        private readonly CosmosClient _client;
         private readonly string _databaseId;
         private readonly string _collectionId;
+        private readonly string _partitionKey;
+        private Container _container;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentDbClient"/> class.
@@ -37,68 +39,51 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
             var endpoint = config.Secure.Documents.Endpoint;
             _databaseId = config.Secure.Documents.DatabaseId;
             _collectionId = config.Secure.Documents.CollectionId;
-            _client = new DocumentClient(new Uri(endpoint), key);
+            _partitionKey = config.Secure.Documents.PartitionKey;
+            _client = new CosmosClient(endpoint, key);
+        }
+        /// <inheritdoc />
+        public async Task<IEnumerable<T>> CreateDocumentQuery<T>(Expression<Func<T, bool>> predicate)
+            where T : IDocument
+        {
+            var container = await GetContainer();
+            using FeedIterator<T> setIterator = container.GetItemLinqQueryable<T>()
+                .Where(predicate)
+                .ToFeedIterator<T>();
+            List<T> results = new List<T>();
+            while (setIterator.HasMoreResults)
+            {
+                foreach (var item in await setIterator.ReadNextAsync())
+                {
+                    {
+                        results.Add(item);
+                    }
+                }
+            }
+            return results;
         }
 
         /// <inheritdoc />
-        public async Task<Document> ReadDocumentAsync(string id)
+        public async Task<T> CreateDocumentAsync(object item)
         {
-            return await _client.ReadDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
+            var container = await GetContainer();
+            var result = await container.CreateItemAsync<T>((T)item);
+            return result.Resource;
         }
 
         /// <inheritdoc />
-        public IDocumentQuery<T> CreateDocumentQuery<T>(Expression<Func<T, bool>> predicate)
-            where T : Resource, IDocument
+        public async Task<T> ReplaceDocumentAsync(string id, object item)
         {
-            var query = _client.CreateDocumentQuery<T>(
-                UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId),
-                new FeedOptions { MaxItemCount = -1 });
-            return query.Where(predicate).AsDocumentQuery();
-        }
-
-        /// <inheritdoc />
-        public async Task<Document> CreateDocumentAsync(object item)
-        {
-            return await _client.CreateDocumentAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId), item);
-        }
-
-        /// <inheritdoc />
-        public async Task<Document> ReplaceDocumentAsync(string id, object item)
-        {
-            return await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id), item);
+            var container = await GetContainer();
+            var result = await container.ReplaceItemAsync<T>((T)item, id);
+            return result.Resource;
         }
 
         /// <inheritdoc />
         public async Task DeleteDocumentAsync(string id)
         {
-            await _client.DeleteDocumentAsync(UriFactory.CreateDocumentUri(_databaseId, _collectionId, id));
-        }
-
-        /// <inheritdoc />
-        public async Task AssertDatabaseExists()
-        {
-            await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_databaseId));
-        }
-
-        /// <inheritdoc />
-        public async Task CreateDatabaseAsync()
-        {
-            await _client.CreateDatabaseAsync(new Database { Id = _databaseId });
-        }
-
-        /// <inheritdoc />
-        public async Task AssertCollectionExists()
-        {
-            await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_databaseId, _collectionId));
-        }
-
-        /// <inheritdoc />
-        public async Task CreateDocumentCollectionAsync()
-        {
-            await _client.CreateDocumentCollectionAsync(
-                UriFactory.CreateDatabaseUri(_databaseId),
-                new DocumentCollection { Id = _collectionId },
-                new RequestOptions { OfferThroughput = 1000 });
+            var container = await GetContainer();
+            await container.DeleteItemAsync<T>(id, PartitionKey.None);
         }
 
         /// <inheritdoc />
@@ -118,6 +103,17 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
             {
                 _client?.Dispose();
             }
+        }
+
+        private async Task<Container> GetContainer()
+        {
+            if (_container != null)
+            {
+                return _container;
+            }
+            Database database = await _client.CreateDatabaseIfNotExistsAsync(_databaseId);
+            _container = await database.CreateContainerIfNotExistsAsync(_collectionId, _partitionKey, 400);
+            return _container;
         }
     }
 }

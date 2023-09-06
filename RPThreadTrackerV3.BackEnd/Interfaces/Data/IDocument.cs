@@ -10,5 +10,8 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
     /// </summary>
     public interface IDocument
     {
+        #pragma warning disable SA1300 // Element must begin with upper-case letter
+        string id { get; set;  }
+        #pragma warning restore SA1300 // Element must begin with upper-case letter
     }
 }
