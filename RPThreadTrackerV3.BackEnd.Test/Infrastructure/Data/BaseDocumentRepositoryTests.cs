@@ -43,7 +43,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
                 document.Name = "Test Name";
                 document.Slug = "test-slug";
                 document.Size = 15;
-                _mockClient.Setup(c => c.ReadDocumentAsync("documentid")).Returns(Task.FromResult(document));
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>()))
+                    .Returns(Task.FromResult(new List<MockDocumentPoco> { document }.AsEnumerable()));
 
                 // Act
                 var result = await _repo.GetItemAsync("documentid");
@@ -60,7 +61,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             {
                 // Arrange
                 var exception = ExceptionBuilder.BuildDocumentClientException(new Exception("not found"), HttpStatusCode.NotFound);
-                _mockClient.Setup(c => c.ReadDocumentAsync("documentid")).Throws(exception);
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>()))
+                    .Throws(exception);
 
                 // Act
                 var result = await _repo.GetItemAsync("documentid");
@@ -74,7 +76,8 @@ namespace RPThreadTrackerV3.BackEnd.Test.Infrastructure.Data
             {
                 // Arrange
                 var exception = ExceptionBuilder.BuildDocumentClientException(new Exception(), HttpStatusCode.BadRequest);
-                _mockClient.Setup(c => c.ReadDocumentAsync("documentid")).Throws(exception);
+                _mockClient.Setup(c => c.CreateDocumentQuery(It.IsAny<Expression<Func<MockDocumentPoco, bool>>>()))
+                    .Throws(exception);
 
                 // Act
                 Func<Task> action = async () => await _repo.GetItemAsync("documentid");
