@@ -1,4 +1,5 @@
 # RPThreadTrackerV3.BackEnd
+
 > Web service API used by RPThreadTracker.com V3
 >
 > If you are looking for the front-end Javascript code, please see [http://www.github.com/blackjackkent/RPThreadTrackerV3.FrontEnd](http://www.github.com/blackjackkent/RPThreadTrackerV3.FrontEnd).
@@ -9,7 +10,6 @@
 [![codecov](https://codecov.io/gh/blackjackkent/RPThreadTrackerV3.BackEnd/branch/development/graph/badge.svg)](https://codecov.io/gh/blackjackkent/RPThreadTracker.BackEnd.TumblrClient)
 [![Discord](https://img.shields.io/discord/375365160057176064?color=7389D8&label=Discord&logo=discord)](https://discord.gg/k4gDad5)
 
-
 This is a web service API called by [RPThreadTrackerV3.FrontEnd](https://github.com/blackjackkent/RPThreadTrackerV3.FrontEnd) to retrieve information about a user's account, tracked characters, tracked threads, and other account tools.
 
 ## Documentation
@@ -18,7 +18,7 @@ Documentation for this API's endpoints can be found at [https://rpthreadtrackerv
 
 ## Running the Application Locally
 
-You will need to have the .NET Core SDK v.2.1.4 or later installed on your local machine to develop this application.
+You will need to have the .NET Core SDK v.6.0.413 or later installed on your local machine to develop this application.
 
 1. Create a fork of this repository to your own GitHub account (<https://github.com/blackjackkent/RPThreadTrackerV3.BackEnd/fork>).
 2. Clone the forked repository to your local machine.
@@ -37,16 +37,17 @@ You can run all unit tests using your preferred C# test runner. To generate a co
 
 This application communicates with the following external services:
 
-
 1. A SQL Server database for Tracker-specific account information. The connection string for this database is set in `./RPThreadTrackerV3.BackEnd/appsettings.json`. You can use the following command to set up a local copy of the database tables for development purposes:
 
 ```
 cd ./SQL/InitDatabase
 sh ./InitDatabase.sh "(localdb)\mssqllocaldb" # or other local SQL server info
 ```
+
 2. A DocumentDB NoSQL database for maintaining information about customized public views. You can run a local DocumentDB server using the [Azure CosmosDB Emulator](https://docs.microsoft.com/en-us/azure/cosmos-db/local-emulator), and set the connection information for this server in the `./RPThreadTrackerV3.BackEnd/appsettings.secure.json` file that you created earlier.
 
-	Unfortunately, this portion of the service can only be run on Windows machines at this time.
+   Unfortunately, this portion of the service can only be run on Windows machines at this time.
+
 3. The SendGrid API for managing email transmission. If you wish to develop/modify features involving emails, you will need to set up a SendGrid account and generate an API key. The application SendGrid API key is set in the `./RPThreadTrackerV3.BackEnd/appsettings.secure.json` file that you created earlier.
 
 Of the three services above, only the SQL Server database is absolutely required to run the application.
@@ -55,7 +56,6 @@ Of the three services above, only the SQL Server database is absolutely required
 
 1. Commit your changes to your feature branch and push it to your forked repository.
 2. Open a pull request to the repository at https://github.com/blackjackkent/RPThreadTrackerV3.BackEnd.
-
 
 ## Meta
 
