@@ -20,7 +20,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data.Documents
         /// <value>
         /// The ID of the public view.
         /// </value>
-        public string Id { get; set; }
+        #pragma warning disable SA1300 // Element must begin with upper-case letter
+        public string id { get; set; }
+        #pragma warning restore SA1300 // Element must begin with upper-case letter
 
         /// <summary>
         /// Gets or sets the name of the public view.

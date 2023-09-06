@@ -25,6 +25,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         private readonly CosmosClient _client;
         private readonly string _databaseId;
         private readonly string _collectionId;
+        private readonly string _partitionKey;
         private Container _container;
 
         /// <summary>
@@ -38,17 +39,9 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
             var endpoint = config.Secure.Documents.Endpoint;
             _databaseId = config.Secure.Documents.DatabaseId;
             _collectionId = config.Secure.Documents.CollectionId;
+            _partitionKey = config.Secure.Documents.PartitionKey;
             _client = new CosmosClient(endpoint, key);
         }
-
-        /// <inheritdoc />
-        public async Task<T> ReadDocumentAsync(string id)
-        {
-            var container = await GetContainer();
-            var response = await container.ReadItemAsync<T>(id, PartitionKey.None);
-            return response.Resource;
-        }
-
         /// <inheritdoc />
         public async Task<IEnumerable<T>> CreateDocumentQuery<T>(Expression<Func<T, bool>> predicate)
             where T : IDocument
@@ -119,7 +112,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
                 return _container;
             }
             Database database = await _client.CreateDatabaseIfNotExistsAsync(_databaseId);
-            _container = await database.CreateContainerIfNotExistsAsync(_collectionId, null, 400);
+            _container = await database.CreateContainerIfNotExistsAsync(_collectionId, _partitionKey, 400);
             return _container;
         }
     }

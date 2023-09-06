@@ -46,16 +46,6 @@ namespace RPThreadTrackerV3.BackEnd.Interfaces.Data
         Task DeleteDocumentAsync(string id);
 
         /// <summary>
-        /// Retrieves information about the document with the passed ID.
-        /// </summary>
-        /// <param name="id">The ID of the document to be retrieved.</param>
-        /// <returns>
-        /// A task that represents the asynchronous operation.
-        /// The task result contains the retrieved document.
-        /// </returns>
-        Task<T> ReadDocumentAsync(string id);
-
-        /// <summary>
         /// Updates the document with the passed ID.
         /// </summary>
         /// <param name="id">The ID of the document to be updated.</param>

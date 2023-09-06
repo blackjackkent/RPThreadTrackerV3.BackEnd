@@ -5,6 +5,7 @@
 
 namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
@@ -41,6 +42,10 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             {
                 throw new InvalidPublicViewSlugException();
             }
+            if (document.id == null || document.id == string.Empty)
+            {
+                document.id = Guid.NewGuid().ToString();
+            }
             var createdDocument = await publicViewRepository.CreateItemAsync(document);
             return mapper.Map<PublicView>(createdDocument);
         }
@@ -65,11 +70,11 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             var entity = mapper.Map<Documents.PublicView>(model);
             var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == model.Slug && v.UserId == model.UserId);
             var existingDocument = existingDocuments.FirstOrDefault();
-            if (existingDocument != null && existingDocument.Id != model.Id)
+            if (existingDocument != null && existingDocument.id != model.id)
             {
                 throw new InvalidPublicViewSlugException();
             }
-            var result = await publicViewRepository.UpdateItemAsync(model.Id, entity);
+            var result = await publicViewRepository.UpdateItemAsync(model.id, entity);
             return mapper.Map<PublicView>(result);
         }
 
@@ -134,7 +139,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Services
             {
                 throw new InvalidPublicViewSlugException();
             }
-            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == slug && v.Id != viewId && v.UserId == userId);
+            var existingDocuments = await publicViewRepository.GetItemsAsync(v => v.Slug == slug && v.id != viewId && v.UserId == userId);
             if (existingDocuments.Any())
             {
                 throw new InvalidPublicViewSlugException();

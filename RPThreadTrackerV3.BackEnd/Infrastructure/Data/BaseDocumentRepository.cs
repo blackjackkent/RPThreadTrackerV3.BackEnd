@@ -7,6 +7,7 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
     using Exceptions;
@@ -34,8 +35,8 @@ namespace RPThreadTrackerV3.BackEnd.Infrastructure.Data
         {
             try
             {
-                var document = await _client.ReadDocumentAsync(id);
-                return document;
+                var document = await _client.CreateDocumentQuery<T>(doc => doc.id == id);
+                return document.FirstOrDefault();
             } catch (CosmosException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)

@@ -123,8 +123,8 @@ namespace RPThreadTrackerV3.BackEnd
             builder.Services.AddScoped<IEmailClient, SendGridEmailClient>();
             builder.Services.AddScoped<IRepository<Thread>, ThreadRepository>();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            builder.Services.AddSingleton(typeof(IDocumentRepository<>), typeof(BaseDocumentRepository<>));
             builder.Services.AddSingleton(typeof(IDocumentClient<>), typeof(DocumentDbClient<>));
+            builder.Services.AddSingleton(typeof(IDocumentRepository<>), typeof(BaseDocumentRepository<>));
             builder.Services.AddSingleton<IEmailBuilder, EmailBuilder>();
             builder.Services.AddScoped<IPasswordHasher<IdentityUser>, CustomPasswordHasher>();
             builder.Services.AddScoped<GlobalExceptionHandlerAttribute>();

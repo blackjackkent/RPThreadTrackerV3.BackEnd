@@ -120,12 +120,12 @@ namespace RPThreadTrackerV3.BackEnd.Controllers
             }
             catch (InvalidPublicViewException)
             {
-                _logger.LogWarning($"User {UserId} attempted to add invalid public view {JsonConvert.SerializeObject(model)}.");
+                _logger.LogWarning("User {UserId} attempted to add invalid public view {model}.", UserId, JsonConvert.SerializeObject(model));
                 return BadRequest("The supplied public view configuration is invalid.");
             }
             catch (Exception e)
             {
-                _logger.LogError($"Error creating public view {JsonConvert.SerializeObject(model)}: {e.Message}", e);
+                _logger.LogError("Error creating public view {model}: {message}", JsonConvert.SerializeObject(model), e.Message);
                 return StatusCode(500, "An unexpected error occurred.");
             }
         }
